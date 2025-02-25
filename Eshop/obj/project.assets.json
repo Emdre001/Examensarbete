@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Examentsarbete\\Models\\Class.cs\\Class.cs.csproj",
-      "projectName": "Class.cs",
-      "projectPath": "C:\\Examentsarbete\\Models\\Class.cs\\Class.cs.csproj",
+      "projectUniqueName": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
+      "projectName": "Eshop",
+      "projectPath": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
       "packagesPath": "C:\\Users\\emdre\\.nuget\\packages\\",
-      "outputPath": "C:\\Examentsarbete\\Models\\Class.cs\\obj\\",
+      "outputPath": "C:\\Examentsarbete-old\\Eshop\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -68,6 +68,9 @@
         "assetTargetFallback": true,
         "warn": true,
         "frameworkReferences": {
+          "Microsoft.AspNetCore.App": {
+            "privateAssets": "none"
+          },
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
