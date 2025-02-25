@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-
+using System;
 namespace Models;
 
-public class ShoeSize : IShoeSize
+public interface IShoeSize
+
 {
     public Guid SizeID { get; set; }
     public int MenSize { get; set; }
@@ -10,3 +10,4 @@ public class ShoeSize : IShoeSize
     public int ChildrenSize { get; set; }
 
 }
+

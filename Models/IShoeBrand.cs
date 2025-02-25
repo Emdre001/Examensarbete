@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-
+using System;
 namespace Models;
 
-public class ShoeBrand : IShoeBrand
+public interface IShoeBrand
 {
     public Guid BrandID { get; set; }
     public string BrandName { get; set; }
-  
+
 }
