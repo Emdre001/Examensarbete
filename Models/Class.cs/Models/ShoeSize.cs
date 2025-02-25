@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Models;
 
-public class ShoeSize : IShoeSize
+public class ShoeSize
 {
     public Guid SizeID { get; set; }
     public int MenSize { get; set; }

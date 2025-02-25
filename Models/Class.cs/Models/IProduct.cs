@@ -5,7 +5,7 @@ namespace Models
 {
     public interface IProduct
     {
-        public GUID ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductType { get; set; }
         public string ProductDescription { get; set; }
