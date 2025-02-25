@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Models
+namespace Models;
 
     public interface IProduct
     {
@@ -13,4 +13,3 @@ namespace Models
         public int ProductPrice { get; set; }
         public int ProductRating { get; set; }
     }
-}
