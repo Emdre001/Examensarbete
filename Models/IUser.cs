@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Models;
 
-public class User : IUser
+public interface IUser
 {
     public Guid UserID { get; set; }
     public string UserName { get; set; }

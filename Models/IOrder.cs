@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Models;
 
-public class Order : IOrder
+public interface IOrder
 {
     public virtual Guid OrderID { get; set; }
     public virtual string OrderDetails { get; set; }
