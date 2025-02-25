@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Models
-{
+
     public interface IProduct
     {
         public GUID ProductId { get; set; }
