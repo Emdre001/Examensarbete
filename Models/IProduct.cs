@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Models
 {
@@ -11,6 +12,5 @@ namespace Models
         public int ProductStock { get; set; }
         public int ProductPrice { get; set; }
         public int ProductRating { get; set; }
-
     }
 }
