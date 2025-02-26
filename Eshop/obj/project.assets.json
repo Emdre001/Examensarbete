@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
+      "projectUniqueName": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
       "projectName": "Eshop",
-      "projectPath": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
+      "projectPath": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
       "packagesPath": "C:\\Users\\emdre\\.nuget\\packages\\",
-      "outputPath": "C:\\Examentsarbete-old\\Eshop\\obj\\",
+      "outputPath": "C:\\Examensarbete\\Eshop\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

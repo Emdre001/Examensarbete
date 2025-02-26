@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj": {}
+    "C:\\Examensarbete\\Eshop\\Eshop.csproj": {}
   },
   "projects": {
-    "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj": {
+    "C:\\Examensarbete\\Eshop\\Eshop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
+        "projectUniqueName": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
         "projectName": "Eshop",
-        "projectPath": "C:\\Examentsarbete-old\\Eshop\\Eshop.csproj",
+        "projectPath": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
         "packagesPath": "C:\\Users\\emdre\\.nuget\\packages\\",
-        "outputPath": "C:\\Examentsarbete-old\\Eshop\\obj\\",
+        "outputPath": "C:\\Examensarbete\\Eshop\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
