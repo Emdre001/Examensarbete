@@ -1,6 +1,15 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Configuration;
 using Models;
-using System;
+using Models.DTO;
+using DbModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Npgsql.Replication;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace MainDbContext
 {
@@ -8,9 +17,9 @@ namespace MainDbContext
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
 
+        public DbSet<Product> Products { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<Product> Products { get; set; }
         public DbSet<ShoeBrand> ShoeBrands { get; set; } 
         public DbSet<ShoeSize> ShoeSizes { get; set; }
         public DbSet<User> Users { get; set; }
