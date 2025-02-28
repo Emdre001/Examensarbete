@@ -8,5 +8,4 @@ public class ShoeSize
     public int MenSize { get; set; }
     public int WomenSize { get; set; }
     public int ChildrenSize { get; set; }
-
 }
