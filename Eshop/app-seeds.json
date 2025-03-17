@@ -201,9 +201,9 @@
     ],
     "Shoes": [
     {
-        "jsonBrand": "Nike, Steve Madden, Adidas, Air Force, New Balance, Puma, Uggs",
-        "jsonColor": "Black, red, white, green, blue, lightblue, pink, baby purple, yellow, beige, orange",
-        "jsonSize": "16, 17, 19, 22, 28, 30, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47"
+        "jsonBrands": "Nike, Steve Madden, Adidas, Air Force, New Balance, Puma, Uggs",
+        "jsonColors": "Black, red, white, green, blue, lightblue, pink, baby purple, yellow, beige, orange",
+        "jsonSizes": "16, 17, 19, 22, 28, 30, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47"
 
     }
     ],
