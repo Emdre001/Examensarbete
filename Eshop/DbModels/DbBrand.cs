@@ -5,7 +5,7 @@ using Models;
 namespace Eshop.DbModels
 {
     [Table("ShoeBrands")]
-    public class DbShoeBrand : ShoeBrand
+    public class DbBrand : Brand
     {
         [Key]
         public int Id { get; set; }
