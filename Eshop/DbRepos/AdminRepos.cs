@@ -29,6 +29,5 @@ public class AdminDbRepos
         //_encryptions = encryptions;
         //_dbContext = context;
     }
-
-
+    #endregion
 }
