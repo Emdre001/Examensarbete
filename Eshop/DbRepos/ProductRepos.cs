@@ -22,9 +22,9 @@ public class ProductDbRepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IProduct>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<IProduct>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ProductDbM> query;
+        IQueryable<DbProduct> query;
         if (!flat)
         {
             query = _dbContext.Products.AsNoTracking()
@@ -39,7 +39,7 @@ public class ProductDbRepos
         }   
 
         var resp =  await query.FirstOrDefaultAsync<IProduct>();
-        return new ResponseItemDto<IProduct>()
+        return new ResponseItemDTO<IProduct>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
@@ -49,7 +49,7 @@ public class ProductDbRepos
     public async Task<ResponsePageDto<IProduct>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
-        IQueryable<ProductDbM> query;
+        IQueryable<DbProduct> query;
         if (flat)
         {
             query = _dbContext.Products.AsNoTracking();
@@ -91,12 +91,12 @@ public class ProductDbRepos
         };
     }
 
-    public async Task<ResponseItemDto<IProduct>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<IProduct>> DeleteItemAsync(Guid id)
     {
         //Find the instance with matching id
         var query1 = _dbContext.Products
             .Where(i => i.ProductId == id);
-        var item = await query1.FirstOrDefaultAsync<ProductDbM>();
+        var item = await query1.FirstOrDefaultAsync<DbProduct>();
 
         //If the item does not exists
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
@@ -107,32 +107,32 @@ public class ProductDbRepos
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
 
-        return new ResponseItemDto<IProduct>()
+        return new ResponseItemDTO<IProduct>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
         };
     }
 
-    public async Task<ResponseItemDto<IProduct>> UpdateItemAsync(ProductDTO itemDto)
+    public async Task<ResponseItemDTO<IProduct>> UpdateItemAsync(ProductDTO itemDTO)
     {
         //Find the instance with matching id and read the navigation properties.
         var query1 = _dbContext.Products
-            .Where(i => i.ProductId == itemDto.ProductId);
+            .Where(i => i.ProductId == itemDTO.ProductId);
         var item = await query1
             .Include(i => i.AnimalsDbM)
             .Include(i => i.EmployeesDbM)
-            .FirstOrDefaultAsync<ProductDbM>();
+            .FirstOrDefaultAsync<DbProduct>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDto.ProductId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDTO.ProductId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
-        item.UpdateFromDTO(itemDto);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_Itemdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemdTO_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Products.Update(item);
@@ -144,17 +144,17 @@ public class ProductDbRepos
         return await ReadItemAsync(item.ProductId, false);    
     }
 
-    public async Task<ResponseItemDto<IProduct>> CreateItemAsync(ProductDTO itemDto)
+    public async Task<ResponseItemDTO<IProduct>> CreateItemAsync(ProductDTO itemDTO)
     {
-        if (itemDto.ProductId != null)
-            throw new ArgumentException($"{nameof(itemDto.ProductId)} must be null when creating a new object");
+        if (itemDTO.ProductId != null)
+            throw new ArgumentException($"{nameof(itemDTO.ProductId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties Zoo
-        var item = new ProductDbM(itemDto);
+        var item = new DbProduct(itemDTO);
 
         //Update navigation properties
-        await navProp_Itemdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemdTO_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Products.Add(item);
@@ -167,16 +167,16 @@ public class ProductDbRepos
     }
     /*
 
-    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst 
+    //from all Guid relationships in _itemDTOSrc finds the corresponding object in the database and assigns it to _itemDst 
     //as navigation properties. Error is thrown if no object is found corresponing to an id.
-    private async Task navProp_Itemdto_to_ItemDbM(ProductDTO itemDtoSrc, ProductDbM itemDst)
+    private async Task navProp_ItemdTO_to_ItemDbM(ProductDTO itemDTOSrc, DbProduct itemDst)
     {
         //update AnimalsDbM from list
         List<AnimalDbM> Animals = null;
-        if (itemDtoSrc.AnimalsId != null)
+        if (itemDTOSrc.AnimalsId != null)
         {
             Animals = new List<AnimalDbM>();
-            foreach (var id in itemDtoSrc.AnimalsId)
+            foreach (var id in itemDTOSrc.AnimalsId)
             {
                 var p = await _dbContext.Animals.FirstOrDefaultAsync(i => i.AnimalId == id);
                 if (p == null)
@@ -189,10 +189,10 @@ public class ProductDbRepos
 
         //update EmployeessDbM from list
         List<EmployeeDbM> Employees = null;
-        if (itemDtoSrc.EmployeesId != null)
+        if (itemDTOSrc.EmployeesId != null)
         {
             Employees = new List<EmployeeDbM>();
-            foreach (var id in itemDtoSrc.EmployeesId)
+            foreach (var id in itemDTOSrc.EmployeesId)
             {
                 var p = await _dbContext.Employees.FirstOrDefaultAsync(i => i.EmployeeId == id);
                 if (p == null)

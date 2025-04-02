@@ -29,7 +29,7 @@ public class LoginDbRepos
 
 
 
-    public async Task<ResponseItemDto<LoginUserSessionDto>> LoginUserAsync(LoginCredentialsDto usrCreds)
+    public async Task<ResponseItemDto<LoginUserSessionDTO>> LoginUserAsync(LoginCredentialsDTO usrCreds)
     {
         using (var cmd1 = _dbContext.Database.GetDbConnection().CreateCommand())
         {
@@ -48,7 +48,7 @@ public class LoginDbRepos
             _dbContext.Database.OpenConnection();
             await cmd1.ExecuteScalarAsync();
 
-            var info = new LoginUserSessionDto
+            var info = new LoginUserSessionDTO
             {
                 //Notice the soft cast conversion 'as' it will be null if cast cannot be made
                 UserId = cmd1.Parameters[_usrIdIdx].Value as Guid?,
@@ -56,7 +56,7 @@ public class LoginDbRepos
                 UserRole = cmd1.Parameters[_roleIdx].Value as string
             };
 
-            return new ResponseItemDto<LoginUserSessionDto>()
+            return new ResponseItemDto<LoginUserSessionDTO>()
             {
                 DbConnectionKeyUsed = _dbContext.dbConnection,
                 Item = info

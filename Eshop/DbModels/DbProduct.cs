@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 
-namespace Eshop.DbModels
-{
+namespace DbModels;
+
     [Table("Products")]
     public class DbProduct : Product
     {
@@ -28,4 +28,3 @@ namespace Eshop.DbModels
         [Required]
         public int ProductRating { get; set; }
     }
-}

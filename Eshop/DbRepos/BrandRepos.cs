@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Models;
 using Models.DTO;
-using DbModels;
 using DbContext;
 
 namespace DbRepos;
@@ -21,30 +20,30 @@ public class BrandDbRepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IShoeBrand>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDto<IBrand>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ShoeBrandDbM> query;
+        IQueryable<BrandDbM> query;
         if (!flat)
         {
-            query = _dbContext.ShoeBrands.AsNoTracking()
-                .Include(i => i.ShoeBrandDbM)
+            query = _dbContext.Brands.AsNoTracking()
+                .Include(i => i.BrandDbM)
                 .Where(i => i.BrandId == id);
         }
         else
         {
-            query = _dbContext.ShoeBrands.AsNoTracking()
+            query = _dbContext.Brands.AsNoTracking()
                 .Where(i => i.BrandId == id);
         }
 
-        var resp = await query.FirstOrDefaultAsync<IShoeBrand>();
-        return new ResponseItemDto<IShoeBrand>()
+        var resp = await query.FirstOrDefaultAsync<IBrand>();
+        return new ResponseItemDto<IBrand>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IShoeBrand>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDto<IBrand>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
         IQueryable<ShoeBrandDbM> query;

@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Npgsql.Replication;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 
-namespace MainDbContext;
+
+namespace DbContext;
 
 
      public class MainDbContext : DbContext
@@ -21,13 +21,13 @@ namespace MainDbContext;
         public DbSet<Product> Products { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<ShoeBrand> ShoeBrands { get; set; } 
-        public DbSet<ShoeSize> ShoeSizes { get; set; }
+        public DbSet<Brand> Brands { get; set; } 
+        public DbSet<Size> Sizes { get; set; }
         public DbSet<User> Users { get; set; }
     
         #region model the Views
-    public DbSet<GstUsrInfoDbDto> InfoDbView { get; set; }
-    public DbSet<GstUsrInfoProductDto> InfoProductsView { get; set; }
+    public DbSet<GstUsrInfoDbDTO> InfoDbView { get; set; }
+    public DbSet<GstUsrInfoProductDTO> InfoProductsView { get; set; }
     //gör en för varje view i gstuserDTO
     #endregion
 
@@ -61,7 +61,7 @@ namespace MainDbContext;
             entity.Property(p => p.ProductRating).IsRequired();
         });
         
-          modelBuilder.Entity<ShoeBrand>(entity =>
+          modelBuilder.Entity<Brand>(entity =>
         {
             entity.HasKey(b => b.BrandID);
             entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);

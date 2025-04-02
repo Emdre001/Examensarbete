@@ -5,40 +5,40 @@ namespace Services;
  
 public interface IProductService {
  
-    public Task<ResponsePageDto<IProduct>> ReadProductsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IProduct>> ReadProductAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IProduct>> DeleteProductAsync(Guid id);
-    public Task<ResponseItemDto<IProduct>> UpdateProductAsync(ProductDto item);
-    public Task<ResponseItemDto<IProduct>> CreateProductAsync(ProductDto item);
+    public Task<ResponsePageDTO<IProduct>> ReadProductsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<IProduct>> ReadProductAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<IProduct>> DeleteProductAsync(Guid id);
+    public Task<ResponseItemDTO<IProduct>> UpdateProductAsync(ProductDTO item);
+    public Task<ResponseItemDTO<IProduct>> CreateProductAsync(ProductDTO item);
  
-    public Task<ResponsePageDto<IOrder>> ReadOrdersAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IOrder>> ReadOrderAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IOrder>> DeleteOrderAsync(Guid id);
-    public Task<ResponseItemDto<IOrder>> UpdateOrderAsync(OrderDto item);
-    public Task<ResponseItemDto<IOrder>> CreateOrderAsync(OrderDto item);
+    public Task<ResponsePageDTO<IOrder>> ReadOrdersAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<IOrder>> ReadOrderAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<IOrder>> DeleteOrderAsync(Guid id);
+    public Task<ResponseItemDTO<IOrder>> UpdateOrderAsync(OrderDTO item);
+    public Task<ResponseItemDTO<IOrder>> CreateOrderAsync(OrderDTO item);
  
-    public Task<ResponsePageDto<IColor>> ReadColorsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IColor>> ReadColorAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IColor>> DeleteColorAsync(Guid id);
-    public Task<ResponseItemDto<IColor>> UpdateColorAsync(ColorDto item);
-    public Task<ResponseItemDto<IColor>> CreateColorAsync(ColorDto item);
+    public Task<ResponsePageDTO<IColor>> ReadColorsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<IColor>> ReadColorAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<IColor>> DeleteColorAsync(Guid id);
+    public Task<ResponseItemDTO<IColor>> UpdateColorAsync(ColorDTO item);
+    public Task<ResponseItemDTO<IColor>> CreateColorAsync(ColorDTO item);
 
-    public Task<ResponsePageDto<IShoeBrand>> ReadShoeBrandsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IShoeBrand>> ReadShoeBrandAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IShoeBrand>> DeleteShoeBrandAsync(Guid id);
-    public Task<ResponseItemDto<IShoeBrand>> UpdateShoeBrandAsync(ShoeBrandDto item);
-    public Task<ResponseItemDto<IShoeBrand>> CreateShoeBrandAsync(ShoeBrandDto item);
+    public Task<ResponsePageDTO<IBrand>> ReadShoeBrandsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<IBrand>> ReadShoeBrandAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<IBrand>> DeleteShoeBrandAsync(Guid id);
+    public Task<ResponseItemDTO<IBrand>> UpdateShoeBrandAsync(BrandDTO item);
+    public Task<ResponseItemDTO<IBrand>> CreateShoeBrandAsync(BrandDTO item);
 
-    public Task<ResponsePageDto<IShoeSize>> ReadShoeSizesAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IShoeSize>> ReadShoeSizeAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IShoeSize>> DeleteShoeSizeAsync(Guid id);
-    public Task<ResponseItemDto<IShoeSize>> UpdateShoeSizeAsync(ShoeSizeDto item);
-    public Task<ResponseItemDto<IShoeSize>> CreateShoeSizeAsync(ShoeSizeDto item);
+    public Task<ResponsePageDTO<ISize>> ReadShoeSizesAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<ISize>> ReadShoeSizeAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<ISize>> DeleteShoeSizeAsync(Guid id);
+    public Task<ResponseItemDTO<ISize>> UpdateShoeSizeAsync(SizeDTO item);
+    public Task<ResponseItemDTO<ISize>> CreateShoeSizeAsync(SizeDTO item);
 
-    public Task<ResponsePageDto<IUser>> ReadUsersAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
-    public Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id, bool flat);
-    public Task<ResponseItemDto<IUser>> DeleteUserAsync(Guid id);
-    public Task<ResponseItemDto<IUser>> UpdateUserAsync(UserDto item);
-    public Task<ResponseItemDto<IUser>> CreateUserAsync(UserDto item);
+    public Task<ResponsePageDTO<IUser>> ReadUsersAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize);
+    public Task<ResponseItemDTO<IUser>> ReadUserAsync(Guid id, bool flat);
+    public Task<ResponseItemDTO<IUser>> DeleteUserAsync(Guid id);
+    public Task<ResponseItemDTO<IUser>> UpdateUserAsync(UserDTO item);
+    public Task<ResponseItemDTO<IUser>> CreateUserAsync(UserDTO item);
 
 }

@@ -17,10 +17,10 @@ public class BrandServiceDb : IBrandService {
         _logger = logger;
     }
  
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> InfoAsync() => _brandRepo.InfoAsync();
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> SeedAsync(int nrOfItems) => _brandRepo.SeedAsync(nrOfItems);
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> RemoveSeedAsync(bool seeded) => _brandRepo.RemoveSeedAsync(seeded);
-    public Task<UsrInfoDto> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysBrand) => _brandRepo.SeedUsersAsync(nrOfUsers, nrOfSuperUsers, nrOfSysBrand);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> InfoAsync() => _brandRepo.InfoAsync();
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> SeedAsync(int nrOfItems) => _brandRepo.SeedAsync(nrOfItems);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> RemoveSeedAsync(bool seeded) => _brandRepo.RemoveSeedAsync(seeded);
+    public Task<UsrInfoDTO> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysBrand) => _brandRepo.SeedUsersAsync(nrOfUsers, nrOfSuperUsers, nrOfSysBrand);
  
 }
 

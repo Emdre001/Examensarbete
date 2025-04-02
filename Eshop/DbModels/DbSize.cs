@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 
-namespace Eshop.DbModels
-{
-    [Table("ShoeSizes")]
-    public class DbShoeSize : ShoeBrand
+namespace DbModels;
+
+    [Table("Sizes")]
+    public class DbSize : Size
     {
         [Key]
         public int Id { get; set; }
@@ -19,4 +19,3 @@ namespace Eshop.DbModels
         [Required]
         public int ChildrenSize { get; set; }
     }
-}

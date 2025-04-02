@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 
-namespace Eshop.DbModels
-{
+namespace DbModels;
+
     [Table("Colors")]
     public class DbColor : Color
     {
@@ -13,4 +13,3 @@ namespace Eshop.DbModels
         [Required]
         public string ColorName { get; set; }
     }
-}

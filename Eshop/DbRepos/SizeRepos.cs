@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-
-using Models;
-using Models.DTO;
 using DbModels;
 using DbContext;
+using Models.DTO;
+using Eshop.DbModels;
 
 namespace DbRepos;
 
@@ -22,13 +21,13 @@ public class SizeDbrepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IShoeSize>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<ISize>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ShoeSizeDbM> query;
+        IQueryable<DbSize> query;
         if (!flat)
         {
             query = _dbContext.Sizes.AsNoTracking()
-                .Include(i => i.ProductDbM)
+                .Include(i => i.DbProduct)
                 .Where(i => i.SizeId == id);
         }
         else
@@ -37,18 +36,18 @@ public class SizeDbrepos
                 .Where(i => i.SizeId == id);
         }
 
-        var resp = await query.FirstOrDefaultAsync<IShoeSize>();
-        return new ResponseItemDto<IShoeSize>()
+        var resp = await query.FirstOrDefaultAsync<ISize>();
+        return new ResponseItemDTO<ISize>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IShoeSize>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDTO<ISize>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
-        IQueryable<ShoeSizeDbM> query;
+        IQueryable<DbSize> query;
         if (flat)
         {
             query = _dbContext.Sizes.AsNoTracking();
@@ -56,10 +55,10 @@ public class SizeDbrepos
         else
         {
             query = _dbContext.Sizes.AsNoTracking()
-                .Include(i => i.ProductDbM);
+                .Include(i => i.DbProduct);
         }
 
-        var ret = new ResponsePageDto<IShoeSize>()
+        var ret = new ResponsePageDTO<ISize>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -86,7 +85,7 @@ public class SizeDbrepos
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
 
-            .ToListAsync<IShoeSize>(),
+            .ToListAsync<ISize>(),
 
             PageNr = pageNumber,
             PageSize = pageSize
@@ -94,12 +93,12 @@ public class SizeDbrepos
         return ret;
     }
 
-    public async Task<ResponseItemDto<IShoeSize>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<ISize>> DeleteItemAsync(Guid id)
     {
         var query1 = _dbContext.Sizes
             .Where(i => i.SizeId == id);
 
-        var item = await query1.FirstOrDefaultAsync<ShoeSizeDbM>();
+        var item = await query1.FirstOrDefaultAsync<DbSize>();
 
         //If the item does not exists
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
@@ -110,30 +109,30 @@ public class SizeDbrepos
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
 
-        return new ResponseItemDto<IShoeSize>()
+        return new ResponseItemDTO<ISize>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
         };
     }
 
-    public async Task<ResponseItemDto<IShoeSize>> UpdateItemAsync(AnimalCuDto itemDto)
+    public async Task<ResponseItemDTO<ISize>> UpdateItemAsync(ProductDTO itemDTO)
     {
         var query1 = _dbContext.Sizes
-            .Where(i => i.SizeId == itemDto.SizeId);
+            .Where(i => i.SizeId == itemDTO.SizeId);
         var item = await query1
                 .Include(i => i.ProductDbM)
-                .FirstOrDefaultAsync<ShoeSizeDbM>();
+                .FirstOrDefaultAsync<DbSize>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDto.SizeId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDTO.SizeId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties 
-        item.UpdateFromDTO(itemDto);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Sizes.Update(item);
@@ -145,17 +144,17 @@ public class SizeDbrepos
         return await ReadItemAsync(item.SizeId, false);    
     }
 
-    public async Task<ResponseItemDto<IShoeSize>> CreateItemAsync(AnimalCuDto itemDto)
+    public async Task<ResponseItemDTO<ISize>> CreateItemAsync(ProductDTO itemDTO)
     {
-        if (itemDto.SizeId != null)
-            throw new ArgumentException($"{nameof(itemDto.SizeId)} must be null when creating a new object");
+        if (itemDTO.SizeId != null)
+            throw new ArgumentException($"{nameof(itemDTO.SizeId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
-        var item = new ShoeSizeDbM(itemDto);
+        var item = new DbSize(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Sizes.Add(item);
@@ -166,17 +165,5 @@ public class SizeDbrepos
         //return the updated item in non-flat mode
         return await ReadItemAsync(item.SizeId, false);    
     }
-    /*
-    private async Task navProp_ItemCUdto_to_ItemDbM(AnimalCuDto itemDtoSrc, ShoeSizeDbM itemDst)
-    {
-        //update zoo nav props
-        var zoo = await _dbContext.Zoos.FirstOrDefaultAsync(
-            a => (a.ZooId == itemDtoSrc.ZooId));
-
-        if (zoo == null)
-            throw new ArgumentException($"Item id {itemDtoSrc.ZooId} not existing");
-
-        itemDst.ProductDbM = zoo;
-    }
-    */
+  
 }

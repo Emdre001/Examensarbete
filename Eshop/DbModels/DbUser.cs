@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 
-namespace Eshop.DbModels
-{
+namespace DbModels;
+
     [Table("Users")]
-    public class DbUser : ShoeBrand
+    public class DbUser : User
     {
         [Key]
         public int Id { get; set; }
@@ -28,4 +28,3 @@ namespace Eshop.DbModels
         [Required]
         public string UserRole { get; set; }
     }
-}

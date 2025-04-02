@@ -24,11 +24,11 @@ public class ColorDbRepos
 
     public async Task<ResponseItemDto<IColor>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ColorDbM> query;
+        IQueryable<DbColor> query;
         if (!flat)
         {
             query = _dbContext.Colors.AsNoTracking()
-                .Include(i => i.ZooDbM)
+                .Include(i => i.DbColor)
                 .Where(i => i.ColorId == id);
         }
         else

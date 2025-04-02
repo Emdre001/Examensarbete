@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 
-namespace Eshop.DbModels
-{
+namespace DbModels;
+
     [Table("Orders")]
     public class DbOrder : Order
     {
@@ -22,4 +22,3 @@ namespace Eshop.DbModels
         [Required]
         public virtual int OrderAmount { get; set; }
     }
-}

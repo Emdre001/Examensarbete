@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Models;
 
-public interface IShoeSize
+public interface ISize
 
 {
     public Guid SizeID { get; set; }
