@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 
-namespace Models.DTO;
+namespace Models;
 
-public class ShoeBrandDTO
+public class Brand
 {
     public Guid BrandID { get; set; }
     public string BrandName { get; set; }
-  
 }
