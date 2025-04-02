@@ -21,44 +21,44 @@ public class BrandDbRepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IShoeBrand>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<IBrand>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ShoeBrandDbM> query;
+        IQueryable<DbBrand> query;
         if (!flat)
         {
-            query = _dbContext.ShoeBrands.AsNoTracking()
-                .Include(i => i.ShoeBrandDbM)
+            query = _dbContext.Brands.AsNoTracking()
+                .Include(i => i.BrandDbM)
                 .Where(i => i.BrandId == id);
         }
         else
         {
-            query = _dbContext.ShoeBrands.AsNoTracking()
+            query = _dbContext.Brands.AsNoTracking()
                 .Where(i => i.BrandId == id);
         }
 
-        var resp = await query.FirstOrDefaultAsync<IShoeBrand>();
-        return new ResponseItemDto<IShoeBrand>()
+        var resp = await query.FirstOrDefaultAsync<IBrand>();
+        return new ResponseItemDTO<IBrand>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IShoeBrand>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDTO<IBrand>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
-        IQueryable<ShoeBrandDbM> query;
+        IQueryable<DbBrand> query;
         if (flat)
         {
-            query = _dbContext.ShoeBrands.AsNoTracking();
+            query = _dbContext.Brands.AsNoTracking();
         }
         else
         {
-            query = _dbContext.Animals.AsNoTracking()
-                .Include(i => i.ShoeBrandDbM);
+            query = _dbContext.Brands.AsNoTracking()
+                .Include(i => i.DbBrand);
         }
 
-        var ret = new ResponsePageDto<IShoeBrand>()
+        var ret = new ResponsePageDTO<IBrand>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -85,7 +85,7 @@ public class BrandDbRepos
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
 
-            .ToListAsync<IShoeBrand>(),
+            .ToListAsync<IBrand>(),
 
             PageNr = pageNumber,
             PageSize = pageSize
@@ -93,12 +93,12 @@ public class BrandDbRepos
         return ret;
     }
 
-    public async Task<ResponseItemDto<IShoeBrand>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<IBrand>> DeleteItemAsync(Guid id)
     {
-        var query1 = _dbContext.Animals
+        var query1 = _dbContext.Brands
             .Where(i => i.BrandId == id);
 
-        var item = await query1.FirstOrDefaultAsync<ShoeBrandDbM>();
+        var item = await query1.FirstOrDefaultAsync<DbBrand>();
 
         //If the item does not exists
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
@@ -109,30 +109,30 @@ public class BrandDbRepos
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
 
-        return new ResponseItemDto<IShoeBrand>()
+        return new ResponseItemDTO<IBrand>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
         };
     }
 
-    public async Task<ResponseItemDto<IShoeBrand>> UpdateItemAsync(ShoeBrandDTO itemDto)
+    public async Task<ResponseItemDTO<IBrand>> UpdateItemAsync(BrandDTO itemDTO)
     {
-        var query1 = _dbContext.Animals
-            .Where(i => i.BrandId == itemDto.BrandId);
+        var query1 = _dbContext.Brands
+            .Where(i => i.BrandId == itemDTO.BrandId);
         var item = await query1
                 .Include(i => i.ZooDbM)
-                .FirstOrDefaultAsync<ShoeBrandDbM>();
+                .FirstOrDefaultAsync<DbBrand>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDto.BrandId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDTO.BrandId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties 
-        item.UpdateFromDTO(itemDto);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Animals.Update(item);
@@ -144,17 +144,17 @@ public class BrandDbRepos
         return await ReadItemAsync(item.BrandId, false);    
     }
 
-    public async Task<ResponseItemDto<IShoeBrand>> CreateItemAsync(ShoeBrandDTO itemDto)
+    public async Task<ResponseItemDTO<IBrand>> CreateItemAsync(BrandDTO itemDTO)
     {
-        if (itemDto.BrandId != null)
-            throw new ArgumentException($"{nameof(itemDto.BrandId)} must be null when creating a new object");
+        if (itemDTO.BrandId != null)
+            throw new ArgumentException($"{nameof(itemDTO.BrandId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
-        var item = new ShoeBrandDbM(itemDto);
+        var item = new BrandDbM(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Animals.Add(item);
@@ -166,14 +166,14 @@ public class BrandDbRepos
         return await ReadItemAsync(item.BrandId, false);    
     }
 
-    private async Task navProp_ItemCUdto_to_ItemDbM(ShoeBrandDTO itemDtoSrc, ShoeBrandDbM itemDst)
+    private async Task navProp_ItemCUdto_to_ItemDbM(BrandDTO itemDTOSrc, DbBrand itemDst)
     {
         //update zoo nav props
-        var zoo = await _dbContext.products.FirstOrDefaultAsync(
-            a => (a.productId == itemDtoSrc.productId));
+        var brand = await _dbContext.products.FirstOrDefaultAsync(
+            a => (a.productId == itemDTOSrc.productId));
 
-        if (zoo == null)
-            throw new ArgumentException($"Item id {itemDtoSrc.productId} not existing");
+        if (brand == null)
+            throw new ArgumentException($"Item id {itemDTOSrc.productId} not existing");
 
         itemDst.productDbM = product;
     }

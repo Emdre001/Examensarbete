@@ -22,13 +22,13 @@ public class OrderDbRepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IOrder>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<IOrder>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<OrderDbM> query;
+        IQueryable<DbOrder> query;
         if (!flat)
         {
             query = _dbContext.Orders.AsNoTracking()
-                .Include(i => i.ProductDbM)
+                .Include(i => i.DbOrder)
                 .Where(i => i.OrderId == id);
         }
         else
@@ -38,17 +38,17 @@ public class OrderDbRepos
         }
 
         var resp = await query.FirstOrDefaultAsync<IOrder>();
-        return new ResponseItemDto<IOrder>()
+        return new ResponseItemDTO<IOrder>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IOrder>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDTO<IOrder>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
-        IQueryable<OrderDbM> query;
+        IQueryable<DbOrder> query;
         if (flat)
         {
             query = _dbContext.Orders.AsNoTracking();
@@ -59,7 +59,7 @@ public class OrderDbRepos
                 .Include(i => i.ProductDbM);
         }
 
-        var ret = new ResponsePageDto<IOrder>()
+        var ret = new ResponsePageDTO<IOrder>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -94,12 +94,12 @@ public class OrderDbRepos
         return ret;
     }
 
-    public async Task<ResponseItemDto<IOrder>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<IOrder>> DeleteItemAsync(Guid id)
     {
         var query1 = _dbContext.Orders
             .Where(i => i.OrderId == id);
 
-        var item = await query1.FirstOrDefaultAsync<OrderDbM>();
+        var item = await query1.FirstOrDefaultAsync<DbOrder>();
 
         //If the item does not exists
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
@@ -110,30 +110,30 @@ public class OrderDbRepos
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
 
-        return new ResponseItemDto<IOrder>()
+        return new ResponseItemDTO<IOrder>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
         };
     }
 
-    public async Task<ResponseItemDto<IOrder>> UpdateItemAsync(AnimalCuDto itemDto)
+    public async Task<ResponseItemDTO<IOrder>> UpdateItemAsync(OrderDTO itemDTO)
     {
         var query1 = _dbContext.Orders
-            .Where(i => i.OrderId == itemDto.OrderId);
+            .Where(i => i.OrderId == itemDTO.OrderId);
         var item = await query1
                 .Include(i => i.ProductDbM)
-                .FirstOrDefaultAsync<OrderDbM>();
+                .FirstOrDefaultAsync<DbOrder>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDto.OrderId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDTO.OrderId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties 
-        item.UpdateFromDTO(itemDto);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Orders.Update(item);
@@ -145,17 +145,17 @@ public class OrderDbRepos
         return await ReadItemAsync(item.OrderId, false);    
     }
 
-    public async Task<ResponseItemDto<IOrder>> CreateItemAsync(AnimalCuDto itemDto)
+    public async Task<ResponseItemDTO<IOrder>> CreateItemAsync(OrderDTO itemDTO)
     {
-        if (itemDto.OrderId != null)
-            throw new ArgumentException($"{nameof(itemDto.OrderId)} must be null when creating a new object");
+        if (itemDTO.OrderId != null)
+            throw new ArgumentException($"{nameof(itemDTO.OrderId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
-        var item = new OrderDbM(itemDto);
+        var item = new DbOrder(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Orders.Add(item);

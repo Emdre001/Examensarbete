@@ -22,13 +22,13 @@ public class ColorDbRepos
     }
     #endregion
 
-    public async Task<ResponseItemDto<IColor>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<IColor>> ReadItemAsync(Guid id, bool flat)
     {
-        IQueryable<ColorDbM> query;
+        IQueryable<DbColor> query;
         if (!flat)
         {
             query = _dbContext.Colors.AsNoTracking()
-                .Include(i => i.ZooDbM)
+                .Include(i => i.DbColor)
                 .Where(i => i.ColorId == id);
         }
         else
@@ -38,17 +38,17 @@ public class ColorDbRepos
         }
 
         var resp = await query.FirstOrDefaultAsync<IColor>();
-        return new ResponseItemDto<IColor>()
+        return new ResponseItemDTO<IColor>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IColor>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDTO<IColor>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
-        IQueryable<ColorDbM> query;
+        IQueryable<DbColor> query;
         if (flat)
         {
             query = _dbContext.Colors.AsNoTracking();
@@ -56,10 +56,10 @@ public class ColorDbRepos
         else
         {
             query = _dbContext.Colors.AsNoTracking()
-                .Include(i => i.ZooDbM);
+                .Include(i => i.DbColor);
         }
 
-        var ret = new ResponsePageDto<IColor>()
+        var ret = new ResponsePageDTO<IColor>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -94,12 +94,12 @@ public class ColorDbRepos
         return ret;
     }
 
-    public async Task<ResponseItemDto<IColor>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<IColor>> DeleteItemAsync(Guid id)
     {
         var query1 = _dbContext.Colors
             .Where(i => i.ColorId == id);
 
-        var item = await query1.FirstOrDefaultAsync<ColorDbM>();
+        var item = await query1.FirstOrDefaultAsync<DbColor>();
 
         //If the item does not exists
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
@@ -110,30 +110,30 @@ public class ColorDbRepos
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
 
-        return new ResponseItemDto<IColor>()
+        return new ResponseItemDTO<IColor>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
         };
     }
 
-    public async Task<ResponseItemDto<IColor>> UpdateItemAsync(ColorDto itemDto)
+    public async Task<ResponseItemDTO<IColor>> UpdateItemAsync(ColorDTO itemDTO)
     {
         var query1 = _dbContext.Colors
-            .Where(i => i.ColorId == itemDto.ColorId);
+            .Where(i => i.ColorId == itemDTO.ColorId);
         var item = await query1
                 .Include(i => i.ZooDbM)
-                .FirstOrDefaultAsync<ColorDbM>();
+                .FirstOrDefaultAsync<DbColor>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDto.ColorId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDTO.ColorId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties 
-        item.UpdateFromDTO(itemDto);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Colors.Update(item);
@@ -145,17 +145,17 @@ public class ColorDbRepos
         return await ReadItemAsync(item.ColorId, false);    
     }
 
-    public async Task<ResponseItemDto<IColor>> CreateItemAsync(ColorDto itemDto)
+    public async Task<ResponseItemDTO<IColor>> CreateItemAsync(ColorDTO itemDTO)
     {
-        if (itemDto.ColorId != null)
-            throw new ArgumentException($"{nameof(itemDto.ColorId)} must be null when creating a new object");
+        if (itemDTO.ColorId != null)
+            throw new ArgumentException($"{nameof(itemDTO.ColorId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
-        var item = new ColorDbM(itemDto);
+        var item = new DbColor(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDto, item);
+        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Colors.Add(item);
