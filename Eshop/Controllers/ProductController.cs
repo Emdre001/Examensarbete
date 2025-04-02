@@ -25,6 +25,7 @@ namespace Controllers
 
         [HttpGet()]
         [ProducesResponseType(200, Type = typeof(ResponsePageDTO<IProduct>))]
+        [ProducesResponseType(200, Type = typeof(ResponsePageDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> ReadItems(string seeded = "true", string flat = "true",
             string filter = null, string pageNr = "0", string pageSize = "10")
@@ -50,6 +51,7 @@ namespace Controllers
         }
 
         [HttpGet()]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
@@ -77,6 +79,7 @@ namespace Controllers
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
             Policy = null, Roles = "supusr, sysadmin")]
         [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> DeleteItem(string id)
@@ -119,7 +122,9 @@ namespace Controllers
 
                 return Ok(
                     new ResponseItemDTO<ProductDTO>() {
+                    new ResponseItemDTO<ProductDTO>() {
                     DbConnectionKeyUsed = item.DbConnectionKeyUsed,
+                    Item = new ProductDTO(item.Item)
                     Item = new ProductDTO(item.Item)
                 });
             }
@@ -134,7 +139,9 @@ namespace Controllers
             Policy = null, Roles = "supusr, sysadmin")]
         [HttpPut("{id}")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> UpdateItem(string id, [FromBody] ProductDTO item)
         public async Task<IActionResult> UpdateItem(string id, [FromBody] ProductDTO item)
         {
             try
@@ -161,7 +168,9 @@ namespace Controllers
             Policy = null, Roles = "supusr, sysadmin")]
         [HttpPost()]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> CreateItem([FromBody] ProductDTO item)
         public async Task<IActionResult> CreateItem([FromBody] ProductDTO item)
         {
             try

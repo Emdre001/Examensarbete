@@ -27,9 +27,7 @@ public class LoginDbRepos
         _encryptions = encryptions;
     }
 
-
-
-    public async Task<ResponseItemDto<LoginUserSessionDTO>> LoginUserAsync(LoginCredentialsDTO usrCreds)
+    public async Task<ResponseItemDTO<LoginUserSessionDTO>> LoginUserAsync(LoginCredentialsDTO usrCreds)
     {
         using (var cmd1 = _dbContext.Database.GetDbConnection().CreateCommand())
         {
@@ -56,7 +54,7 @@ public class LoginDbRepos
                 UserRole = cmd1.Parameters[_roleIdx].Value as string
             };
 
-            return new ResponseItemDto<LoginUserSessionDTO>()
+            return new ResponseItemDTO<LoginUserSessionDTO>()
             {
                 DbConnectionKeyUsed = _dbContext.dbConnection,
                 Item = info

@@ -23,7 +23,9 @@ public class ProductDbRepos
     #endregion
 
     public async Task<ResponseItemDTO<IProduct>> ReadItemAsync(Guid id, bool flat)
+    public async Task<ResponseItemDTO<IProduct>> ReadItemAsync(Guid id, bool flat)
     {
+        IQueryable<DbProduct> query;
         IQueryable<DbProduct> query;
         if (!flat)
         {
@@ -40,15 +42,17 @@ public class ProductDbRepos
 
         var resp =  await query.FirstOrDefaultAsync<IProduct>();
         return new ResponseItemDTO<IProduct>()
+        return new ResponseItemDTO<IProduct>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = resp
         };
     }
 
-    public async Task<ResponsePageDto<IProduct>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
+    public async Task<ResponsePageDTO<IProduct>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         filter ??= "";
+        IQueryable<DbProduct> query;
         IQueryable<DbProduct> query;
         if (flat)
         {
@@ -61,7 +65,7 @@ public class ProductDbRepos
                 .Include(i => i.EmployeesDbM);
         }
 
-        return new ResponsePageDto<IProduct>()
+        return new ResponsePageDTO<IProduct>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -92,10 +96,12 @@ public class ProductDbRepos
     }
 
     public async Task<ResponseItemDTO<IProduct>> DeleteItemAsync(Guid id)
+    public async Task<ResponseItemDTO<IProduct>> DeleteItemAsync(Guid id)
     {
         //Find the instance with matching id
         var query1 = _dbContext.Products
             .Where(i => i.ProductId == id);
+        var item = await query1.FirstOrDefaultAsync<DbProduct>();
         var item = await query1.FirstOrDefaultAsync<DbProduct>();
 
         //If the item does not exists
@@ -108,6 +114,7 @@ public class ProductDbRepos
         await _dbContext.SaveChangesAsync();
 
         return new ResponseItemDTO<IProduct>()
+        return new ResponseItemDTO<IProduct>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = item
@@ -115,24 +122,29 @@ public class ProductDbRepos
     }
 
     public async Task<ResponseItemDTO<IProduct>> UpdateItemAsync(ProductDTO itemDTO)
+    public async Task<ResponseItemDTO<IProduct>> UpdateItemAsync(ProductDTO itemDTO)
     {
         //Find the instance with matching id and read the navigation properties.
         var query1 = _dbContext.Products
+            .Where(i => i.ProductId == itemDTO.ProductId);
             .Where(i => i.ProductId == itemDTO.ProductId);
         var item = await query1
             .Include(i => i.AnimalsDbM)
             .Include(i => i.EmployeesDbM)
             .FirstOrDefaultAsync<DbProduct>();
+            .FirstOrDefaultAsync<DbProduct>();
 
         //If the item does not exists
+        if (item == null) throw new ArgumentException($"Item {itemDTO.ProductId} is not existing");
         if (item == null) throw new ArgumentException($"Item {itemDTO.ProductId} is not existing");
 
         //transfer any changes from DTO to database objects
         //Update individual properties
         item.UpdateFromDTO(itemDTO);
+        item.UpdateFromDTO(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemdTO_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Products.Update(item);
@@ -145,16 +157,20 @@ public class ProductDbRepos
     }
 
     public async Task<ResponseItemDTO<IProduct>> CreateItemAsync(ProductDTO itemDTO)
+    public async Task<ResponseItemDTO<IProduct>> CreateItemAsync(ProductDTO itemDTO)
     {
+        if (itemDTO.ProductId != null)
+            throw new ArgumentException($"{nameof(itemDTO.ProductId)} must be null when creating a new object");
         if (itemDTO.ProductId != null)
             throw new ArgumentException($"{nameof(itemDTO.ProductId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
         //Update individual properties Zoo
         var item = new DbProduct(itemDTO);
+        var item = new DbProduct(itemDTO);
 
         //Update navigation properties
-        await navProp_ItemdTO_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDTO, item);
 
         //write to database model
         _dbContext.Products.Add(item);
