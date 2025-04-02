@@ -5,11 +5,11 @@ using Newtonsoft.Json;
 
 using Models.DTO;
 using Services;
-using Configuration;
+
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Controller
+namespace Controllers
 {
 #if !DEBUG    
     [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
