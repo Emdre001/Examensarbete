@@ -1,0 +1,75 @@
+.Contact {
+    background-color: #ffffff; /* Samma vita bakgrund */
+    padding: 40px; /* Ge innehållet mer utrymme */
+    margin: 40px auto; /* Centrerar komponenten och ger utrymme runt */
+    max-width: 800px; /* Begränsar bredden för bättre läsbarhet */
+    border-radius: 8px; /* Rundade hörn för ett mjukare intryck */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Lätt skugga för att skapa djup */
+}
+
+.contact-title {
+    font-size: 1.8rem; /* Anpassad textstorlek */
+    color: #333; /* Mörkare textfärg för bättre kontrast */
+    margin-bottom: 20px; /* Utrymme mellan titeln och resten */
+    text-align: center; /* Centrera titeln */
+}
+
+.contact-lead {
+    font-size: 18px; /* Anpassad textstorlek */
+    color: #333; /* Mörkare textfärg för bättre kontrast */
+    line-height: 1.6; /* Ökar radavstånd för bättre läsbarhet */
+    margin-bottom: 20px; /* Utrymme mellan styckena */
+    text-align: center; /* Centrera texten */
+}
+
+.contact-email, .contact-address {
+    font-size: 18px; /* Samma storlek som texten ovan */
+    color: #333; /* Mörkare textfärg */
+    margin-bottom: 20px; /* Utrymme under varje rad */
+    text-align: center; /* Centrera texten */
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center; /* Centrera ikonen */
+    margin-top: 20px; /* Utrymme ovanför ikonen */
+}
+
+    .social-icons a {
+        color: #007bff; /* Färg på ikonen */
+        transition: color 0.3s ease;
+    }
+
+        .social-icons a:hover {
+            color: #0056b3; /* Färgändring vid hovring */
+        }
+
+.map-container {
+    margin-top: 30px; /* Avstånd till kartan */
+}
+
+iframe {
+    width: 100%;
+    border-radius: 8px; /* Rundade hörn på kartan */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Lätt skugga */
+}
+
+/* Anpassa layouten för mindre skärmar */
+@media (max-width: 768px) {
+    .Contact {
+        padding: 20px; /* Mindre padding för små skärmar */
+        margin: 20px; /* Mindre margin för att passa skärmen */
+    }
+
+    .contact-title {
+        font-size: 1.6rem; /* Mindre titelstorlek på mindre skärmar */
+    }
+
+    .contact-lead, .contact-email, .contact-address {
+        font-size: 16px; /* Minskar textstorlek för bättre läsbarhet */
+    }
+
+    .map-container {
+        margin-top: 20px; /* Minska avståndet till kartan på mindre skärmar */
+    }
+}
