@@ -1,0 +1,82 @@
+/* Login Page Background */
+.login-page {
+    background-image: url('../img/login-bg.jpeg'), linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* Login Container */
+.login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Login Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Form Title */
+.login-header {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Information Text */
+.info-text-login {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.login-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Submit Button */
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    background: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.login-form button:hover {
+    background: #0056b3;
+    transform: scale(1.02);
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
