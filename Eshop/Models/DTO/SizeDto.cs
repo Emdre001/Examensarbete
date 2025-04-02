@@ -4,7 +4,7 @@ namespace Models.DTO;
 
 public class SizeDTO
 {
-    public Guid SizeID { get; set; }
+    public Guid SizeId{ get; set; }
     public int MenSize { get; set; }
     public int WomenSize { get; set; }
     public int ChildrenSize { get; set; }

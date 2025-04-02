@@ -4,7 +4,7 @@ namespace Models.DTO;
 
 public class BrandDTO
 {
-    public Guid BrandID { get; set; }
+    public Guid BrandId { get; set; }
     public string BrandName { get; set; }
   
 }

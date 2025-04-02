@@ -6,7 +6,7 @@ namespace Models;
 
 public class Order : IOrder
 {
-    public virtual Guid OrderID { get; set; }
+    public virtual Guid OrderId { get; set; }
     public virtual string OrderDetails { get; set; }
     public virtual DateTime OrderDate {get; set; }
     public virtual string OrderStatus { get; set; }

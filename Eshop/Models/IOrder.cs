@@ -6,7 +6,7 @@ namespace Models;
 
 public interface IOrder
 {
-    public Guid OrderID { get; set; }
+    public Guid OrderId { get; set; }
     public string OrderDetails { get; set; }
     public DateTime OrderDate {get; set; }
     public string OrderStatus { get; set; }
