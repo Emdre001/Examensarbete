@@ -1,16 +1,10 @@
-using Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 using Models;
 using Models.DTO;
 using DbModels;
 using DbContext;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Reflection.Metadata;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Text;
 
 namespace DbRepos;
 
@@ -18,49 +12,193 @@ public class LoginDbRepos
 {
     private readonly ILogger<LoginDbRepos> _logger;
     private readonly MainDbContext _dbContext;
-    private Encryptions _encryptions;
 
-    public LoginDbRepos(ILogger<LoginDbRepos> logger, Encryptions encryptions, MainDbContext dbContext)
+    #region contructors
+    public LoginDbRepos(ILogger<LoginDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
-        _dbContext = dbContext;
-        _encryptions = encryptions;
+        _dbContext = context;
+    }
+    #endregion
+
+    public async Task<ResponseItemDTO<ILogin>> ReadItemAsync(Guid id, bool flat)
+    {
+        IQueryable<DbLogin> query;
+        if (!flat)
+        {
+            query = _dbContext.Logins.AsNoTracking()
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM)
+                .Where(i => i.LoginId == id);
+        }
+        else
+        {
+            query = _dbContext.Logins.AsNoTracking()
+                .Where(i => i.LoginId == id);
+        }   
+
+        var resp =  await query.FirstOrDefaultAsync<ILogin>();
+        return new ResponseItemDTO<ILogin>()
+        {
+            DbConnectionKeyUsed = _dbContext.dbConnection,
+            Item = resp
+        };
     }
 
-    public async Task<ResponseItemDTO<LoginUserSessionDTO>> LoginUserAsync(LoginCredentialsDTO usrCreds)
+    public async Task<ResponsePageDTO<ILogin>> ReadItemsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
-        using (var cmd1 = _dbContext.Database.GetDbConnection().CreateCommand())
+        filter ??= "";
+        IQueryable<DbLogin> query;
+        if (flat)
         {
-            //Notice how I use the efc Command to call sp as I do not return any dataset, only output parameters
-            //Notice also how I encrypt the password, no coms to database with open password
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.CommandText = "gstusr.spLogin";
-            cmd1.Parameters.Add(new SqlParameter("UserNameOrEmail", usrCreds.UserNameOrEmail));
-            cmd1.Parameters.Add(new SqlParameter("Password", _encryptions.EncryptPasswordToBase64(usrCreds.Password)));
-
-            int _usrIdIdx = cmd1.Parameters.Add(new SqlParameter("UserId", SqlDbType.UniqueIdentifier) { Direction = ParameterDirection.Output });
-            int _usrIdx = cmd1.Parameters.Add(new SqlParameter("UserName", SqlDbType.NVarChar, 100) { Direction = ParameterDirection.Output });
-            int _roleIdx = cmd1.Parameters.Add(new SqlParameter("Role", SqlDbType.NVarChar, 100) { Direction = ParameterDirection.Output });
-
-
-            _dbContext.Database.OpenConnection();
-            await cmd1.ExecuteScalarAsync();
-
-            var info = new LoginUserSessionDTO
-            {
-                //Notice the soft cast conversion 'as' it will be null if cast cannot be made
-                UserId = cmd1.Parameters[_usrIdIdx].Value as Guid?,
-                UserName = cmd1.Parameters[_usrIdx].Value as string,
-                UserRole = cmd1.Parameters[_roleIdx].Value as string
-            };
-
-            return new ResponseItemDTO<LoginUserSessionDTO>()
-            {
-                DbConnectionKeyUsed = _dbContext.dbConnection,
-                Item = info
-            };
+            query = _dbContext.Logins.AsNoTracking();
         }
+        else
+        {
+            query = _dbContext.Logins.AsNoTracking()
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM);
+        }
+
+        return new ResponsePageDTO<ILogin>()
+        {
+            DbConnectionKeyUsed = _dbContext.dbConnection,
+            DbItemsCount = await query
+
+            //Adding filter functionality
+            .Where(i => (i.Seeded == seeded) && 
+                        (i.Name.ToLower().Contains(filter) ||
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter))).CountAsync(),
+
+            PageItems = await query
+
+            //Adding filter functionality
+            .Where(i => (i.Seeded == seeded) && 
+                        (i.Name.ToLower().Contains(filter) ||
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter)))
+
+            //Adding paging
+            .Skip(pageNumber * pageSize)
+            .Take(pageSize)
+
+            .ToListAsync<ILogin>(),
+
+            PageNr = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<ResponseItemDTO<ILogin>> DeleteItemAsync(Guid id)
+    {
+        //Find the instance with matching id
+        var query1 = _dbContext.Logins
+            .Where(i => i.LoginId == id);
+        var item = await query1.FirstOrDefaultAsync<DbLogin>();
+
+        //If the item does not exists
+        if (item == null) throw new ArgumentException($"Item {id} is not existing");
+
+        //delete in the database model
+        _dbContext.Logins.Remove(item);
+
+        //write to database in a UoW
+        await _dbContext.SaveChangesAsync();
+
+        return new ResponseItemDTO<ILogin>()
+        {
+            DbConnectionKeyUsed = _dbContext.dbConnection,
+            Item = item
+        };
+    }
+
+    public async Task<ResponseItemDTO<ILogin>> UpdateItemAsync(LoginDTO itemDto)
+    {
+        //Find the instance with matching id and read the navigation properties.
+        var query1 = _dbContext.Logins
+            .Where(i => i.LoginId == itemDto.LoginId);
+        var item = await query1
+            .Include(i => i.AnimalsDbM)
+            .Include(i => i.EmployeesDbM)
+            .FirstOrDefaultAsync<DbLogin>();
+
+        //If the item does not exists
+        if (item == null) throw new ArgumentException($"Item {itemDto.LoginId} is not existing");
+
+        //transfer any changes from DTO to database objects
+        //Update individual properties
+        item.UpdateFromDTO(itemDto);
+
+        //Update navigation properties
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
+
+        //write to database model
+        _dbContext.Logins.Update(item);
+
+        //write to database in a UoW
+        await _dbContext.SaveChangesAsync();
+
+        //return the updated item in non-flat mode
+        return await ReadItemAsync(item.LoginId, false);    
+    }
+
+    public async Task<ResponseItemDTO<ILogin>> CreateItemAsync(LoginDTO itemDto)
+    {
+        if (itemDto.LoginId != null)
+            throw new ArgumentException($"{nameof(itemDto.LoginId)} must be null when creating a new object");
+
+        //transfer any changes from DTO to database objects
+        //Update individual properties Zoo
+        var item = new DbLogin(itemDto);
+
+        //Update navigation properties
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
+
+        //write to database model
+        _dbContext.Logins.Add(item);
+
+        //write to database in a UoW
+        await _dbContext.SaveChangesAsync();
+        
+        //return the updated item in non-flat mode
+        return await ReadItemAsync(item.LoginId, false);
+    }
+
+    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst 
+    //as navigation properties. Error is thrown if no object is found corresponing to an id.
+    private async Task navProp_Itemdto_to_ItemDbM(LoginDTO itemDtoSrc, DbLogin itemDst)
+    {
+        //update AnimalsDbM from list
+        List<AnimalDbM> Animals = null;
+        if (itemDtoSrc.AnimalsId != null)
+        {
+            Animals = new List<AnimalDbM>();
+            foreach (var id in itemDtoSrc.AnimalsId)
+            {
+                var p = await _dbContext.Animals.FirstOrDefaultAsync(i => i.AnimalId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
+
+                Animals.Add(p);
+            }
+        }
+        itemDst.AnimalsDbM = Animals;
+
+        //update EmployeessDbM from list
+        List<EmployeeDbM> Employees = null;
+        if (itemDtoSrc.EmployeesId != null)
+        {
+            Employees = new List<EmployeeDbM>();
+            foreach (var id in itemDtoSrc.EmployeesId)
+            {
+                var p = await _dbContext.Employees.FirstOrDefaultAsync(i => i.EmployeeId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
+
+                Employees.Add(p);
+            }
+        }
+        itemDst.EmployeesDbM = Employees;
     }
 }
-
-

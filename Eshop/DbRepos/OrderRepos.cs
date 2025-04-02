@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using Configuration;
 using Models;
 using Models.DTO;
 using DbModels;
@@ -28,16 +27,17 @@ public class OrderDbRepos
         if (!flat)
         {
             query = _dbContext.Orders.AsNoTracking()
-                .Include(i => i.DbOrder)
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM)
                 .Where(i => i.OrderId == id);
         }
         else
         {
             query = _dbContext.Orders.AsNoTracking()
                 .Where(i => i.OrderId == id);
-        }
+        }   
 
-        var resp = await query.FirstOrDefaultAsync<IOrder>();
+        var resp =  await query.FirstOrDefaultAsync<IOrder>();
         return new ResponseItemDTO<IOrder>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
@@ -56,10 +56,11 @@ public class OrderDbRepos
         else
         {
             query = _dbContext.Orders.AsNoTracking()
-                .Include(i => i.ProductDbM);
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM);
         }
 
-        var ret = new ResponsePageDTO<IOrder>()
+        return new ResponsePageDTO<IOrder>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -67,20 +68,16 @@ public class OrderDbRepos
             //Adding filter functionality
             .Where(i => (i.Seeded == seeded) && 
                         (i.Name.ToLower().Contains(filter) ||
-                         i.strMood.ToLower().Contains(filter) ||
-                         i.strKind.ToLower().Contains(filter) ||
-                         i.Age.ToString().Contains(filter) ||
-                         i.Description.ToLower().Contains(filter))).CountAsync(),
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter))).CountAsync(),
 
             PageItems = await query
 
             //Adding filter functionality
             .Where(i => (i.Seeded == seeded) && 
                         (i.Name.ToLower().Contains(filter) ||
-                         i.strMood.ToLower().Contains(filter) ||
-                         i.strKind.ToLower().Contains(filter) ||
-                         i.Age.ToString().Contains(filter) ||
-                         i.Description.ToLower().Contains(filter)))
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter)))
 
             //Adding paging
             .Skip(pageNumber * pageSize)
@@ -91,14 +88,13 @@ public class OrderDbRepos
             PageNr = pageNumber,
             PageSize = pageSize
         };
-        return ret;
     }
 
     public async Task<ResponseItemDTO<IOrder>> DeleteItemAsync(Guid id)
     {
+        //Find the instance with matching id
         var query1 = _dbContext.Orders
             .Where(i => i.OrderId == id);
-
         var item = await query1.FirstOrDefaultAsync<DbOrder>();
 
         //If the item does not exists
@@ -117,23 +113,25 @@ public class OrderDbRepos
         };
     }
 
-    public async Task<ResponseItemDTO<IOrder>> UpdateItemAsync(OrderDTO itemDTO)
+    public async Task<ResponseItemDTO<IOrder>> UpdateItemAsync(OrderDTO itemDto)
     {
+        //Find the instance with matching id and read the navigation properties.
         var query1 = _dbContext.Orders
-            .Where(i => i.OrderId == itemDTO.OrderId);
+            .Where(i => i.OrderId == itemDto.OrderId);
         var item = await query1
-                .Include(i => i.ProductDbM)
-                .FirstOrDefaultAsync<DbOrder>();
+            .Include(i => i.AnimalsDbM)
+            .Include(i => i.EmployeesDbM)
+            .FirstOrDefaultAsync<DbOrder>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDTO.OrderId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDto.OrderId} is not existing");
 
         //transfer any changes from DTO to database objects
-        //Update individual properties 
-        item.UpdateFromDTO(itemDTO);
+        //Update individual properties
+        item.UpdateFromDTO(itemDto);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
 
         //write to database model
         _dbContext.Orders.Update(item);
@@ -145,38 +143,62 @@ public class OrderDbRepos
         return await ReadItemAsync(item.OrderId, false);    
     }
 
-    public async Task<ResponseItemDTO<IOrder>> CreateItemAsync(OrderDTO itemDTO)
+    public async Task<ResponseItemDTO<IOrder>> CreateItemAsync(OrderDTO itemDto)
     {
-        if (itemDTO.OrderId != null)
-            throw new ArgumentException($"{nameof(itemDTO.OrderId)} must be null when creating a new object");
+        if (itemDto.OrderId != null)
+            throw new ArgumentException($"{nameof(itemDto.OrderId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
-        //Update individual properties
-        var item = new DbOrder(itemDTO);
+        //Update individual properties Zoo
+        var item = new DbOrder(itemDto);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
 
         //write to database model
         _dbContext.Orders.Add(item);
 
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
-
+        
         //return the updated item in non-flat mode
-        return await ReadItemAsync(item.OrderId, false);    
+        return await ReadItemAsync(item.OrderId, false);
     }
-    /*
-    private async Task navProp_ItemCUdto_to_ItemDbM(AnimalCuDto itemDtoSrc, OrderDbM itemDst)
+
+    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst 
+    //as navigation properties. Error is thrown if no object is found corresponing to an id.
+    private async Task navProp_Itemdto_to_ItemDbM(OrderDTO itemDtoSrc, DbOrder itemDst)
     {
-        //update zoo nav props
-        var zoo = await _dbContext.Zoos.FirstOrDefaultAsync(
-            a => (a.ZooId == itemDtoSrc.ZooId));
+        //update AnimalsDbM from list
+        List<AnimalDbM> Animals = null;
+        if (itemDtoSrc.AnimalsId != null)
+        {
+            Animals = new List<AnimalDbM>();
+            foreach (var id in itemDtoSrc.AnimalsId)
+            {
+                var p = await _dbContext.Animals.FirstOrDefaultAsync(i => i.AnimalId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
 
-        if (zoo == null)
-            throw new ArgumentException($"Item id {itemDtoSrc.ZooId} not existing");
+                Animals.Add(p);
+            }
+        }
+        itemDst.AnimalsDbM = Animals;
 
-        itemDst.ProductDbM = zoo;
+        //update EmployeessDbM from list
+        List<EmployeeDbM> Employees = null;
+        if (itemDtoSrc.EmployeesId != null)
+        {
+            Employees = new List<EmployeeDbM>();
+            foreach (var id in itemDtoSrc.EmployeesId)
+            {
+                var p = await _dbContext.Employees.FirstOrDefaultAsync(i => i.EmployeeId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
+
+                Employees.Add(p);
+            }
+        }
+        itemDst.EmployeesDbM = Employees;
     }
-    */
 }

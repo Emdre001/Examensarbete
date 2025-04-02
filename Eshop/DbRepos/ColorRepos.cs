@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using Configuration;
 using Models;
 using Models.DTO;
 using DbModels;
@@ -28,16 +27,17 @@ public class ColorDbRepos
         if (!flat)
         {
             query = _dbContext.Colors.AsNoTracking()
-                .Include(i => i.DbColor)
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM)
                 .Where(i => i.ColorId == id);
         }
         else
         {
             query = _dbContext.Colors.AsNoTracking()
                 .Where(i => i.ColorId == id);
-        }
+        }   
 
-        var resp = await query.FirstOrDefaultAsync<IColor>();
+        var resp =  await query.FirstOrDefaultAsync<IColor>();
         return new ResponseItemDTO<IColor>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
@@ -56,10 +56,11 @@ public class ColorDbRepos
         else
         {
             query = _dbContext.Colors.AsNoTracking()
-                .Include(i => i.DbColor);
+                .Include(i => i.AnimalsDbM)
+                .Include(i => i.EmployeesDbM);
         }
 
-        var ret = new ResponsePageDTO<IColor>()
+        return new ResponsePageDTO<IColor>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             DbItemsCount = await query
@@ -67,20 +68,16 @@ public class ColorDbRepos
             //Adding filter functionality
             .Where(i => (i.Seeded == seeded) && 
                         (i.Name.ToLower().Contains(filter) ||
-                         i.strMood.ToLower().Contains(filter) ||
-                         i.strKind.ToLower().Contains(filter) ||
-                         i.Age.ToString().Contains(filter) ||
-                         i.Description.ToLower().Contains(filter))).CountAsync(),
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter))).CountAsync(),
 
             PageItems = await query
 
             //Adding filter functionality
             .Where(i => (i.Seeded == seeded) && 
                         (i.Name.ToLower().Contains(filter) ||
-                         i.strMood.ToLower().Contains(filter) ||
-                         i.strKind.ToLower().Contains(filter) ||
-                         i.Age.ToString().Contains(filter) ||
-                         i.Description.ToLower().Contains(filter)))
+                         i.City.ToLower().Contains(filter) ||
+                         i.Country.ToLower().Contains(filter)))
 
             //Adding paging
             .Skip(pageNumber * pageSize)
@@ -91,14 +88,13 @@ public class ColorDbRepos
             PageNr = pageNumber,
             PageSize = pageSize
         };
-        return ret;
     }
 
     public async Task<ResponseItemDTO<IColor>> DeleteItemAsync(Guid id)
     {
+        //Find the instance with matching id
         var query1 = _dbContext.Colors
             .Where(i => i.ColorId == id);
-
         var item = await query1.FirstOrDefaultAsync<DbColor>();
 
         //If the item does not exists
@@ -117,23 +113,25 @@ public class ColorDbRepos
         };
     }
 
-    public async Task<ResponseItemDTO<IColor>> UpdateItemAsync(ColorDTO itemDTO)
+    public async Task<ResponseItemDTO<IColor>> UpdateItemAsync(ColorDTO itemDto)
     {
+        //Find the instance with matching id and read the navigation properties.
         var query1 = _dbContext.Colors
-            .Where(i => i.ColorId == itemDTO.ColorId);
+            .Where(i => i.ColorId == itemDto.ColorId);
         var item = await query1
-                .Include(i => i.ZooDbM)
-                .FirstOrDefaultAsync<DbColor>();
+            .Include(i => i.AnimalsDbM)
+            .Include(i => i.EmployeesDbM)
+            .FirstOrDefaultAsync<DbColor>();
 
         //If the item does not exists
-        if (item == null) throw new ArgumentException($"Item {itemDTO.ColorId} is not existing");
+        if (item == null) throw new ArgumentException($"Item {itemDto.ColorId} is not existing");
 
         //transfer any changes from DTO to database objects
-        //Update individual properties 
-        item.UpdateFromDTO(itemDTO);
+        //Update individual properties
+        item.UpdateFromDTO(itemDto);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
 
         //write to database model
         _dbContext.Colors.Update(item);
@@ -145,38 +143,62 @@ public class ColorDbRepos
         return await ReadItemAsync(item.ColorId, false);    
     }
 
-    public async Task<ResponseItemDTO<IColor>> CreateItemAsync(ColorDTO itemDTO)
+    public async Task<ResponseItemDTO<IColor>> CreateItemAsync(ColorDTO itemDto)
     {
-        if (itemDTO.ColorId != null)
-            throw new ArgumentException($"{nameof(itemDTO.ColorId)} must be null when creating a new object");
+        if (itemDto.ColorId != null)
+            throw new ArgumentException($"{nameof(itemDto.ColorId)} must be null when creating a new object");
 
         //transfer any changes from DTO to database objects
-        //Update individual properties
-        var item = new DbColor(itemDTO);
+        //Update individual properties Zoo
+        var item = new DbColor(itemDto);
 
         //Update navigation properties
-        await navProp_ItemCUdto_to_ItemDbM(itemDTO, item);
+        await navProp_Itemdto_to_ItemDbM(itemDto, item);
 
         //write to database model
         _dbContext.Colors.Add(item);
 
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
-
+        
         //return the updated item in non-flat mode
-        return await ReadItemAsync(item.ColorId, false);    
+        return await ReadItemAsync(item.ColorId, false);
     }
-    /*
-    private async Task navProp_ItemCUdto_to_ItemDbM(ColorDto itemDtoSrc, ColorDbM itemDst)
+
+    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst 
+    //as navigation properties. Error is thrown if no object is found corresponing to an id.
+    private async Task navProp_Itemdto_to_ItemDbM(ColorDTO itemDtoSrc, DbColor itemDst)
     {
-        //update zoo nav props
-        var zoo = await _dbContext.Zoos.FirstOrDefaultAsync(
-            a => (a.ZooId == itemDtoSrc.ZooId));
+        //update AnimalsDbM from list
+        List<AnimalDbM> Animals = null;
+        if (itemDtoSrc.AnimalsId != null)
+        {
+            Animals = new List<AnimalDbM>();
+            foreach (var id in itemDtoSrc.AnimalsId)
+            {
+                var p = await _dbContext.Animals.FirstOrDefaultAsync(i => i.AnimalId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
 
-        if (zoo == null)
-            throw new ArgumentException($"Item id {itemDtoSrc.ZooId} not existing");
+                Animals.Add(p);
+            }
+        }
+        itemDst.AnimalsDbM = Animals;
 
-        itemDst.ZooDbM = zoo;
+        //update EmployeessDbM from list
+        List<EmployeeDbM> Employees = null;
+        if (itemDtoSrc.EmployeesId != null)
+        {
+            Employees = new List<EmployeeDbM>();
+            foreach (var id in itemDtoSrc.EmployeesId)
+            {
+                var p = await _dbContext.Employees.FirstOrDefaultAsync(i => i.EmployeeId == id);
+                if (p == null)
+                    throw new ArgumentException($"Item id {id} not existing");
+
+                Employees.Add(p);
+            }
+        }
+        itemDst.EmployeesDbM = Employees;
     }
-    */
 }
