@@ -10,7 +10,7 @@ public class GstUsrInfoDbDTO
     
 }
 
-public class GstUsrInfoProductDTO
+public class GstUsrInfoProductsDTO
 {
     public string ProductName { get; set; }
     public string ProductType { get; set; }
@@ -20,12 +20,12 @@ public class GstUsrInfoProductDTO
     public int ProductRating { get; set; }
     public int NrProducts { get; set; }
 }
-public class GstUsrInfoColorDTO
+public class GstUsrInfoColorsDTO
 {
     public string ColorName { get; set; }
     public int NrColors { get; set; }
 }
-public class GstUsrInfoOrderDTO
+public class GstUsrInfoOrdersDTO
 {
     public virtual string OrderDetails { get; set; }
     public virtual DateTime OrderDate {get; set; }
@@ -33,19 +33,19 @@ public class GstUsrInfoOrderDTO
     public virtual int OrderAmount { get; set; }
     public int NrOrders { get; set; }
 }
-public class GstUsrInfoBrandDTO
+public class GstUsrInfoBrandsDTO
 {
     public string BrandName { get; set; }
     public int NrBrands { get; set; }
 }
-public class GstUsrInfoSizeDTO
+public class GstUsrInfoSizesDTO
 {
     public int MenSize { get; set; }
     public int WomenSize { get; set; }
     public int ChildrenSize { get; set; }
     public int NrSizes { get; set; }
 }
-public class GstUsrInfoUserDTO
+public class GstUsrInfoUsersDTO
 {
     public string UserName { get; set; }
     public string UserEmail { get; set; }

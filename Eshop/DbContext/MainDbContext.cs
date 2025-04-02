@@ -14,20 +14,26 @@ using Npgsql.Replication;
 namespace DbContext;
 
 
-     public class MainDbContext : DbContext
+     public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Color> Colors { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Brand> Brands { get; set; } 
-        public DbSet<Size> Sizes { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<DbProduct> Products { get; set; }
+        public DbSet<DbColor> Colors { get; set; }
+        public DbSet<DbOrder> Orders { get; set; }
+        public DbSet<DbBrand> Brands { get; set; } 
+        public DbSet<DbSize> Sizes { get; set; }
+        public DbSet<DbUser> Users { get; set; }
     
         #region model the Views
-    public DbSet<GstUsrInfoDbDTO> InfoDbView { get; set; }
-    public DbSet<GstUsrInfoProductDTO> InfoProductsView { get; set; }
+        public DbSet<GstUsrInfoDbDTO> InfoDbView { get; set; }
+        public DbSet<GstUsrInfoProductsDTO> InfoProductsView { get; set; }
+        public DbSet<GstUsrInfoColorsDTO> InfoColorsView { get; set; }
+        public DbSet<GstUsrInfoBrandsDTO> InfoBrandsView { get; set; }
+        public DbSet<GstUsrInfoSizesDTO> InfoSizesView { get; set; }
+        public DbSet<GstUsrInfoOrdersDTO> InfoOrdersView { get; set; }
+        public DbSet<GstUsrInfoUsersDTO> InfoUsersView { get; set; }
+
     //gör en för varje view i gstuserDTO
     #endregion
 
@@ -67,7 +73,7 @@ namespace DbContext;
             entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
         });
 
-        modelBuilder.Entity<ShoeSize>(entity =>
+        modelBuilder.Entity<Size>(entity =>
             {
                 entity.HasKey(s => s.SizeID);
                 entity.Property(s => s.MenSize).IsRequired();

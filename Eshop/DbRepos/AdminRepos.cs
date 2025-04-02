@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Seido.Utilities.SeedGenerator;
-using Models.DTO;
+using Configuration;
 using Models;
+using Models.DTO;
+using DbModels;
 using DbContext;
-using System.Security;
+
 
 namespace DbRepos;
 
@@ -14,69 +16,62 @@ public class AdminDbRepos
 {
     private const string _seedSource = "./app-seeds.json";
     private readonly ILogger<AdminDbRepos> _logger;
-    //private Encryptions _encryptions;
-    //private readonly MainDbContext _dbContext;
+    private readonly MainDbContext _dbContext;
 
     #region contructors
-    public AdminDbRepos(ILogger<AdminDbRepos> logger/*, Encryptions encryptions, MainDbContext context*/)
+    public AdminDbRepos(ILogger<AdminDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
-        //_encryptions = encryptions;
-        //_dbContext = context;
+        _dbContext = context;
     }
     #endregion
 
-      public async Task<ResponseItemDto<GstUsrInfoAllDto>> InfoAsync()
+    public async Task<ResponseItemDTO<GstUsrInfoAllDTO>> InfoAsync()
     {
-        var info = new GstUsrInfoAllDto();
+        var info = new GstUsrInfoAllDTO();
         info.Db = await _dbContext.InfoDbView.FirstAsync();
-        info.Products = await _dbContext.InfoAttractionsView.ToListAsync();
-        info.Categories = await _dbContext.InfoCategoriesView.ToListAsync();
+        info.Products = await _dbContext.InfoProductsView.ToListAsync();
+        info.Brands = await _dbContext.InfoBrandsView.ToListAsync();
+        info.Colors = await _dbContext.InfoColorsView.ToListAsync();
 
-
-        return new ResponseItemDto<GstUsrInfoAllDto>()
+        return new ResponseItemDTO<GstUsrInfoAllDTO>()
         {
             DbConnectionKeyUsed = _dbContext.dbConnection,
             Item = info
         };
     }
 
-    public async Task<ResponseItemDto<GstUsrInfoAllDto>> SeedAsync(int nrOfAttractions, int nrAddress)
+    public async Task<ResponseItemDTO<GstUsrInfoAllDTO>> SeedAsync(int nrOfItems)
     {
-        try 
+        //First of all make sure the database is cleared from all seeded data
+        await RemoveSeedAsync(true);
+
+        //Create a seeder
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = new SeedGenerator(fn);
+
+        //Generate Zoos and persons to be employed
+        var zoos = seeder.ItemsToList<ZooDbM>(nrOfItems);
+        var persons = seeder.ItemsToList<EmployeeDbM>(seeder.Next(nrOfItems, 5*nrOfItems));
+
+        //Assign Animals and Employees to all the Zoos
+        foreach (var zoo in zoos)
         {
-            await RemoveSeedAsync(true);
+            zoo.AnimalsDbM = seeder.ItemsToList<AnimalDbM>(seeder.Next(5,51));
 
-        var rnd = new SeedGenerator();
-        var at = rnd.ItemsToList<AttractionDBM>(nrOfAttractions);
-        var ad = rnd.ItemsToList<AddressDbM>(nrAddress);
-        var comments = rnd.ItemsToList<CommentDbM>(rnd.Next(nrOfAttractions, 20*nrOfAttractions));
-
-        var i = 0;
-
-        var allCategories = await SeedEachCategoryAsync();
-
-        foreach (var item in at){
-            item.CategoryDbM = rnd.FromList(allCategories);
-            item.AddressDbM = rnd.FromList(ad);
-            item.CommentsDbM = rnd.UniqueIndexPickedFromList<CommentDbM>(rnd.Next(0,21), comments);
-            i++;
+            //Employ between 2 and 8 persons from the list
+            zoo.EmployeesDbM = seeder.UniqueIndexPickedFromList<EmployeeDbM>(seeder.Next(2, 9), persons);
         }
 
-        _dbContext.Attractions.AddRange(at);
-    
+        //Note that all other tables are automatically set through ZooDbM Navigation properties
+        _dbContext.Zoos.AddRange(zoos);
+
         await _dbContext.SaveChangesAsync();
 
-            return await InfoAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error in SeedAsync: {ex.Message}");
-            _logger.LogError($"Stack trace: {ex.StackTrace}");
-            throw;
-        }
+        return await InfoAsync();
     }
-    public async Task<ResponseItemDto<GstUsrInfoAllDto>> RemoveSeedAsync(bool seeded)
+    
+    public async Task<ResponseItemDTO<GstUsrInfoAllDTO>> RemoveSeedAsync(bool seeded)
     {
             var parameters = new List<SqlParameter>();
 
@@ -100,81 +95,5 @@ public class AdminDbRepos
             if (retCode != 0) throw new Exception("supusr.spDeleteAll return code error");
 
             return await InfoAsync();
-    }
-    public async Task<UsrInfoDTO> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysAdmin)
-    {
-            _logger.LogInformation($"Seeding {nrOfUsers} users and {nrOfSuperUsers} superusers");
-            
-            //First delete all existing users
-            foreach (var u in _dbContext.Users)
-                _dbContext.Users.Remove(u);
-
-            //add users
-            for (int i = 1; i <= nrOfUsers; i++)
-            {
-                _dbContext.Users.Add(new UserDbM
-                {
-                    UserId = Guid.NewGuid(),
-                    UserName = $"user{i}",
-                    Email = $"user{i}@gmail.com",
-                    Password = _encryptions.EncryptPasswordToBase64($"user{i}"),
-                    Role = "usr"
-                });
-            }
-
-            //add super user
-            for (int i = 1; i <= nrOfSuperUsers; i++)
-            {
-                _dbContext.Users.Add(new UserDbM
-                {
-                    UserId = Guid.NewGuid(),
-                    UserName = $"superuser{i}",
-                    Email = $"superuser{i}@gmail.com",
-                    Password = _encryptions.EncryptPasswordToBase64($"superuser{i}"),
-                    Role = "supusr"
-                });
-            }
-
-            //add system adminitrators
-            for (int i = 1; i <= nrOfSysAdmin; i++)
-            {
-                _dbContext.Users.Add(new UserDbM
-                {
-                    UserId = Guid.NewGuid(),
-                    UserName = $"sysadmin{i}",
-                    Email = $"sysadmin{i}@gmail.com",
-                    Password = _encryptions.EncryptPasswordToBase64($"sysadmin{i}"),
-                    Role = "sysadmin"
-                });
-            }
-            await _dbContext.SaveChangesAsync();
-
-            var _info = new UsrInfoDTO
-            {
-                NrUsers = await _dbContext.Users.CountAsync(i => i.Role == "usr"),
-                NrSuperUsers = await _dbContext.Users.CountAsync(i => i.Role == "supusr"),
-                NrSystemAdmin = await _dbContext.Users.CountAsync(i => i.Role == "sysadmin")
-            };
-
-            return _info;
-    }
-    public async Task<List<CategoryDbM>> SeedEachCategoryAsync(){
-
-        var allCategories = new List<CategoryDbM>();
-
-        foreach (CategoryNames category in Enum.GetValues(typeof(CategoryNames)))
-        {
-            CategoryDbM cat = new();
-            cat.CategoryId = Guid.NewGuid();
-            cat.Name = category;
-            cat.Seeded = true;
-            
-            allCategories.Add(cat);
-        }
-
-        await _dbContext.Categories.AddRangeAsync(allCategories);
-
-        return allCategories;
-
     }
 }
