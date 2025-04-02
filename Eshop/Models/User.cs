@@ -12,4 +12,6 @@ public class User : IUser
     public string UserAddress { get; set; }
     public int UserPhoneNr { get; set; }
     public string UserRole { get; set; }
+
+    public virtual List<IOrder> Orders { get; set; }
 }

@@ -7,4 +7,5 @@ public interface IColor
 {
     public Guid ColorId { get; set; }
     public string ColorName { get; set; }
+    public  List<IProduct> Products { get; set; }
 }

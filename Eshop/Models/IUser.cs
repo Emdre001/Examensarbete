@@ -12,4 +12,6 @@ public interface IUser
     public string UserAddress { get; set; }
     public int UserPhoneNr { get; set; }
     public string UserRole { get; set; }
+
+    public List<IOrder> Orders { get; set; }
 }

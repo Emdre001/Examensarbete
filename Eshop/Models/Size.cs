@@ -8,4 +8,5 @@ public class Size : ISize
     public int MenSize { get; set; }
     public int WomenSize { get; set; }
     public int ChildrenSize { get; set; }
+    public virtual List<IProduct> Products { get; set; }
 }
