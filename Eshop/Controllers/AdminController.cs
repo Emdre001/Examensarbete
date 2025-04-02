@@ -53,7 +53,7 @@ namespace Controllers
             Policy = null, Roles = "sysadmin")]
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<GstUsrInfoAllDto>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<GstUsrInfoAllDTO>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> Seed(string count = "10")
         {
@@ -76,7 +76,7 @@ namespace Controllers
             Policy = null, Roles = "sysadmin")]
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<GstUsrInfoAllDto>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<GstUsrInfoAllDTO>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> RemoveSeed(string seeded = "true")
         {
@@ -96,7 +96,7 @@ namespace Controllers
         }
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(UsrInfoDto))]
+        [ProducesResponseType(200, Type = typeof(UsrInfoDTO))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> SeedUsers(string countUsr = "32", string countSupUsr = "2", string countSysAdmin = "1")
         {
@@ -108,7 +108,7 @@ namespace Controllers
 
                 _logger.LogInformation($"{nameof(SeedUsers)}: {nameof(_countUsr)}: {_countUsr}, {nameof(_countSupUsr)}: {_countSupUsr}, {nameof(_countSysAdmin)}: {_countSysAdmin}");
 
-                UsrInfoDto _info = await _adminService.SeedUsersAsync(_countUsr, _countSupUsr, _countSysAdmin);
+                UsrInfoDTO _info = await _adminService.SeedUsersAsync(_countUsr, _countSupUsr, _countSysAdmin);
                 return Ok(_info);           
             }
             catch (Exception ex)
