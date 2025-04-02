@@ -53,7 +53,7 @@ namespace Controllers
             Policy = null, Roles = "sysadmin")]
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<GstUsrInfoAllDTO>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<GstUsrInfoAllDTO>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> Seed(string count = "10")
         {

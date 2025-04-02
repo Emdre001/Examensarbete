@@ -24,7 +24,7 @@ namespace Controllers
         }
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(ResponsePageDto<IBrand>))]
+        [ProducesResponseType(200, Type = typeof(ResponsePageDTO<IBrand>))]
         [ProducesResponseType(400, Type = typeof(string))]
         public async Task<IActionResult> ReadItems(string seeded = "true", string flat = "true",
             string filter = null, string pageNr = "0", string pageSize = "10")
@@ -103,7 +103,7 @@ namespace Controllers
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
             Policy = null, Roles = "supusr, sysadmin")]
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<BrandDto>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDTO<BrandDTO>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
         public async Task<IActionResult> ReadItemDto(string id = null)
@@ -120,7 +120,7 @@ namespace Controllers
                 return Ok(
                     new ResponseItemDTO<BrandDTO>() {
                     DbConnectionKeyUsed = item.DbConnectionKeyUsed,
-                    Item = new BrandDto(item.Item)
+                    Item = new BrandDTO(item.Item)
                 });
             }
             catch (Exception ex)
@@ -135,7 +135,7 @@ namespace Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IBrand>))]
         [ProducesResponseType(400, Type = typeof(string))]
-        public async Task<IActionResult> UpdateItem(string id, [FromBody] BrandD item)
+        public async Task<IActionResult> UpdateItem(string id, [FromBody] BrandDTO item)
         {
             try
             {
