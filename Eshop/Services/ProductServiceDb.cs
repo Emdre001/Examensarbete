@@ -11,13 +11,13 @@ public class ProductServiceDb : IProductService
     private readonly OrderDbRepos _orderRepo;
     private readonly ColorDbRepos _colorRepo;
     private readonly BrandDbRepos _brandRepo;
-    private readonly SizeDbrepos _sizeRepo;
+    private readonly SizeDbRepos _sizeRepo;
     private readonly UserDbRepos _userRepo;
     private readonly ILogger<ProductServiceDb> _logger;
 
     public ProductServiceDb(
         ProductDbRepos productRepo, OrderDbRepos orderRepo, ColorDbRepos colorRepo,
-        BrandDbRepos brandRepo, SizeDbrepos sizeRepo, UserDbRepos userRepo,
+        BrandDbRepos brandRepo, SizeDbRepos sizeRepo, UserDbRepos userRepo,
         ILogger<ProductServiceDb> logger)
     {
         _productRepo = productRepo;
