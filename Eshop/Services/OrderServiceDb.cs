@@ -17,10 +17,10 @@ public class OrderServiceDb : IOrderService {
         _logger = logger;
     }
  
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> InfoAsync() => _orderRepo.InfoAsync();
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> SeedAsync(int nrOfItems) => _orderRepo.SeedAsync(nrOfItems);
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> RemoveSeedAsync(bool seeded) => _orderRepo.RemoveSeedAsync(seeded);
-    public Task<UsrInfoDto> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysBrand) => _orderRepo.SeedUsersAsync(nrOfUsers, nrOfSuperUsers, nrOfSysBrand);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> InfoAsync() => _orderRepo.InfoAsync();
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> SeedAsync(int nrOfItems) => _orderRepo.SeedAsync(nrOfItems);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> RemoveSeedAsync(bool seeded) => _orderRepo.RemoveSeedAsync(seeded);
+    public Task<UsrInfoDTO> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysBrand) => _orderRepo.SeedUsersAsync(nrOfUsers, nrOfSuperUsers, nrOfSysBrand);
  
 }
 
