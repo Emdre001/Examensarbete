@@ -27,8 +27,7 @@ public class OrderDbRepos
         if (!flat)
         {
             query = _dbContext.Orders.AsNoTracking()
-                .Include(i => i.AnimalsDbM)
-                .Include(i => i.EmployeesDbM)
+                .Include(i => i.DbProduct)
                 .Where(i => i.OrderId == id);
         }
         else

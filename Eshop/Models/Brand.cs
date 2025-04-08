@@ -4,8 +4,8 @@ namespace Models;
 
 public class Brand : IBrand
 {
-    public Guid BrandId { get; set; }
-    public string BrandName { get; set; }
+    public virtual Guid BrandId { get; set; }
+    public virtual string BrandName { get; set; }
 
     public virtual IProduct Product { get; set; }
     

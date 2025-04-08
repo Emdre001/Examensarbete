@@ -11,6 +11,7 @@ public interface IOrder
     public DateTime OrderDate {get; set; }
     public string OrderStatus { get; set; }
     public int OrderAmount { get; set; }
+    
     public  List<IProduct> Products { get; set; }
-    public  IUser User { get; set; };
+    public  IUser User { get; set; }
 }

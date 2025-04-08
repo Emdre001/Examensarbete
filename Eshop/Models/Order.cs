@@ -12,5 +12,5 @@ public class Order : IOrder
     public virtual string OrderStatus { get; set; }
     public virtual int OrderAmount { get; set; }
     public virtual List<IProduct> Products { get; set; }
-    public virtual IUser User { get; set; };
+    public virtual IUser User { get; set; }
 }

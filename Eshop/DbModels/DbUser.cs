@@ -8,7 +8,7 @@ namespace DbModels;
     public class DbUser : User
     {
         [Key]
-        public int Id { get; set; }
+        public override Guid UserId { get; set; }
 
         [Required]
         public string UserName { get; set; }

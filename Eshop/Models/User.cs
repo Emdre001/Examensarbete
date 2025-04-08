@@ -5,13 +5,13 @@ namespace Models;
 
 public class User : IUser
 {
-    public Guid UserId { get; set; }
-    public string UserName { get; set; }
-    public string UserEmail { get; set; }
-    public string UserPassword { get; set; }
-    public string UserAddress { get; set; }
-    public int UserPhoneNr { get; set; }
-    public string UserRole { get; set; }
+    public virtual Guid UserId { get; set; }
+    public virtual string UserName { get; set; }
+    public virtual string UserEmail { get; set; }
+    public virtual string UserPassword { get; set; }
+    public virtual string UserAddress { get; set; }
+    public virtual int UserPhoneNr { get; set; }
+    public virtual string UserRole { get; set; }
 
     public virtual List<IOrder> Orders { get; set; }
 }
