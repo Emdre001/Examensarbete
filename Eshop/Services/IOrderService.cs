@@ -5,10 +5,10 @@ namespace Services;
  
 public interface IOrderService {
  
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> InfoAsync();
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> SeedAsync(int nrOfItems);
-    public Task<ResponseItemDto<GstUsrInfoAllDto>> RemoveSeedAsync(bool seeded);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> InfoAsync();
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> SeedAsync(int nrOfItems);
+    public Task<ResponseItemDTO<GstUsrInfoAllDTO>> RemoveSeedAsync(bool seeded);
  
-    public Task<UsrInfoDto> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysAdmin);
+    public Task<UsrInfoDTO> SeedUsersAsync(int nrOfUsers, int nrOfSuperUsers, int nrOfSysAdmin);
  
 }
