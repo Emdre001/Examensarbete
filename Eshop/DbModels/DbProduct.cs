@@ -26,7 +26,7 @@ namespace DbModels;
         public List<DbColor> DbColors { get; set; }
 
         [NotMapped]
-        public override List<ISize> Sizes { get => DbSize?.ToList<ISizes>(); set => throw new NotImplementedException(); }
+        public override List<ISize> Sizes { get => DbSize?.ToList<ISize>(); set => throw new NotImplementedException(); }
         
         [JsonIgnore]
         public List<DbSize> DbSizes { get; set; }

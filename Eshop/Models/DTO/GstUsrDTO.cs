@@ -58,6 +58,6 @@ public class GstUsrInfoUsersDTO
 public class GstUsrInfoAllDTO
 {
     public GstUsrInfoDbDTO Db { get; set; } = null;
-    public List<GstUsrInfoProductDTO> Products { get; set; } = null;
+    public List<GstUsrInfoProductsDTO> Products { get; set; } = null;
 
 }
