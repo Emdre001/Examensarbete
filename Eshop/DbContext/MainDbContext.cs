@@ -43,13 +43,13 @@ namespace DbContext;
     
           modelBuilder.Entity<Color>(entity =>
            {
-            entity.HasKey(c => c.ColorID);
+            entity.HasKey(c => c.ColorId);
             entity.Property(c => c.ColorName).IsRequired().HasMaxLength(50);
         });
 
           modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(o => o.OrderID);
+            entity.HasKey(o => o.OrderId);
             entity.Property(o => o.OrderDetails).IsRequired().HasMaxLength(500);
             entity.Property(o => o.OrderDate).IsRequired();
             entity.Property(o => o.OrderStatus).IsRequired().HasMaxLength(50);
@@ -69,13 +69,13 @@ namespace DbContext;
         
           modelBuilder.Entity<Brand>(entity =>
         {
-            entity.HasKey(b => b.BrandID);
+            entity.HasKey(b => b.BrandId);
             entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
         });
 
         modelBuilder.Entity<Size>(entity =>
             {
-                entity.HasKey(s => s.SizeID);
+                entity.HasKey(s => s.SizeId);
                 entity.Property(s => s.MenSize).IsRequired();
                 entity.Property(s => s.WomenSize).IsRequired();
                 entity.Property(s => s.ChildrenSize).IsRequired();
@@ -83,7 +83,7 @@ namespace DbContext;
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(u => u.UserID);
+                entity.HasKey(u => u.UserId);
                 entity.Property(u => u.UserName).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.UserEmail).IsRequired().HasMaxLength(100);
                 entity.Property(u => u.UserPassword).IsRequired();
