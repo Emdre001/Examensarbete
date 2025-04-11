@@ -1,0 +1,6 @@
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.GeneratedMSBuildEditorConfig.editorconfig
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.AssemblyInfoInputs.cache
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.AssemblyInfo.cs
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.csproj.CoreCompileInputs.cache
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.MvcApplicationPartsAssemblyInfo.cache
+C:\ExamensArbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.sourcelink.json

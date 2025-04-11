@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Examensarbete\\Eshop\\Eshop.csproj": {}
+    "C:\\ExamensArbete\\Examentsarbete\\Eshop\\Eshop.csproj": {}
   },
   "projects": {
-    "C:\\Examensarbete\\Eshop\\Eshop.csproj": {
+    "C:\\ExamensArbete\\Examentsarbete\\Eshop\\Eshop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
+        "projectUniqueName": "C:\\ExamensArbete\\Examentsarbete\\Eshop\\Eshop.csproj",
         "projectName": "Eshop",
-        "projectPath": "C:\\Examensarbete\\Eshop\\Eshop.csproj",
-        "packagesPath": "C:\\Users\\emdre\\.nuget\\packages\\",
-        "outputPath": "C:\\Examensarbete\\Eshop\\obj\\",
+        "projectPath": "C:\\ExamensArbete\\Examentsarbete\\Eshop\\Eshop.csproj",
+        "packagesPath": "C:\\Users\\robin\\.nuget\\packages\\",
+        "outputPath": "C:\\ExamensArbete\\Examentsarbete\\Eshop\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\emdre\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\robin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
