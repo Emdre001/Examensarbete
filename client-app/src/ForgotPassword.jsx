@@ -1,49 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './styles/login.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./styles/login.css";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate sending reset link
-    setMessage(`Password reset link sent to ${email}`);
-    setTimeout(() => navigate('/login'), 3000);
+
+    if (!email) {
+      setMessage("Please enter your email address.");
+      return;
+    }
+
+    // Simulate sending reset email
+    setMessage("If this email is registered, a password reset link has been sent.");
+    setEmail("");
   };
 
   return (
-    <div className="login-container">
-      <div className="login-form">
-        <img src="/LOGO.png" alt="Shoe Store Logo" className="login-logo" />
-        <h2>Reset Your Password</h2>
-        
+    <div className="wrapper">
+      <div className="form-container">
+        <header>Forgot Your Password?</header>
+        <p className="subheader">Enter your email and we’ll send you a reset link</p>
+
         {message && <div className="success-message">{message}</div>}
-        
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="input-field">
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            <i className="fas fa-envelope"></i>
           </div>
-          
-          <button type="submit" className="login-button">
+
+          <button
+            type="submit"
+            className="button login-button"
+          >
             Send Reset Link
           </button>
         </form>
-        
-        <div className="signup-link">
-          Remember your password?{' '}
-          <button 
-            type="button" 
-            className="text-button"
-            onClick={() => navigate('/login')}
+
+        <div className="auth-text">
+          Remember your password?{" "}
+          <button
+            type="button"
+            className="auth-link"
+            onClick={() => navigate("/login")}
           >
             Back to Login
           </button>
