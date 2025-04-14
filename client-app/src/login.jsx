@@ -1,134 +1,161 @@
-import React, { useState, useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import "./styles/login.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './styles/login.css';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [eyesCovered, setEyesCovered] = useState(false);
-  const leftEyeRef = useRef(null);
-  const rightEyeRef = useRef(null);
-  const emailRef = useRef(null);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize animations
-  useEffect(() => {
-    const emailInput = emailRef.current;
-    
-    const handleEmailInput = (e) => {
-      const emailLength = e.target.value.length;
-      const movement = Math.min(emailLength * 2, 30); // Limit movement range
-      
-      gsap.to([leftEyeRef.current, rightEyeRef.current], {
-        x: movement - 15, // Center the movement
-        duration: 0.3,
-        ease: "power1.out"
-      });
-    };
-
-    emailInput.addEventListener("input", handleEmailInput);
-    
-    return () => {
-      emailInput.removeEventListener("input", handleEmailInput);
-    };
-  }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onLogin(); // Trigger login
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, you would verify credentials here
+      console.log('Login attempt with:', formData);
+      
+      // Call the success handler (would set auth state in parent)
+      if (onLoginSuccess) {
+        onLoginSuccess({
+          email: formData.email,
+          name: "Test User" // In real app, this would come from your backend
+        });
+      }
+      
+      // Redirect to shop page after login
+      navigate('/shop');
+    } catch (err) {
+      setError('Invalid credentials. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const navigateToForgotPassword = () => {
+    navigate('/forgot-password');
+  };
+
+  const navigateToSignUp = () => {
+    navigate('/signup');
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="svg-container">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 200 200"
-            className={`face-svg ${eyesCovered ? "eyes-covered" : ""}`}
-          >
-            {/* Face */}
-            <circle cx="100" cy="100" r="80" fill="#FFDAC1" className="face" />
-            
-            {/* Eyes */}
-            <circle 
-              cx="70" 
-              cy="80" 
-              r="10" 
-              fill="black" 
-              className="eye" 
-              ref={leftEyeRef}
-            />
-            <circle 
-              cx="130" 
-              cy="80" 
-              r="10" 
-              fill="black" 
-              className="eye" 
-              ref={rightEyeRef}
-            />
-            
-            {/* Eye covers (shown when password focused) */}
-            {eyesCovered && (
-              <>
-                <rect x="55" y="65" width="30" height="30" fill="#FFDAC1" />
-                <rect x="115" y="65" width="30" height="30" fill="#FFDAC1" />
-              </>
-            )}
-            
-            {/* Smile */}
-            <path 
-              d="M60,120 Q100,150 140,120" 
-              fill="none" 
-              stroke="black" 
-              strokeWidth="3"
-              className="mouth"
-            />
-          </svg>
-        </div>
-
-        <h2 className="login-header">Welcome Back!</h2>
+    <div className="wrapper">
+      <div className="form-container">
+        <header>Welcome to SoleMate</header>
+        <p className="subheader">Sign in to access your shoe collection</p>
         
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="loginEmail">Email:</label>
+        <form onSubmit={handleSubmit} noValidate>
+          {error && <div className="error-message" role="alert">{error}</div>}
+
+          <div className="input-field">
+            <label htmlFor="email" className="sr-only">Email</label>
             <input
               type="email"
-              id="loginEmail"
-              ref={emailRef}
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Enter your email"
               required
+              autoComplete="username"
             />
+            <i className="fas fa-envelope"></i>
           </div>
-          
-          <div className="form-group">
-            <label htmlFor="loginPassword">Password:</label>
-            <div className="password-container">
+
+          <div className="input-field">
+            <label htmlFor="password" className="sr-only">Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              required
+              autoComplete="current-password"
+            />
+            <i 
+              className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'} password-toggle`}
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex="0"
+            ></i>
+          </div>
+
+          <div className="options">
+            <div className="checkbox">
               <input
-                type={showPassword ? "text" : "password"}
-                id="loginPassword"
-                placeholder="Enter your password"
-                onFocus={() => setEyesCovered(true)}
-                onBlur={() => setEyesCovered(false)}
-                required
+                type="checkbox"
+                id="remember"
+                name="rememberMe"
+                checked={formData.rememberMe}
+                onChange={handleChange}
               />
-              <button
-                type="button"
-                className="show-password-btn"
-                onClick={toggleShowPassword}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
+              <label htmlFor="remember">Remember me</label>
             </div>
+            <button 
+              type="button" 
+              className="forgot-password"
+              onClick={navigateToForgotPassword}
+            >
+              Forgot password?
+            </button>
           </div>
-          
-          <button type="submit" className="login-btn">
-            Login
+
+          <button 
+            type="submit" 
+            className="button login-button"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <span className="spinner"></span>
+                Signing in...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-shoe-prints"></i> Login Now
+              </>
+            )}
           </button>
         </form>
+
+        <div className="auth-text">
+          New to SoleMate?{' '}
+          <button 
+            type="button" 
+            className="auth-link"
+            onClick={navigateToSignUp}
+          >
+            Create an account
+          </button>
+        </div>
       </div>
     </div>
   );
