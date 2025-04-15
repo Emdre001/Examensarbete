@@ -14,7 +14,7 @@ public class Product : IProduct
     public virtual int ProductPrice { get; set; }
     public virtual int ProductRating { get; set; }
 
-    public virtual List<IBrand> Brands { get; set; }
+    public virtual IBrand Brand { get; set; }
     public virtual List<IColor> Colors { get; set; }
     public virtual List<ISize> Sizes { get; set; }
     public virtual List<IOrder> Orders { get; set; }

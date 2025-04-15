@@ -13,7 +13,7 @@ namespace Models;
         public int ProductPrice { get; set; }
         public int ProductRating { get; set; }
 
-        public  List<IBrand> Brands { get; set; }
+        public  IBrand Brand { get; set; }
         public  List<IColor> Colors { get; set; }
         public  List<ISize> Sizes { get; set; }
         public  List<IOrder> Orders { get; set; }
