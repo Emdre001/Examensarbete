@@ -147,7 +147,7 @@ const Login = ({ onLoginSuccess }) => {
         </form>
 
         <div className="auth-text">
-          New to SoleMate?{' '}
+          New to SoleMate??{' '}
           <button 
             type="button" 
             className="auth-link"
