@@ -20,19 +20,19 @@ namespace DbModels;
         public List<DbOrder> DbOrders { get; set; }
 
         [Required]
-        public string UserName { get; set; }
+        public override string UserName { get; set; }
 
         [Required]
-        public string UserEmail { get; set; }
+        public override string UserEmail { get; set; }
 
         [Required]
-        public string UserPassword { get; set; }
+        public override string UserPassword { get; set; }
 
         [Required]
-        public string UserAddress { get; set; }
+        public override string UserAddress { get; set; }
 
         [Required]
-        public int UserPhoneNr { get; set; }
+        public override int UserPhoneNr { get; set; }
 
         [Required]
         public string UserRole { get; set; }
