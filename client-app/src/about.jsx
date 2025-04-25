@@ -1,6 +1,5 @@
 import React from 'react';
 import './styles/about.css'; // Corrected path for CSS
-import LOGO from './img/LOGO.png';
 
 export function About() {
     return (
@@ -22,16 +21,10 @@ export function About() {
                     Tveka inte att kontakta oss om du har frågor eller behöver hjälp. Välkommen till ShoeStore – där stil och komfort möts!
                 </p>
 
-                <img
-                    src={LOGO}
-                    alt="LOGO"
-                    className="img-fluid"
-                    width={150}
-                    height={50}
-                    style={{ marginTop: '20px', border: 'none' }}
-                />
+                <img src="/Assets/img/LOGO.png" alt="Logo" />
             </div>
         </nav>
     );
-};
+}
+
 export default About;
