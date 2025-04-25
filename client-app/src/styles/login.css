@@ -119,7 +119,7 @@ body {
 }
 
 .forgot-password {
-  color: #7d2ae8;
+  color: #fff;
   text-decoration: none;
   font-size: 14px;
   transition: all 0.3s;
@@ -127,7 +127,7 @@ body {
 
 .forgot-password:hover {
   text-decoration: underline;
-  color: #6a1ecf;
+  animation: bounce 0.5s infinite;
 }
 
 .button {
@@ -179,7 +179,7 @@ body {
 }
 
 .auth-link {
-  color: #7d2ae8;
+  color: #fff;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s;
@@ -187,6 +187,7 @@ body {
 
 .auth-link:hover {
   text-decoration: underline;
+  animation: bounce 0.5s infinite;
 }
 
 .error-message {

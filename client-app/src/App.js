@@ -7,19 +7,20 @@ import Contact from './contact';
 import Login from './login';
 import SignUp from './SignUp';
 import ForgotPassword from './ForgotPassword';
+import Cart from './Cart'; 
 import Footer from './footer';
 import Navbar from './navbar';
-
-
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <Router>
       <div className="app">
-      <Navbar />
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/cart" element={<Cart />} /> 
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
@@ -27,6 +28,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
         <Footer />
+        <Toaster position="top-right" />
       </div>
     </Router>
   );

@@ -2,14 +2,19 @@ import React from 'react';
 import { Navbar, Nav, Container, Form, FormControl, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
+import useCartStore from './CartStore';
 
 const CustomNavbar = () => {
+  const cartCount = useCartStore((state) =>
+    state.cart.reduce((total, item) => total + item.quantity, 0)
+  );
+
   return (
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img
-            src="/img/logo.png" // Replace with your logo path
+            src="/img/logo.png"
             alt="SoleMate Logo"
             width="30"
             height="30"
@@ -40,7 +45,8 @@ const CustomNavbar = () => {
           </Form>
           <Nav className="ms-3">
             <Nav.Link as={Link} to="/cart">
-              <FaShoppingCart /> <span className="badge bg-danger">3</span>
+              <FaShoppingCart />{' '}
+              {cartCount > 0 && <span className="badge bg-danger">{cartCount}</span>}
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
