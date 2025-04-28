@@ -125,7 +125,6 @@ namespace Controllers
                     new ResponseItemDTO<ProductDTO>() {
                     DbConnectionKeyUsed = item.DbConnectionKeyUsed,
                     Item = new ProductDTO(item.Item)
-                    Item = new ProductDTO(item.Item)
                 });
             }
             catch (Exception ex)
@@ -141,7 +140,6 @@ namespace Controllers
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
-        public async Task<IActionResult> UpdateItem(string id, [FromBody] ProductDTO item)
         public async Task<IActionResult> UpdateItem(string id, [FromBody] ProductDTO item)
         {
             try
@@ -170,7 +168,6 @@ namespace Controllers
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(200, Type = typeof(ResponseItemDTO<IProduct>))]
         [ProducesResponseType(400, Type = typeof(string))]
-        public async Task<IActionResult> CreateItem([FromBody] ProductDTO item)
         public async Task<IActionResult> CreateItem([FromBody] ProductDTO item)
         {
             try
