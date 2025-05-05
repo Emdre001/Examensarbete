@@ -12,8 +12,12 @@ namespace DbModels;
         [Key]
         public override Guid SizeId { get; set; }
 
-        [NotMapped] 
-        public override List<IProduct> Products { get => DbProducts?.ToList<IProduct>(); set => throw new NotImplementedException(); }
+       [NotMapped]
+        public override List<ProductSize> Products 
+        { 
+            get => DbProducts?.Select(dp => new ProductSize { ProductId = dp.ProductId, Product = dp}).ToList(); 
+            set => throw new NotImplementedException(); 
+        }
 
         [JsonIgnore]
         public List<DbProduct> DbProducts { get; set; }

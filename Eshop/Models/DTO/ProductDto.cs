@@ -18,7 +18,7 @@ public class ProductDTO
     public virtual List<Guid> OrdersId { get; set; } = null;
     public virtual List<Guid> SizesId { get; set; } = null;
     public ProductDTO() {}
-    public ProductDTO (IProduct org)
+    public ProductDTO (Product org)
     {
         ProductId = org.ProductId;
         ProductName = org.ProductName;

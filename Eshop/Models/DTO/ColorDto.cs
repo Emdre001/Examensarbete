@@ -10,7 +10,7 @@ public class ColorDTO
     public virtual List<Guid> ProductsId { get; set; } = null;
 
     public ColorDTO() {}
-    public ColorDTO (IColor org)
+    public ColorDTO (Color org)
     {
         ColorId = org.ColorId;
         ColorName = org.ColorName;

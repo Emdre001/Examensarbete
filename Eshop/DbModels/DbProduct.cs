@@ -3,54 +3,79 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DbModels;
 
-    [Table("Products")]
-    public class DbProduct : Product
-    {
-        [Key]
-        public override Guid ProductId { get; set; }
+[Table("Products")]
+public class DbProduct : Product
+{
+    [Key]
+    public override Guid ProductId { get; set; }
 
-        [NotMapped]
-        public override IBrand Brand { get => DbBrand; set => throw new NotImplementedException(); }
+    [NotMapped]
+    public override Brand Brand => DbBrand;
 
-        [JsonIgnore]
-        [Required]
-        public  DbBrand DbBrand { get; set; }
+    [JsonIgnore]
+    [Required]
+    public DbBrand DbBrand { get; set; }
 
-        [NotMapped]
-        public override List<IColor> Colors { get => DbColors?.ToList<IColor>(); set => throw new NotImplementedException(); }
+    // === ProductColor mapping ===
+    [NotMapped]
+    public override List<ProductColor> ProductColors =>
+        DbProductColors?.Select(p => new ProductColor
+        {
+            ProductId = p.ProductId,
+            ColorId = p.ColorId,
+            Color = p.Color,
+            Product = this
+        }).ToList();
 
-        [JsonIgnore]
-        public List<DbColor> DbColors { get; set; }
+    [JsonIgnore]
+    public List<DbProductColor> DbProductColors { get; set; }
 
-        [NotMapped]
-        public override List<ISize> Sizes { get => DbSizes?.ToList<ISize>(); set => throw new NotImplementedException(); }
-        
-        [JsonIgnore]
-        public List<DbSize> DbSizes { get; set; }
+    // === ProductSize mapping ===
+    [NotMapped]
+    public override List<ProductSize> ProductSizes =>
+        DbProductSizes?.Select(p => new ProductSize
+        {
+            ProductId = p.ProductId,
+            SizeId = p.SizeId,
+            Size = p.Size,
+            Product = this
+        }).ToList();
 
-        [NotMapped]
-        public override List<IOrder> Orders { get => DbOrders?.ToList<IOrder>(); set => throw new NotImplementedException(); }
+    [JsonIgnore]
+    public List<DbProductSize> DbProductSizes { get; set; }
 
-        [JsonIgnore]
-        public List<DbOrder> DbOrders { get; set; }
+    // === ProductOrder mapping ===
+    [NotMapped]
+    public override List<ProductOrder> ProductOrders =>
+        DbProductOrders?.Select(p => new ProductOrder
+        {
+            ProductId = p.ProductId,
+            OrderId = p.OrderId,
+            Order = p.Order,
+            Product = this
+        }).ToList();
 
-        [Required]
-        public string ProductName { get; set; }
+    [JsonIgnore]
+    public List<DbProductOrder> DbProductOrders { get; set; }
 
-        [Required]
-        public string ProductType { get; set; }
+    [Required]
+    public string ProductName { get; set; }
 
-        [Required]
-        public string ProductDescription { get; set; }
+    [Required]
+    public string ProductType { get; set; }
 
-        [Required]
-        public int ProductPrice { get; set; }
+    [Required]
+    public string ProductDescription { get; set; }
 
-        [Required]
-        public int ProductRating { get; set; }
+    [Required]
+    public int ProductPrice { get; set; }
+
+    [Required]
+    public int ProductRating { get; set; }
 
     public DbProduct UpdateFromDTO(ProductDTO org)
     {
@@ -66,10 +91,10 @@ namespace DbModels;
     }
 
     public DbProduct() { }
+
     public DbProduct(ProductDTO org)
     {
         ProductId = Guid.NewGuid();
         UpdateFromDTO(org);
     }
-
 }

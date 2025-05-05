@@ -16,7 +16,7 @@ public class UserDTO
     public virtual List<Guid> OrdersId { get; set; } = null;
 
     public UserDTO() {}
-    public UserDTO (IUser org)
+    public UserDTO (User org)
     {
         UserId = org.UserId;
         UserName = org.UserName;

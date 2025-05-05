@@ -16,7 +16,7 @@ public class OrderDTO
     public virtual Guid? UserId { get; set; } = null;
 
     public OrderDTO() {}
-    public OrderDTO (IOrder org)
+    public OrderDTO (Order org)
     {
         OrderId = org.OrderId;
 

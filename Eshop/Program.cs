@@ -1,8 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using DbContext; 
+using DbRepos;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<MainDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlEShop")));
+
+builder.Services.AddScoped<SizeDbRepos>();
+
+builder.Services.AddControllers(); 
+builder.Services.AddEndpointsApiExplorer(); 
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -21,6 +30,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.MapGet("/", () => "Hello World!");
+app.UseHttpsRedirection();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

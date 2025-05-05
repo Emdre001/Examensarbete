@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Models;
 
-public class User : IUser
+public class User 
 {
     public virtual Guid UserId { get; set; }
     public virtual string UserName { get; set; }
@@ -13,5 +13,5 @@ public class User : IUser
     public virtual int UserPhoneNr { get; set; }
     public virtual string UserRole { get; set; }
 
-    public virtual List<IOrder> Orders { get; set; }
+    public virtual List<ProductOrder> Orders { get; set; }
 }

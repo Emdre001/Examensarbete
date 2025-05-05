@@ -11,7 +11,7 @@ public class SizeDTO
     public virtual List<Guid> ProductsId { get; set; } = null;
 
     public SizeDTO() {}
-    public SizeDTO (ISize org)
+    public SizeDTO (Size org)
     {
         SizeId = org.SizeId;
         SizeValue = org.SizeValue;
@@ -19,4 +19,4 @@ public class SizeDTO
 
         ProductsId = org.Products?.Select(p => p.ProductId).ToList();
     }
-    }
+}

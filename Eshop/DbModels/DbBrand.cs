@@ -13,7 +13,7 @@ public class DbBrand : Brand
     public override Guid BrandId { get; set; }
 
     [NotMapped] 
-    public override List<IProduct> Products { get => DbProducts?.ToList<IProduct>(); set => throw new NotImplementedException(); }
+    public override List<Product> Products { get => DbProducts?.ToList<Product>(); set => throw new NotImplementedException(); }
 
     [JsonIgnore]
     public List<DbProduct> DbProducts { get; set; }

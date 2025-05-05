@@ -1,85 +1,82 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Models.DTO;
-using DbModels;
 
-namespace DbContext;
-
-     public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
+namespace DbContext
+{
+    public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
 
-        public DbSet<DbProduct> Products { get; set; }
-        public DbSet<DbColor> Colors { get; set; }
-        public DbSet<DbOrder> Orders { get; set; }
-        public DbSet<DbBrand> Brands { get; set; } 
-        public DbSet<DbSize> Sizes { get; set; }
-        public DbSet<DbUser> Users { get; set; }
-    
-        #region model the Views
-        public DbSet<GstUsrInfoDbDTO> InfoDbView { get; set; }
-        public DbSet<GstUsrInfoProductsDTO> InfoProductsView { get; set; }
-        public DbSet<GstUsrInfoColorsDTO> InfoColorsView { get; set; }
-        public DbSet<GstUsrInfoBrandsDTO> InfoBrandsView { get; set; }
-        public DbSet<GstUsrInfoSizesDTO> InfoSizesView { get; set; }
-        public DbSet<GstUsrInfoOrdersDTO> InfoOrdersView { get; set; }
-        public DbSet<GstUsrInfoUsersDTO> InfoUsersView { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Color> Colors { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Size> Sizes { get; set; }
+        public DbSet<User> Users { get; set; }
 
-    //gör en för varje view i gstuserDTO
-    #endregion
+        // Join tables for Many-to-Many relations
+        public DbSet<ProductColor> ProductColors { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; set; }
 
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-    
-          modelBuilder.Entity<Color>(entity =>
-           {
-            entity.HasKey(c => c.ColorId);
-            entity.Property(c => c.ColorName).IsRequired().HasMaxLength(50);
-        });
-
-          modelBuilder.Entity<Order>(entity =>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            entity.HasKey(o => o.OrderId);
-            entity.Property(o => o.OrderDetails).IsRequired().HasMaxLength(500);
-            entity.Property(o => o.OrderDate).IsRequired();
-            entity.Property(o => o.OrderStatus).IsRequired().HasMaxLength(50);
-            entity.Property(o => o.OrderAmount).IsRequired();
-            });
+            base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Product>(entity =>
-        {
-            entity.HasKey(p => p.ProductId);
-            entity.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.ProductType).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.ProductDescription).HasMaxLength(300);
-            entity.Property(p => p.ProductPrice).IsRequired();
-            entity.Property(p => p.ProductRating).IsRequired();
-        });
-        
-          modelBuilder.Entity<Brand>(entity =>
-        {
-            entity.HasKey(b => b.BrandId);
-            entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
-        });
+            // Product - Brand: One-to-Many relationship (A Brand can have many Products)
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Brand)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BrandId)
+                .OnDelete(DeleteBehavior.Cascade); // Assuming you want cascading delete for Brand-Product relation
 
-        modelBuilder.Entity<Size>(entity =>
-            {
-                entity.HasKey(s => s.SizeId);
-                entity.Property(s => s.SizeValue).IsRequired();
-                entity.Property(s => s.SizeStock).IsRequired();
-            });
+            // Product - Color: Many-to-Many relationship (Through ProductColor join table)
+            modelBuilder.Entity<ProductColor>()
+                .HasKey(pc => new { pc.ProductId, pc.ColorId });
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(u => u.UserId);
-                entity.Property(u => u.UserName).IsRequired().HasMaxLength(50);
-                entity.Property(u => u.UserEmail).IsRequired().HasMaxLength(100);
-                entity.Property(u => u.UserPassword).IsRequired();
-                entity.Property(u => u.UserAddress).HasMaxLength(100);
-                entity.Property(u => u.UserPhoneNr).IsRequired();
-                entity.Property(u => u.UserRole).IsRequired().HasMaxLength(50);
-            });
+            modelBuilder.Entity<ProductColor>()
+                .HasOne(pc => pc.Product)
+                .WithMany(p => p.ProductColors)
+                .HasForeignKey(pc => pc.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);  // No cascading delete for many-to-many
+
+            modelBuilder.Entity<ProductColor>()
+                .HasOne(pc => pc.Color)
+                .WithMany(c => c.Products)
+                .HasForeignKey(pc => pc.ColorId)
+                .OnDelete(DeleteBehavior.NoAction);  // No cascading delete for many-to-many
+
+            // Product - Size: Many-to-Many relationship (Through ProductSize join table)
+            modelBuilder.Entity<ProductSize>()
+                .HasKey(ps => new { ps.ProductId, ps.SizeId });
+
+            modelBuilder.Entity<ProductSize>()
+                .HasOne(ps => ps.Product)
+                .WithMany(p => p.ProductSizes)
+                .HasForeignKey(ps => ps.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);  // No cascading delete for many-to-many
+
+            modelBuilder.Entity<ProductSize>()
+                .HasOne(ps => ps.Size)
+                .WithMany(s => s.Products)
+                .HasForeignKey(ps => ps.SizeId)
+                .OnDelete(DeleteBehavior.NoAction);  // No cascading delete for many-to-many
+
+            // Product - Order: Many-to-Many relationship (Through ProductOrder join table)
+            modelBuilder.Entity<ProductOrder>()
+                .HasKey(po => new { po.ProductId, po.OrderId });
+
+            modelBuilder.Entity<ProductOrder>()
+                .HasOne(po => po.Product)
+                .WithMany(p => p.ProductOrders)
+                .HasForeignKey(po => po.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);  // No cascading delete for many-to-many
+
+            modelBuilder.Entity<ProductOrder>()
+                .HasOne(po => po.Order)
+                .WithMany(o => o.Products)
+                .HasForeignKey(po => po.OrderId)
+                .OnDelete(DeleteBehavior.NoAction);  
         }
     }
+}
