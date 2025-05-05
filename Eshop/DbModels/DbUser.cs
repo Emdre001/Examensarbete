@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
 
 namespace DbModels;
 
@@ -36,12 +35,6 @@ namespace DbModels;
 
         [Required]
         public string UserRole { get; set; }
-
-         public override DbUser Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
 
     public DbUser UpdateFromDTO(UserDTO org)
     {

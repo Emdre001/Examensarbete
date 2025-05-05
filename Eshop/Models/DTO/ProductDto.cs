@@ -10,7 +10,6 @@ public class ProductDTO
     public string ProductName { get; set; }
     public string ProductType { get; set; }
     public string ProductDescription { get; set; }
-    public int ProductStock { get; set; }
     public int ProductPrice { get; set; }
     public int ProductRating { get; set; }
 
@@ -25,7 +24,6 @@ public class ProductDTO
         ProductName = org.ProductName;
         ProductType = org.ProductType;
         ProductDescription = org.ProductDescription;
-        ProductStock = org.ProductStock;
         ProductPrice = org.ProductPrice;
         ProductRating = org.ProductRating;
 

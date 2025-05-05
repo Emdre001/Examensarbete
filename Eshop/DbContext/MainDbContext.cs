@@ -1,18 +1,10 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-using Configuration;
 using Models;
 using Models.DTO;
 using DbModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Npgsql.Replication;
-
-
 
 namespace DbContext;
-
 
      public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
@@ -62,7 +54,6 @@ namespace DbContext;
             entity.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
             entity.Property(p => p.ProductType).IsRequired().HasMaxLength(100);
             entity.Property(p => p.ProductDescription).HasMaxLength(300);
-            entity.Property(p => p.ProductStock).IsRequired();
             entity.Property(p => p.ProductPrice).IsRequired();
             entity.Property(p => p.ProductRating).IsRequired();
         });
@@ -76,9 +67,8 @@ namespace DbContext;
         modelBuilder.Entity<Size>(entity =>
             {
                 entity.HasKey(s => s.SizeId);
-                entity.Property(s => s.MenSize).IsRequired();
-                entity.Property(s => s.WomenSize).IsRequired();
-                entity.Property(s => s.ChildrenSize).IsRequired();
+                entity.Property(s => s.SizeValue).IsRequired();
+                entity.Property(s => s.SizeStock).IsRequired();
             });
 
             modelBuilder.Entity<User>(entity =>

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
 
 namespace DbModels;
 
@@ -48,19 +47,10 @@ namespace DbModels;
         public string ProductDescription { get; set; }
 
         [Required]
-        public int ProductStock { get; set; }
-
-        [Required]
         public int ProductPrice { get; set; }
 
         [Required]
         public int ProductRating { get; set; }
-
-    public override DbProduct Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
 
     public DbProduct UpdateFromDTO(ProductDTO org)
     {
@@ -69,7 +59,6 @@ namespace DbModels;
         ProductName = org.ProductName;
         ProductType = org.ProductType;
         ProductDescription = org.ProductDescription;
-        ProductStock = org.ProductStock;
         ProductPrice = org.ProductPrice;
         ProductRating = org.ProductRating;
 

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
 
 namespace DbModels;
 
@@ -21,12 +20,6 @@ public class DbBrand : Brand
 
     [Required]
     public string BrandName { get; set; }
-
-     public override DbBrand Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
 
     public DbBrand UpdateFromDTO(BrandDTO org)
     {

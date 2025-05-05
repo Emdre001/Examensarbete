@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
 
 namespace DbModels;
 
@@ -20,27 +19,18 @@ namespace DbModels;
         public List<DbProduct> DbProducts { get; set; }
 
         [Required]
-        public int MenSize { get; set; }
+        public int SizeValue { get; set; }
 
         [Required]
-        public int WomenSize { get; set; }
+        public int SizeStock { get; set; }
 
-        [Required]
-        public int ChildrenSize { get; set; }
-
-         public override DbSize Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
 
     public DbSize UpdateFromDTO(SizeDTO org)
     {
         if (org == null) return null;
 
-        MenSize = org.MenSize;
-        WomenSize = org.WomenSize;
-        ChildrenSize = org.ChildrenSize;
+        SizeValue = org.SizeValue;
+        SizeStock = org.SizeStock;
 
         return this;
     }
