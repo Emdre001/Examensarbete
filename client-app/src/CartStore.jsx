@@ -3,12 +3,14 @@ import { create } from 'zustand';
 const useCartStore = create((set, get) => ({
   cart: [],
   addToCart: (product) => {
-    const existingProduct = get().cart.find((item) => item.id === product.id);
+    const existingProduct = get().cart.find(
+      (item) => item.id === product.id && item.size === product.size
+    );
 
     if (existingProduct) {
       set((state) => ({
         cart: state.cart.map((item) =>
-          item.id === product.id
+          item.id === product.id && item.size === product.size
             ? { ...item, quantity: item.quantity + 1 }
             : item
         ),
@@ -19,16 +21,16 @@ const useCartStore = create((set, get) => ({
       }));
     }
   },
-  removeFromCart: (id) => {
+  removeFromCart: (id, size) => {
     set((state) => ({
-      cart: state.cart.filter((item) => item.id !== id),
+      cart: state.cart.filter((item) => item.id !== id || item.size !== size),
     }));
   },
-  updateQuantity: (id, quantity) => {
-    if (quantity < 1) return; // Prevent quantity from going below 1
+  updateQuantity: (id, size, quantity) => {
+    if (quantity < 1) return;
     set((state) => ({
       cart: state.cart.map((item) =>
-        item.id === id ? { ...item, quantity } : item
+        item.id === id && item.size === size ? { ...item, quantity } : item
       ),
     }));
   },

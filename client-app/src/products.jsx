@@ -6,7 +6,7 @@ const products = [
     {
         id: 1,
         name: "Nike Air Max DN Women",
-        price: 1517,
+        price: 1499,
         image: process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen.png",
     },
     // Template for future products

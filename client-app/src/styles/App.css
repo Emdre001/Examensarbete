@@ -1,7 +1,27 @@
-.App {
-  text-align: center;
+/* Grundläggande reset för att ta bort marginaler och fylla ut hela sidan */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+/* App-container som håller hela sidan */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main-sektion som fyller ut all tillgänglig höjd mellan navbar och footer */
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+/* Övriga standardklasser från din tidigare App.css */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
