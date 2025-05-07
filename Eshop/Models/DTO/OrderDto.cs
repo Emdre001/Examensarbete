@@ -15,17 +15,4 @@ public class OrderDTO
     public virtual List<Guid> ProductsId { get; set; } = null;
     public virtual Guid? UserId { get; set; } = null;
 
-    public OrderDTO() {}
-    public OrderDTO (IOrder org)
-    {
-        OrderId = org.OrderId;
-
-        OrderDetails = org.OrderDetails;
-        OrderDate = org.OrderDate;
-        OrderStatus = org.OrderStatus;
-        OrderAmount = org.OrderAmount;
-
-        ProductsId = org.Products?.Select(p => p.ProductId).ToList();
-        UserId = org?.User?.UserId;
-    }
 }

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
 
 namespace DbModels;
 
@@ -14,7 +13,7 @@ namespace DbModels;
         public override Guid UserId { get; set; }
 
         [NotMapped] 
-        public override List<IOrder> Orders { get => DbOrders?.ToList<IOrder>(); set => throw new NotImplementedException(); }
+        public override List<IOrder> Orders { get; set; }
 
         [JsonIgnore]
         public List<DbOrder> DbOrders { get; set; }
@@ -37,30 +36,4 @@ namespace DbModels;
         [Required]
         public string UserRole { get; set; }
 
-         public override DbUser Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
-
-    public DbUser UpdateFromDTO(UserDTO org)
-    {
-        if (org == null) return null;
-
-        UserName = org.UserName;
-        UserEmail = org.UserEmail;
-        UserPassword = org.UserPassword;
-        UserAddress = org.UserAddress;
-        UserPhoneNr = org.UserPhoneNr;
-        UserRole = org.UserRole;
-
-        return this;
-    }
-
-    public DbUser() { }
-    public DbUser(UserDTO org)
-    {
-        UserId = Guid.NewGuid();
-        UpdateFromDTO(org);
-    }
     }

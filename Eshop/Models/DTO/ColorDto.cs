@@ -9,12 +9,4 @@ public class ColorDTO
 
     public virtual List<Guid> ProductsId { get; set; } = null;
 
-    public ColorDTO() {}
-    public ColorDTO (IColor org)
-    {
-        ColorId = org.ColorId;
-        ColorName = org.ColorName;
-
-        ProductsId = org.Products?.Select(p => p.ProductId).ToList();
-    }
 }

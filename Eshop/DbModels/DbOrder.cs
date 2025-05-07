@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Models.DTO;
 using Newtonsoft.Json;
-using Seido.Utilities.SeedGenerator;
+
 
 namespace DbModels;
 
@@ -14,13 +14,12 @@ namespace DbModels;
         public override Guid OrderId { get; set; }
 
         [NotMapped] 
-        public override List<IProduct> Products { get => DbProducts?.ToList<IProduct>(); set => throw new NotImplementedException(); }
-
+        public override List<IProduct> Products { get; set; }
         [JsonIgnore]
         public List<DbProduct> DbProducts { get; set; }
 
         [NotMapped]
-        public override IUser User { get => DbUser; set => throw new NotImplementedException(); }
+        public override IUser User { get; set; }
         [JsonIgnore]
         [Required]
         public  DbUser DbUser { get; set; }
@@ -36,28 +35,4 @@ namespace DbModels;
 
         [Required]
         public virtual int OrderAmount { get; set; }
-
-         public override DbOrder Seed (SeedGenerator _seeder)
-    {
-        base.Seed (_seeder);
-        return this;
-    }
-
-    public DbOrder UpdateFromDTO(OrderDTO org)
-    {
-        if (org == null) return null;
-
-        OrderDate = org.OrderDate;
-        OrderStatus = org.OrderStatus;
-        OrderAmount = org.OrderAmount;
-
-        return this;
-    }
-
-    public DbOrder() { }
-    public DbOrder(OrderDTO org)
-    {
-        OrderId = Guid.NewGuid();
-        UpdateFromDTO(org);
-    }
     }

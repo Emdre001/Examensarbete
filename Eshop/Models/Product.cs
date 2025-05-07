@@ -10,7 +10,6 @@ public class Product : IProduct
     public virtual string ProductName { get; set; }
     public virtual string ProductType { get; set; }
     public virtual string ProductDescription { get; set; }
-    public virtual int ProductStock { get; set; }
     public virtual int ProductPrice { get; set; }
     public virtual int ProductRating { get; set; }
 

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Npgsql.Replication;
 
 
-
 namespace DbContext;
 
 
@@ -25,71 +24,4 @@ namespace DbContext;
         public DbSet<DbSize> Sizes { get; set; }
         public DbSet<DbUser> Users { get; set; }
     
-        #region model the Views
-        public DbSet<GstUsrInfoDbDTO> InfoDbView { get; set; }
-        public DbSet<GstUsrInfoProductsDTO> InfoProductsView { get; set; }
-        public DbSet<GstUsrInfoColorsDTO> InfoColorsView { get; set; }
-        public DbSet<GstUsrInfoBrandsDTO> InfoBrandsView { get; set; }
-        public DbSet<GstUsrInfoSizesDTO> InfoSizesView { get; set; }
-        public DbSet<GstUsrInfoOrdersDTO> InfoOrdersView { get; set; }
-        public DbSet<GstUsrInfoUsersDTO> InfoUsersView { get; set; }
-
-    //gör en för varje view i gstuserDTO
-    #endregion
-
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-    
-          modelBuilder.Entity<Color>(entity =>
-           {
-            entity.HasKey(c => c.ColorId);
-            entity.Property(c => c.ColorName).IsRequired().HasMaxLength(50);
-        });
-
-          modelBuilder.Entity<Order>(entity =>
-        {
-            entity.HasKey(o => o.OrderId);
-            entity.Property(o => o.OrderDetails).IsRequired().HasMaxLength(500);
-            entity.Property(o => o.OrderDate).IsRequired();
-            entity.Property(o => o.OrderStatus).IsRequired().HasMaxLength(50);
-            entity.Property(o => o.OrderAmount).IsRequired();
-            });
-
-        modelBuilder.Entity<Product>(entity =>
-        {
-            entity.HasKey(p => p.ProductId);
-            entity.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.ProductType).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.ProductDescription).HasMaxLength(300);
-            entity.Property(p => p.ProductStock).IsRequired();
-            entity.Property(p => p.ProductPrice).IsRequired();
-            entity.Property(p => p.ProductRating).IsRequired();
-        });
-        
-          modelBuilder.Entity<Brand>(entity =>
-        {
-            entity.HasKey(b => b.BrandId);
-            entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
-        });
-
-        modelBuilder.Entity<Size>(entity =>
-            {
-                entity.HasKey(s => s.SizeId);
-                entity.Property(s => s.MenSize).IsRequired();
-                entity.Property(s => s.WomenSize).IsRequired();
-                entity.Property(s => s.ChildrenSize).IsRequired();
-            });
-
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(u => u.UserId);
-                entity.Property(u => u.UserName).IsRequired().HasMaxLength(50);
-                entity.Property(u => u.UserEmail).IsRequired().HasMaxLength(100);
-                entity.Property(u => u.UserPassword).IsRequired();
-                entity.Property(u => u.UserAddress).HasMaxLength(100);
-                entity.Property(u => u.UserPhoneNr).IsRequired();
-                entity.Property(u => u.UserRole).IsRequired().HasMaxLength(50);
-            });
-        }
     }
