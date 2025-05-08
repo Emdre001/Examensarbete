@@ -6,7 +6,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="home-container">
+    <div className="page-wrapper">
       <section className="hero">
         <h1 className="hero-title">Step into Style with SoleMate</h1>
         <p className="hero-subtitle">Discover the latest sneaker drops and timeless classics.</p>

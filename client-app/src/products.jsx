@@ -18,9 +18,9 @@ const Products = () => {
   }, []);
 
   return (
-    <div className="products-page">
-      <h2 className="products-header">Our Collection</h2>
-      <div className="products-container">
+<div className="page-wrapper">
+        <h2 className="products-header">Our Collection</h2>
+      <div className="product-grid">
         {products.map((product) => (
           <div className="product-card" key={product.id}>
             {product.discount && (
