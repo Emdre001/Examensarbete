@@ -12,44 +12,32 @@ import Cart from './Cart';
 import Footer from './footer';
 import Navbar from './navbar';
 import { Toaster } from 'react-hot-toast';
-import './styles/App.css'; // Se till att detta pekar rätt till din CSS
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
 
 function App() {
   return (
     <Router>
       <div className="app">
+        {/* Navbar is rendered once */}
         <Navbar />
-        <main>
-          
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-          </Routes>
-        </main>
-      <Navbar />
-      <div className="page-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-        </Routes>
-         </div>
+
+        {/* Main content wrapper */}
+        <div className="page-wrapper">
+          <main>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Routes>
+          </main>
+        </div>        
         <Footer />
         <Toaster position="top-right" />
       </div>

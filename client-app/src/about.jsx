@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/about.css';
-import LOGO from './img/Logoo.png';
+
+
 
 export function About() {
     return (
@@ -23,7 +24,7 @@ export function About() {
                         Tveka inte att kontakta oss om du har frågor eller behöver hjälp. Välkommen till SoleMate – där stil och komfort möts!
                     </p>
 
-                    <img src={LOGO} alt="LOGO" className="img-fluid" />
+                    <img src="/Assets/img/Logo_1.png" alt="LOGO" className="img-fluid" />
                 </div>
             </div>
         </nav>

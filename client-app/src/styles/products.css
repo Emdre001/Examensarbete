@@ -62,7 +62,7 @@
 
 .product-price {
   font-size: 16px;
-  color: #7d2ae8;
+  color: #000000;
 }
 
 .discount-badge {
@@ -89,12 +89,12 @@
 }
 
 .view-details {
-  background: #7d2ae8;
+  background: #000000;
   color: #fff;
 }
 
 .view-details:hover {
-  background: #6a1ecf;
+  background: #000000;
 }
 
 .add-to-cart {
