@@ -1,8 +1,9 @@
 import React from 'react';
-import { Navbar, Nav, Container, Form, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Form, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import useCartStore from './CartStore';
+import './styles/navbar.css'; // se till att du pekar rätt här
 
 const CustomNavbar = () => {
   const cartCount = useCartStore((state) =>
@@ -10,7 +11,13 @@ const CustomNavbar = () => {
   );
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
+    <Navbar
+    bg="dark"
+    variant="dark"
+    expand="lg"
+    sticky="top"
+    className="custom-navbar"
+    >
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img
@@ -22,8 +29,10 @@ const CustomNavbar = () => {
           />{' '}
           SoleMate
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+
+        <Navbar.Toggle aria-controls="navbar-nav" />
+
+        <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/products">Products</Nav.Link>
@@ -32,7 +41,8 @@ const CustomNavbar = () => {
             <Nav.Link as={Link} to="/login">Login</Nav.Link>
             <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
           </Nav>
-          <Form className="d-flex ms-3">
+
+          <Form className="d-flex ms-3 my-2 my-lg-0">
             <FormControl
               type="search"
               placeholder="Search"
@@ -43,6 +53,7 @@ const CustomNavbar = () => {
               <FaSearch />
             </Button>
           </Form>
+
           <Nav className="ms-3">
             <Nav.Link as={Link} to="/cart">
               <FaShoppingCart />{' '}

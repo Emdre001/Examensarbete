@@ -1,12 +1,25 @@
 /* Styling för About-komponenten */
-.About {
-    background-color: #ffffff; /* Vit bakgrund för kontrast */
-    padding: 40px; /* Ge innehållet mer utrymme */
-    margin: 40px auto; /* Centrerar komponenten och ger utrymme runt */
-    max-width: 800px; /* Begränsar bredden för bättre läsbarhet */
-    border-radius: 8px; /* Rundade hörn för ett mjukare intryck */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Lätt skugga för att skapa djup */
+.page-wrapper {
+    flex: 1;
+    width: 100%;
+    padding: 80px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  
+  .about-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    box-sizing: border-box;
 }
+
+
  
 /* Styling för texten */
 .about-lead {
