@@ -9,7 +9,11 @@ namespace Models;
         public string ProductName { get; set; }
         public string ProductType { get; set; }
         public string ProductDescription { get; set; }
-        public int ProductStock { get; set; }
         public int ProductPrice { get; set; }
         public int ProductRating { get; set; }
+
+        public  IBrand Brand { get; set; }
+        public  List<IColor> Colors { get; set; }
+        public  List<ISize> Sizes { get; set; }
+        public  List<IOrder> Orders { get; set; }
     }

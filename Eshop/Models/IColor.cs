@@ -5,6 +5,7 @@ namespace Models;
 
 public interface IColor
 {
-    public Guid ColorID { get; set; }
+    public Guid ColorId { get; set; }
     public string ColorName { get; set; }
+    public  List<IProduct> Products { get; set; }
 }
