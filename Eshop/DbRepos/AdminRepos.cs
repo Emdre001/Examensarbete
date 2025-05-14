@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Models;
 using Models.DTO;
-using DbModels;
 using DbContext;
 
 namespace DbRepos;
@@ -25,14 +24,14 @@ public class AdminDbRepos
         {
             BrandId = Guid.NewGuid(),
             BrandName = "Nike",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var brand2 = new Brand
         {
             BrandId = Guid.NewGuid(),
             BrandName = "Adidas",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         // Create colors
@@ -40,42 +39,42 @@ public class AdminDbRepos
         {
             ColorId = Guid.NewGuid(),
             ColorName = "Red",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var colorBlue = new Color
         {
             ColorId = Guid.NewGuid(),
             ColorName = "Blue",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var colorGreen = new Color
         {
             ColorId = Guid.NewGuid(),
             ColorName = "Green",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var colorWhite = new Color
         {
             ColorId = Guid.NewGuid(),
             ColorName = "White",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var colorBlack = new Color
         {
             ColorId = Guid.NewGuid(),
             ColorName = "Black",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var colorGrey = new Color
         {
             ColorId = Guid.NewGuid(),
             ColorName = "Grey",
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         // Create sizes
@@ -84,7 +83,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 36,
             SizeStock = 16,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size37 = new Size
@@ -92,7 +91,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 37,
             SizeStock = 22,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size38 = new Size
@@ -100,7 +99,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 38,
             SizeStock = 9,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size39 = new Size
@@ -108,7 +107,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 39,
             SizeStock = 14,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size40 = new Size
@@ -116,7 +115,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 40,
             SizeStock = 15,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size41 = new Size
@@ -124,7 +123,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 41,
             SizeStock = 20,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size42 = new Size
@@ -132,7 +131,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 42,
             SizeStock = 18,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size43 = new Size
@@ -140,7 +139,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 43,
             SizeStock = 12,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         var size44 = new Size
@@ -148,7 +147,7 @@ public class AdminDbRepos
             SizeId = Guid.NewGuid(),
             SizeValue = 44,
             SizeStock = 8,
-            Products = new List<IProduct>()
+            Products = new List<Product>()
         };
 
         // Create products
@@ -161,9 +160,9 @@ public class AdminDbRepos
             ProductPrice = 899,
             ProductRating = 4,
             Brand = brand1,
-            Colors = new List<IColor> { colorWhite, colorBlack },
-            Sizes = new List<ISize> { size38, size40 },
-            Orders = new List<IOrder>() // Add mock orders if necessary
+            Colors = new List<Color> { colorWhite, colorBlack },
+            Sizes = new List<Size> { size38, size40 },
+            Orders = new List<Order>() // Add mock orders if necessary
         };
 
         var product2 = new Product
@@ -175,9 +174,9 @@ public class AdminDbRepos
             ProductPrice = 649,
             ProductRating = 5,
             Brand = brand2,
-            Colors = new List<IColor> { colorBlue, colorRed },
-            Sizes = new List<ISize> { size40, size42 },
-            Orders = new List<IOrder>() // Add mock orders if necessary
+            Colors = new List<Color> { colorBlue, colorRed },
+            Sizes = new List<Size> { size40, size42 },
+            Orders = new List<Order>() // Add mock orders if necessary
         };
 
         // Add products to their respective brands

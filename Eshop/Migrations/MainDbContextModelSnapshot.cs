@@ -22,22 +22,22 @@ namespace Eshop.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DbColorDbProduct", b =>
+            modelBuilder.Entity("ColorProduct", b =>
                 {
-                    b.Property<Guid>("DbColorsColorId")
+                    b.Property<Guid>("ColorsColorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DbProductsProductId")
+                    b.Property<Guid>("ProductsProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("DbColorsColorId", "DbProductsProductId");
+                    b.HasKey("ColorsColorId", "ProductsProductId");
 
-                    b.HasIndex("DbProductsProductId");
+                    b.HasIndex("ProductsProductId");
 
-                    b.ToTable("DbColorDbProduct");
+                    b.ToTable("ColorProduct");
                 });
 
-            modelBuilder.Entity("DbModels.DbBrand", b =>
+            modelBuilder.Entity("Models.Brand", b =>
                 {
                     b.Property<Guid>("BrandId")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace Eshop.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("DbModels.DbColor", b =>
+            modelBuilder.Entity("Models.Color", b =>
                 {
                     b.Property<Guid>("ColorId")
                         .ValueGeneratedOnAdd()
@@ -67,13 +67,10 @@ namespace Eshop.Migrations
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("DbModels.DbOrder", b =>
+            modelBuilder.Entity("Models.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DbUserUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("OrderAmount")
@@ -90,20 +87,23 @@ namespace Eshop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("OrderId");
 
-                    b.HasIndex("DbUserUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("DbModels.DbProduct", b =>
+            modelBuilder.Entity("Models.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DbBrandBrandId")
+                    b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductDescription")
@@ -126,12 +126,12 @@ namespace Eshop.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("DbBrandBrandId");
+                    b.HasIndex("BrandId");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("DbModels.DbSize", b =>
+            modelBuilder.Entity("Models.Size", b =>
                 {
                     b.Property<Guid>("SizeId")
                         .ValueGeneratedOnAdd()
@@ -148,7 +148,7 @@ namespace Eshop.Migrations
                     b.ToTable("Sizes");
                 });
 
-            modelBuilder.Entity("DbModels.DbUser", b =>
+            modelBuilder.Entity("Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -182,111 +182,111 @@ namespace Eshop.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DbOrderDbProduct", b =>
+            modelBuilder.Entity("OrderProduct", b =>
                 {
-                    b.Property<Guid>("DbOrdersOrderId")
+                    b.Property<Guid>("OrdersOrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DbProductsProductId")
+                    b.Property<Guid>("ProductsProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("DbOrdersOrderId", "DbProductsProductId");
+                    b.HasKey("OrdersOrderId", "ProductsProductId");
 
-                    b.HasIndex("DbProductsProductId");
+                    b.HasIndex("ProductsProductId");
 
-                    b.ToTable("DbOrderDbProduct");
+                    b.ToTable("OrderProduct");
                 });
 
-            modelBuilder.Entity("DbProductDbSize", b =>
+            modelBuilder.Entity("ProductSize", b =>
                 {
-                    b.Property<Guid>("DbProductsProductId")
+                    b.Property<Guid>("ProductsProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DbSizesSizeId")
+                    b.Property<Guid>("SizesSizeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("DbProductsProductId", "DbSizesSizeId");
+                    b.HasKey("ProductsProductId", "SizesSizeId");
 
-                    b.HasIndex("DbSizesSizeId");
+                    b.HasIndex("SizesSizeId");
 
-                    b.ToTable("DbProductDbSize");
+                    b.ToTable("ProductSize");
                 });
 
-            modelBuilder.Entity("DbColorDbProduct", b =>
+            modelBuilder.Entity("ColorProduct", b =>
                 {
-                    b.HasOne("DbModels.DbColor", null)
+                    b.HasOne("Models.Color", null)
                         .WithMany()
-                        .HasForeignKey("DbColorsColorId")
+                        .HasForeignKey("ColorsColorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DbModels.DbProduct", null)
+                    b.HasOne("Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("DbProductsProductId")
+                        .HasForeignKey("ProductsProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DbModels.DbOrder", b =>
+            modelBuilder.Entity("Models.Order", b =>
                 {
-                    b.HasOne("DbModels.DbUser", "DbUser")
-                        .WithMany("DbOrders")
-                        .HasForeignKey("DbUserUserId")
+                    b.HasOne("Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DbUser");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DbModels.DbProduct", b =>
+            modelBuilder.Entity("Models.Product", b =>
                 {
-                    b.HasOne("DbModels.DbBrand", "DbBrand")
-                        .WithMany("DbProducts")
-                        .HasForeignKey("DbBrandBrandId")
+                    b.HasOne("Models.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DbBrand");
+                    b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("DbOrderDbProduct", b =>
+            modelBuilder.Entity("OrderProduct", b =>
                 {
-                    b.HasOne("DbModels.DbOrder", null)
+                    b.HasOne("Models.Order", null)
                         .WithMany()
-                        .HasForeignKey("DbOrdersOrderId")
+                        .HasForeignKey("OrdersOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DbModels.DbProduct", null)
+                    b.HasOne("Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("DbProductsProductId")
+                        .HasForeignKey("ProductsProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DbProductDbSize", b =>
+            modelBuilder.Entity("ProductSize", b =>
                 {
-                    b.HasOne("DbModels.DbProduct", null)
+                    b.HasOne("Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("DbProductsProductId")
+                        .HasForeignKey("ProductsProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DbModels.DbSize", null)
+                    b.HasOne("Models.Size", null)
                         .WithMany()
-                        .HasForeignKey("DbSizesSizeId")
+                        .HasForeignKey("SizesSizeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DbModels.DbBrand", b =>
+            modelBuilder.Entity("Models.Brand", b =>
                 {
-                    b.Navigation("DbProducts");
+                    b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("DbModels.DbUser", b =>
+            modelBuilder.Entity("Models.User", b =>
                 {
-                    b.Navigation("DbOrders");
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

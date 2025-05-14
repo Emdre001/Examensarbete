@@ -1,9 +1,7 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-using Configuration;
 using Models;
 using Models.DTO;
-using DbModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +11,49 @@ using Npgsql.Replication;
 namespace DbContext;
 
 
-     public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
-    {
-        public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
+public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
+{
+    public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
 
-        public DbSet<DbProduct> Products { get; set; }
-        public DbSet<DbColor> Colors { get; set; }
-        public DbSet<DbOrder> Orders { get; set; }
-        public DbSet<DbBrand> Brands { get; set; } 
-        public DbSet<DbSize> Sizes { get; set; }
-        public DbSet<DbUser> Users { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Color> Colors { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Brand> Brands { get; set; } 
+    public DbSet<Size> Sizes { get; set; }
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) 
     
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Many-to-Many: Product - Size
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Sizes)
+            .WithMany(s => s.Products);
+
+        // Many-to-Many: Product - Color
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Colors)
+            .WithMany(c => c.Products);
+
+        // Many-to-Many: Product - Order
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Orders)
+            .WithMany(o => o.Products);
+
+        // One-to-Many: Brand - Product
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Brand)
+            .WithMany(b => b.Products)
+            .HasForeignKey(p => p.BrandId);
+
+        // One-to-Many: User - Order
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.User)
+            .WithMany(u => u.Orders)
+            .HasForeignKey(o => o.UserId);
     }
+
+
+}
