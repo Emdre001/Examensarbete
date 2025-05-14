@@ -20,10 +20,6 @@ public class BrandController : Controller
         _brandRepo = brandRepo;
     }
 
-
-
-    
-
     [HttpPost]
     public async Task<IActionResult> CreateBrand([FromBody] BrandDTO brandDto)
     {
