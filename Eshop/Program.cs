@@ -19,7 +19,7 @@ var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop"
 
 // Add DbContext to DI container (use Npgsql for PostgreSQL)
 builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlEShop")));
+    options.UseSqlServer(connectionString));
 
 // Add services for Swagger
 builder.Services.AddControllers();
@@ -33,6 +33,7 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 //Repos goes here
 builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<AdminDbRepos>();
+builder.Services.AddScoped<SizeDbRepos>(); 
 
 var app = builder.Build();
 
