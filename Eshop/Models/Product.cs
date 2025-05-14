@@ -4,18 +4,19 @@ using System;
 
 namespace Models;
 
-public class Product : IProduct
+public class Product
 {
-    public virtual Guid ProductId { get; set; }
-    public virtual string ProductName { get; set; }
-    public virtual string ProductType { get; set; }
-    public virtual string ProductDescription { get; set; }
-    public virtual int ProductPrice { get; set; }
-    public virtual int ProductRating { get; set; }
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; }
+    public string ProductType { get; set; }
+    public string ProductDescription { get; set; }
+    public int ProductPrice { get; set; }
+    public int ProductRating { get; set; }
 
-    public virtual IBrand Brand { get; set; }
-    public virtual List<IColor> Colors { get; set; }
-    public virtual List<ISize> Sizes { get; set; }
-    public virtual List<IOrder> Orders { get; set; }
+    public Guid BrandId { get; set; }
+    public Brand Brand { get; set; }
+    public List<Color> Colors { get; set; }
+    public List<Size> Sizes { get; set; }
+    public List<Order> Orders { get; set; }
     
 }

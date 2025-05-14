@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Eshop.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,19 +70,19 @@ namespace Eshop.Migrations
                 columns: table => new
                 {
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DbBrandBrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductPrice = table.Column<int>(type: "int", nullable: false),
-                    ProductRating = table.Column<int>(type: "int", nullable: false)
+                    ProductRating = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_Products_Brands_DbBrandBrandId",
-                        column: x => x.DbBrandBrandId,
+                        name: "FK_Products_Brands_BrandId",
+                        column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "BrandId",
                         onDelete: ReferentialAction.Cascade);
@@ -93,132 +93,132 @@ namespace Eshop.Migrations
                 columns: table => new
                 {
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DbUserUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderDetails = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderAmount = table.Column<int>(type: "int", nullable: false)
+                    OrderAmount = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_DbUserUserId",
-                        column: x => x.DbUserUserId,
+                        name: "FK_Orders_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DbColorDbProduct",
+                name: "ColorProduct",
                 columns: table => new
                 {
-                    DbColorsColorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DbProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ColorsColorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DbColorDbProduct", x => new { x.DbColorsColorId, x.DbProductsProductId });
+                    table.PrimaryKey("PK_ColorProduct", x => new { x.ColorsColorId, x.ProductsProductId });
                     table.ForeignKey(
-                        name: "FK_DbColorDbProduct_Colors_DbColorsColorId",
-                        column: x => x.DbColorsColorId,
+                        name: "FK_ColorProduct_Colors_ColorsColorId",
+                        column: x => x.ColorsColorId,
                         principalTable: "Colors",
                         principalColumn: "ColorId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DbColorDbProduct_Products_DbProductsProductId",
-                        column: x => x.DbProductsProductId,
+                        name: "FK_ColorProduct_Products_ProductsProductId",
+                        column: x => x.ProductsProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DbProductDbSize",
+                name: "ProductSize",
                 columns: table => new
                 {
-                    DbProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DbSizesSizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SizesSizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DbProductDbSize", x => new { x.DbProductsProductId, x.DbSizesSizeId });
+                    table.PrimaryKey("PK_ProductSize", x => new { x.ProductsProductId, x.SizesSizeId });
                     table.ForeignKey(
-                        name: "FK_DbProductDbSize_Products_DbProductsProductId",
-                        column: x => x.DbProductsProductId,
+                        name: "FK_ProductSize_Products_ProductsProductId",
+                        column: x => x.ProductsProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DbProductDbSize_Sizes_DbSizesSizeId",
-                        column: x => x.DbSizesSizeId,
+                        name: "FK_ProductSize_Sizes_SizesSizeId",
+                        column: x => x.SizesSizeId,
                         principalTable: "Sizes",
                         principalColumn: "SizeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DbOrderDbProduct",
+                name: "OrderProduct",
                 columns: table => new
                 {
-                    DbOrdersOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DbProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    OrdersOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DbOrderDbProduct", x => new { x.DbOrdersOrderId, x.DbProductsProductId });
+                    table.PrimaryKey("PK_OrderProduct", x => new { x.OrdersOrderId, x.ProductsProductId });
                     table.ForeignKey(
-                        name: "FK_DbOrderDbProduct_Orders_DbOrdersOrderId",
-                        column: x => x.DbOrdersOrderId,
+                        name: "FK_OrderProduct_Orders_OrdersOrderId",
+                        column: x => x.OrdersOrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DbOrderDbProduct_Products_DbProductsProductId",
-                        column: x => x.DbProductsProductId,
+                        name: "FK_OrderProduct_Products_ProductsProductId",
+                        column: x => x.ProductsProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbColorDbProduct_DbProductsProductId",
-                table: "DbColorDbProduct",
-                column: "DbProductsProductId");
+                name: "IX_ColorProduct_ProductsProductId",
+                table: "ColorProduct",
+                column: "ProductsProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbOrderDbProduct_DbProductsProductId",
-                table: "DbOrderDbProduct",
-                column: "DbProductsProductId");
+                name: "IX_OrderProduct_ProductsProductId",
+                table: "OrderProduct",
+                column: "ProductsProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbProductDbSize_DbSizesSizeId",
-                table: "DbProductDbSize",
-                column: "DbSizesSizeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_DbUserUserId",
+                name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "DbUserUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_DbBrandBrandId",
+                name: "IX_Products_BrandId",
                 table: "Products",
-                column: "DbBrandBrandId");
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSize_SizesSizeId",
+                table: "ProductSize",
+                column: "SizesSizeId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DbColorDbProduct");
+                name: "ColorProduct");
 
             migrationBuilder.DropTable(
-                name: "DbOrderDbProduct");
+                name: "OrderProduct");
 
             migrationBuilder.DropTable(
-                name: "DbProductDbSize");
+                name: "ProductSize");
 
             migrationBuilder.DropTable(
                 name: "Colors");
