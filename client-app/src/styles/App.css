@@ -1,0 +1,46 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body {
+  background: linear-gradient(to right, #f0f4ff, #f7f9fc);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
+.custom-navbar {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 999;
+  background-color: transparent;
+  width: 100%;
+}
+
+.custom-navbar .navbar-brand img {
+  height: 40px;
+}
+

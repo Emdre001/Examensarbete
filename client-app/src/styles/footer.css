@@ -1,0 +1,30 @@
+.footer-wrapper {
+    background: transparent; /* låter sidans bakgrund synas */
+    width: 100%;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: auto;
+}
+
+  
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 768px) {
+    .footer-inner {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+  }
+  
+  
+  
