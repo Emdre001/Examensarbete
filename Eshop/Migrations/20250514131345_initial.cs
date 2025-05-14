@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Eshop.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Eshop.Migrations
                 columns: table => new
                 {
                     BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    BrandName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {

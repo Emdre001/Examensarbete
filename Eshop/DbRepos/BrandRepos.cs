@@ -18,9 +18,9 @@ public class BrandDbRepos
         _dbContext = context;
     }
 
-    public async Task<DbBrand> CreateBrandAsync(BrandDTO brandDto)
+    public async Task<Brand> CreateBrandAsync(BrandDTO brandDto)
     {
-        var brand = new DbBrand
+        var brand = new Brand
         {
             BrandId = Guid.NewGuid(),
             BrandName = brandDto.BrandName
@@ -31,17 +31,17 @@ public class BrandDbRepos
         return brand;
     }
 
-    public async Task<DbBrand> GetBrandByIdAsync(Guid brandId)
+    public async Task<Brand> GetBrandByIdAsync(Guid brandId)
     {
         return await _dbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
     }
 
-    public async Task<List<DbBrand>> GetAllBrandsAsync()
+    public async Task<List<Brand>> GetAllBrandsAsync()
     {
         return await _dbContext.Brands.ToListAsync();
     }
 
-    public async Task<DbBrand> UpdateBrandAsync(Guid brandId, BrandDTO brandDto)
+    public async Task<Brand> UpdateBrandAsync(Guid brandId, BrandDTO brandDto)
     {
         var brand = await _dbContext.Brands.FindAsync(brandId);
         if (brand == null)

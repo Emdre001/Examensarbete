@@ -53,6 +53,12 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
             .HasOne(o => o.User)
             .WithMany(u => u.Orders)
             .HasForeignKey(o => o.UserId);
+
+        modelBuilder.Entity<Brand>(entity =>
+        {
+            entity.HasKey(b => b.BrandId);
+            entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
+        });
     }
 
 
