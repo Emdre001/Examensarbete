@@ -1,9 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
-using DbRepos;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.WriteIndented = true;
+    options.JsonSerializerOptions.MaxDepth = 100; // Optional: increase if needed
+});
+
+//CORS stuff goes here
 
 // Fetch the connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop");
@@ -13,13 +22,15 @@ builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlEShop")));
 
 // Add services for Swagger
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+
 builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Repos goes here
 builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<AdminDbRepos>();
 
@@ -29,7 +40,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty;
+    });
 }
 app.MapGet("/", () => "Hello World!");
 

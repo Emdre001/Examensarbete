@@ -12,31 +12,28 @@ namespace Controllers;
 [Route("api/[controller]")]
 public class AdminController : Controller
 {   
-    private readonly AdminDbRepos _adminDbRepos = null;
-    readonly ILogger<AdminController> _logger = null;
+    private readonly AdminDbRepos _adminDbRepos;
+    readonly ILogger<AdminController> _logger;
 
-    public AdminController(ILogger<AdminController> logger)
+    public AdminController(ILogger<AdminController> logger, AdminDbRepos adminDbRepos)
     {
         _logger = logger;
+        _adminDbRepos = adminDbRepos;
     }
 
     [HttpPost("createtestdata")]
-        public IActionResult CreateTestData()
+    public async Task<IActionResult> CreateTestData()
+    {
+        try
         {
-            try
-            {
-                // Call the CreateTestData method from the AdminDbRepo
-                _adminDbRepos.CreateTestData();
-
-                // Return a success response
-                return Ok("Test data created successfully.");
-            }
-            catch (Exception ex)
-            {
-                // Handle any errors that might occur
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            await _adminDbRepos.CreateTestDataAsync();
+            return Ok("Test data created successfully.");
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 
 
 }   
