@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
+using DbRepos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,12 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 // Add services for Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddControllers();
+builder.Services.AddDbContext<MainDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<BrandDbRepos>();
 
 var app = builder.Build();
 
@@ -33,4 +40,6 @@ app.MapGet("/products", async (MainDbContext dbContext) =>
     return Results.Ok(products);
 });
 
+app.UseAuthorization();
+app.MapControllers();
 app.Run();

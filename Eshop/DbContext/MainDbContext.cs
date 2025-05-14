@@ -11,17 +11,29 @@ using Npgsql.Replication;
 
 
 namespace DbContext;
+public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
+{
+    public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
 
-
-     public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
-    {
-        public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
-
-        public DbSet<DbProduct> Products { get; set; }
-        public DbSet<DbColor> Colors { get; set; }
-        public DbSet<DbOrder> Orders { get; set; }
-        public DbSet<DbBrand> Brands { get; set; } 
-        public DbSet<DbSize> Sizes { get; set; }
-        public DbSet<DbUser> Users { get; set; }
+    public DbSet<DbProduct> Products { get; set; }
+    public DbSet<DbColor> Colors { get; set; }
+    public DbSet<DbOrder> Orders { get; set; }
+    public DbSet<DbBrand> Brands { get; set; } 
+    public DbSet<DbSize> Sizes { get; set; }
+    public DbSet<DbUser> Users { get; set; }
     
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<DbBrand>(entity =>
+        {
+            entity.HasKey(b => b.BrandId);
+            entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
+        });
+
+        // Lägg till konfiguration för andra entiteter också om du vill
     }
+
+}

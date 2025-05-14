@@ -6,7 +6,6 @@ namespace Models.DTO;
 
 public class ProductDTO
 {
-    public Guid ProductId { get; set; }
     public string ProductName { get; set; }
     public string ProductType { get; set; }
     public string ProductDescription { get; set; }
