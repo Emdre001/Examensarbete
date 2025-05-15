@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/products.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useCartStore from './CartStore';
 
 const products = [
   {
@@ -13,33 +14,53 @@ const products = [
     id: 2,
     name: "Coming Soon Product",
     price: 0,
-    image: "", // Add image path later
+    image: "",
   },
 ];
 
 export function Products() {
+  const navigate = useNavigate();
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = (product) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      size: null,
+    });
+    alert("Produkten har lagts till i shoppingbagen!");
+  };
+
   return (
     <div className="page-wrapper">
       <h2 className="products-header">Our Collection</h2>
       <div className="product-grid">
         {products.map((product) => (
           <div className="product-card" key={product.id}>
-            {product.discount && (
-              <span className="discount-badge">-{product.discount}%</span>
+            {product.image && (
+              <img src={product.image} alt={product.name} className="product-image" />
             )}
-            <Link to={`/products/${product.id}`}>
-              {product.image && (
-                <img src={product.image} alt={product.name} className="product-image" />
-              )}
-              <div className="product-details">
-                <h3 className="product-title">{product.name}</h3>
-                <p className="product-price">
-                  {product.price > 0 ? `${product.price} kr` : 'Snart tillgänglig'}
-                </p>
+            <div className="product-details">
+              <div className="product-title">{product.name}</div>
+              <div className="product-price">
+                {product.price > 0 ? `${product.price} kr` : 'Snart tillgänglig'}
               </div>
-            </Link>
-            <button className="view-details">View Details</button>
-            <button className="add-to-cart">Add to Cart</button>
+            </div>
+            <button
+              className="view-details"
+              onClick={() => navigate(`/products/${product.id}`)}
+            >
+              View Details
+            </button>
+            <button
+              className="add-to-cart"
+              onClick={() => handleAddToCart(product)}
+              disabled={product.price === 0}
+            >
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>
