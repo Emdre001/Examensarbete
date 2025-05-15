@@ -34,6 +34,7 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<AdminDbRepos>();
 builder.Services.AddScoped<SizeDbRepos>(); 
+builder.Services.AddScoped<ColorDbRepos>(); 
 
 var app = builder.Build();
 
