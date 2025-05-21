@@ -16,7 +16,7 @@ public class Product
     public Guid BrandId { get; set; }
     public Brand Brand { get; set; }
     public List<Color> Colors { get; set; }
-    public List<Size> Sizes { get; set; }
+    public List<ProductSize> ProductSizes { get; set; }
     public List<Order> Orders { get; set; }
     
 }

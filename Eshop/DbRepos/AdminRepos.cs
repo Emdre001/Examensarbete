@@ -17,7 +17,7 @@ public class AdminDbRepos
         _dbContext = context;
     }
 
-    public async Task CreateTestDataAsync()
+   public async Task CreateTestDataAsync()
     {
         // Create brands
         var brand1 = new Brand
@@ -45,18 +45,17 @@ public class AdminDbRepos
         // Create sizes
         var sizes = new List<Size>
         {
-            new() { SizeId = Guid.NewGuid(), SizeValue = 36, SizeStock = 16, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 37, SizeStock = 22, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 38, SizeStock = 9, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 39, SizeStock = 14, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 40, SizeStock = 15, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 41, SizeStock = 20, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 42, SizeStock = 18, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 43, SizeStock = 12, Products = new List<Product>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 44, SizeStock = 8, Products = new List<Product>() }
+            new() { SizeId = Guid.NewGuid(), SizeValue = 36, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 37, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 38, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 39, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 40, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 41, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 42, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 43, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 44, ProductSizes = new List<ProductSize>() }
         };
 
-        // Pick some sizes to assign
         var size38 = sizes.First(s => s.SizeValue == 38);
         var size40 = sizes.First(s => s.SizeValue == 40);
         var size42 = sizes.First(s => s.SizeValue == 42);
@@ -72,8 +71,8 @@ public class AdminDbRepos
             ProductRating = 4,
             Brand = brand1,
             Colors = new List<Color> { colorWhite, colorBlack },
-            Sizes = new List<Size> { size38, size40 },
-            Orders = new List<Order>()
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() // ✅ New
         };
 
         var product2 = new Product
@@ -86,11 +85,24 @@ public class AdminDbRepos
             ProductRating = 5,
             Brand = brand2,
             Colors = new List<Color> { colorBlue, colorRed },
-            Sizes = new List<Size> { size40, size42 },
-            Orders = new List<Order>()
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() // ✅ New
         };
 
-        // Reverse links
+        // Create ProductSize entries (Stock is defined per product/size combo)
+        var productSizes = new List<ProductSize>
+        {
+            new() { Product = product1, Size = size38, Stock = 9 },
+            new() { Product = product1, Size = size40, Stock = 14 },
+            new() { Product = product2, Size = size40, Stock = 15 },
+            new() { Product = product2, Size = size42, Stock = 20 }
+        };
+
+        // Assign to ProductSizes collections
+        product1.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product1));
+        product2.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product2));
+
+        // Reverse links (if needed for navigation)
         brand1.Products.Add(product1);
         brand2.Products.Add(product2);
 
@@ -99,19 +111,16 @@ public class AdminDbRepos
         colorBlue.Products.Add(product2);
         colorRed.Products.Add(product2);
 
-        size38.Products.Add(product1);
-        size40.Products.Add(product1);
-        size40.Products.Add(product2);
-        size42.Products.Add(product2);
-
-        // Save to database
+        // Add to DB
         _dbContext.Brands.AddRange(brand1, brand2);
         _dbContext.Colors.AddRange(colorRed, colorBlue, colorGreen, colorWhite, colorBlack, colorGrey);
         _dbContext.Sizes.AddRange(sizes);
         _dbContext.Products.AddRange(product1, product2);
+        _dbContext.AddRange(productSizes); // ✅ Add join entities with stock
 
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task DeleteAllDataAsync()
     {
         try

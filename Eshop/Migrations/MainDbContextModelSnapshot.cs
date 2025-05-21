@@ -132,14 +132,29 @@ namespace Eshop.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Models.ProductSize", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SizeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "SizeId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("ProductSizes");
+                });
+
             modelBuilder.Entity("Models.Size", b =>
                 {
                     b.Property<Guid>("SizeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("SizeStock")
-                        .HasColumnType("int");
 
                     b.Property<int>("SizeValue")
                         .HasColumnType("int");
@@ -198,21 +213,6 @@ namespace Eshop.Migrations
                     b.ToTable("OrderProduct");
                 });
 
-            modelBuilder.Entity("ProductSize", b =>
-                {
-                    b.Property<Guid>("ProductsProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SizesSizeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductsProductId", "SizesSizeId");
-
-                    b.HasIndex("SizesSizeId");
-
-                    b.ToTable("ProductSize");
-                });
-
             modelBuilder.Entity("ColorProduct", b =>
                 {
                     b.HasOne("Models.Color", null)
@@ -250,6 +250,25 @@ namespace Eshop.Migrations
                     b.Navigation("Brand");
                 });
 
+            modelBuilder.Entity("Models.ProductSize", b =>
+                {
+                    b.HasOne("Models.Product", "Product")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Size", "Size")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
+                });
+
             modelBuilder.Entity("OrderProduct", b =>
                 {
                     b.HasOne("Models.Order", null)
@@ -265,24 +284,19 @@ namespace Eshop.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductSize", b =>
-                {
-                    b.HasOne("Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.Size", null)
-                        .WithMany()
-                        .HasForeignKey("SizesSizeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Models.Brand", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Models.Product", b =>
+                {
+                    b.Navigation("ProductSizes");
+                });
+
+            modelBuilder.Entity("Models.Size", b =>
+                {
+                    b.Navigation("ProductSizes");
                 });
 
             modelBuilder.Entity("Models.User", b =>

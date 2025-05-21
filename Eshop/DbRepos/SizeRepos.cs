@@ -23,7 +23,6 @@ public class SizeDbRepos
         {
             SizeId = Guid.NewGuid(),
             SizeValue = sizeDto.SizeValue,
-            SizeStock = sizeDto.SizeStock,
         };
 
         _dbContext.Sizes.Add(size);
@@ -50,7 +49,6 @@ public class SizeDbRepos
         }
 
         size.SizeValue = sizeDto.SizeValue;
-        size.SizeStock = sizeDto.SizeStock;
         _dbContext.Sizes.Update(size);
         await _dbContext.SaveChangesAsync();
         return size;
