@@ -31,10 +31,12 @@ builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //Repos goes here
-builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<AdminDbRepos>();
-builder.Services.AddScoped<SizeDbRepos>(); 
+builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<ColorDbRepos>(); 
+builder.Services.AddScoped<ProductDbRepos>();
+builder.Services.AddScoped<SizeDbRepos>(); 
+
 
 var app = builder.Build();
 
