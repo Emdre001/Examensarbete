@@ -51,18 +51,6 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
-app.MapGet("/", () => "Hello World!");
-
-// Example of a minimal endpoint using the MainDbContext
-app.MapGet("/products", async (MainDbContext dbContext) =>
-{
-    var products = await dbContext.Products.ToListAsync();
-    return Results.Ok(products);
-});
-
-
-app.UseAuthorization();
-app.MapControllers();
 
 
 app.UseAuthorization();
