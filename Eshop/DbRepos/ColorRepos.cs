@@ -66,4 +66,13 @@ public class ColorDbRepos
         await _dbContext.SaveChangesAsync();
         return true;
     }
+    public async Task DeleteAllColorsAsync()
+    {
+        var allColors = await _dbContext.Colors.ToListAsync();
+        if (allColors.Any())
+        {
+            _dbContext.Colors.RemoveRange(allColors);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }

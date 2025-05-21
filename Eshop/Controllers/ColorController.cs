@@ -82,4 +82,10 @@ public class ColorController : Controller
 
         return NoContent(); // 204 No Content
     }
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAllColors()
+    {
+        await _colorRepo.DeleteAllColorsAsync();
+        return NoContent();
+    }
 }

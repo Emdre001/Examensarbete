@@ -68,4 +68,14 @@ public class SizeDbRepos
         await _dbContext.SaveChangesAsync();
         return true;
     }
+    public async Task DeleteAllSizesAsync()
+    {
+        var allSizes = await _dbContext.Sizes.ToListAsync();
+        if (allSizes.Any())
+        {
+            _dbContext.Sizes.RemoveRange(allSizes);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
 }
