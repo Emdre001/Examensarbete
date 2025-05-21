@@ -36,7 +36,9 @@ builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<ColorDbRepos>(); 
 builder.Services.AddScoped<OrderDbRepos>();
 builder.Services.AddScoped<ProductDbRepos>();
-builder.Services.AddScoped<SizeDbRepos>(); 
+builder.Services.AddScoped<SizeDbRepos>();
+builder.Services.AddScoped<UserDbRepos>();
+
 
 
 var app = builder.Build();

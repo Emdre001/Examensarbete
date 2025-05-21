@@ -18,7 +18,7 @@ public class SizeDbRepos
         _dbContext = context;
     }
 
-     public async Task<Size> CreateSizeAsync(SizeDTO sizeDto)
+    public async Task<Size> CreateSizeAsync(SizeDTO sizeDto)
     {
         var size = new Size
         {
