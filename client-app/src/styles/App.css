@@ -44,3 +44,7 @@ body {
   height: 40px;
 }
 
+body, html, #root, .products-layout, .page-wrapper {
+    cursor: default !important;
+    user-select: auto !important;
+}

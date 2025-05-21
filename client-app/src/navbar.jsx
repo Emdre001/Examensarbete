@@ -1,9 +1,9 @@
 import React from 'react';
-import { Navbar, Nav, Container, Button, Form, FormControl } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Form, FormControl, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FaShoppingCart, FaSearch } from 'react-icons/fa';
+import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import useCartStore from './CartStore';
-import './styles/navbar.css'; // se till att du pekar rätt här
+import './styles/navbar.css';
 
 const CustomNavbar = () => {
   const cartCount = useCartStore((state) =>
@@ -12,11 +12,11 @@ const CustomNavbar = () => {
 
   return (
     <Navbar
-    bg="dark"
-    variant="dark"
-    expand="lg"
-    sticky="top"
-    className="custom-navbar"
+      bg="dark"
+      variant="dark"
+      expand="lg"
+      sticky="top"
+      className="custom-navbar"
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
@@ -38,8 +38,6 @@ const CustomNavbar = () => {
             <Nav.Link as={Link} to="/products">Products</Nav.Link>
             <Nav.Link as={Link} to="/about">About</Nav.Link>
             <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
-            <Nav.Link as={Link} to="/login">Login</Nav.Link>
-            <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
           </Nav>
 
           <Form className="d-flex ms-3 my-2 my-lg-0">
@@ -53,6 +51,31 @@ const CustomNavbar = () => {
               <FaSearch />
             </Button>
           </Form>
+
+          <Dropdown align="end" className="ms-3">
+            <Dropdown.Toggle
+              variant="outline-light"
+              id="user-dropdown"
+              style={{
+                border: 'none',
+                background: 'transparent',
+                boxShadow: 'none',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <FaUser size={22} />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/signup">Sign Up</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/settings">Settings</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/orders">Orders</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
           <Nav className="ms-3">
             <Nav.Link as={Link} to="/cart">

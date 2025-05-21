@@ -196,3 +196,57 @@
     align-items: center;
     gap: 6px;
 }
+
+/* Color filter circles (match ProductDetail style) */
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px; /* row gap, column gap */
+    max-width: 66px; /* 3 circles * (20px + 2*2px border + 2*gap) */
+}
+
+.color-circle-filter {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #bbb;
+    position: relative;
+    font-size: 13px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border 0.2s;
+    background: transparent;
+    margin-bottom: 0;
+}
+
+.color-circle-filter.selected {
+    border: 2px solid #7d2ae8;
+    box-shadow: 0 0 0 2px #e5d6fa;
+}
+
+.color-circle-filter .color-checkmark {
+    color: #222;
+    font-size: 13px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.color-circle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    min-width: 70px;
+}
+
+.color-name {
+    font-size: 0.97rem;
+    color: #222;
+    user-select: none;
+}

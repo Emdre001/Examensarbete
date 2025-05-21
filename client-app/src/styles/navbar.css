@@ -69,4 +69,67 @@
     align-items: center;
   }
 }
+.navbar,
+.custom-navbar,
+.navbar-nav .nav-link,
+.navbar-brand,
+#user-dropdown,
+#user-dropdown svg,
+.fa-shopping-cart,
+.fa-search,
+.fa-user {
+  color: #fff !important;
+  fill: #fff !important;
+}
 
+
+/* User icon button style */
+#user-dropdown {
+  border-radius: 0;
+  padding: 0 !important;
+  background: transparent;
+  color: #fff;
+  transition: color 0.2s;
+}
+
+#user-dropdown:hover,
+#user-dropdown:focus {
+  background: transparent !important;
+  color: #7d2ae8 !important;
+}
+
+/* Dropdown menu style */
+.dropdown-menu {
+  min-width: 170px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 6px 0;
+  font-size: 1rem;
+}
+
+.dropdown-menu .dropdown-item {
+  padding: 10px 20px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+  background: #f5f5f7;
+  color: #7d2ae8;
+}
+
+/* Show dropdown on hover for user icon */
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+  display: block;
+  margin-top: 0; /* Fixes slight offset */
+}
+
+/* Optional: Prevent click from toggling the dropdown */
+#user-dropdown {
+  pointer-events: none;
+}
+.dropdown:hover #user-dropdown,
+.dropdown:focus-within #user-dropdown {
+  pointer-events: auto;
+}
