@@ -3,21 +3,23 @@ import './styles/products.css';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from './CartStore';
 
-// Example product data with gender, color, and size
+// Example product data with gender, color, size, and brand
 const products = [
   {
     id: 1,
     name: "Nike Air Max DN Women",
+    brand: "Nike",
     price: 1499,
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen.png",
     gender: "Kvinnor",
     colors: ["#000000", "#ffffff", "#007aff"],
-    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44],
+    sizes: [36, 37, 38, 39, 40],
   },
   {
     id: 2,
     name: "Nike Air Force 1 '07",
     price: 1499,
+    brand: "Nike",
     image: process.env.PUBLIC_URL + "/Assets/img/AirForce1.png",
     gender: "Män",
     colors: ["#ffffff", "#888888"],
@@ -26,6 +28,7 @@ const products = [
   {
     id: 3,
     name: "Nike Air Max Plus",
+    brand: "Nike",
     price: 2399,
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.png",
     gender: "Män",
@@ -35,6 +38,7 @@ const products = [
   {
     id: 4,
     name: "Coming Soon Product",
+    brand: "Adidas",
     price: 0,
     image: "",
     gender: "Kvinnor",
@@ -43,7 +47,8 @@ const products = [
   },
 ];
 
-// Color options for filter
+// Filter options
+const brandOptions = ["Nike", "Adidas", "Puma", "Jordan"];
 const colorOptions = [
   { name: "Svart", value: "#000000" },
   { name: "Vit", value: "#ffffff" },
@@ -51,11 +56,7 @@ const colorOptions = [
   { name: "Blå", value: "#007aff" },
   { name: "Brun", value: "#8B5C2A" },
 ];
-
-// Size options for filter
 const sizeOptions = Array.from({ length: 9 }, (_, i) => 36 + i);
-
-// Price ranges for filter
 const priceOptions = [
   { label: "0 kr - 500 kr", min: 0, max: 500 },
   { label: "500 kr - 1000 kr", min: 500, max: 1000 },
@@ -68,13 +69,17 @@ export function Products() {
   const addToCart = useCartStore((state) => state.addToCart);
 
   // Filter states
+  const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrices, setSelectedPrices] = useState([]);
+  const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
 
   // Filtering logic
   const filteredProducts = products.filter((product) => {
+    // Brand filter
+    if (selectedBrands.length && !selectedBrands.includes(product.brand)) return false;
     // Gender filter
     if (selectedGender.length && !selectedGender.includes(product.gender)) return false;
     // Color filter
@@ -103,6 +108,11 @@ export function Products() {
   };
 
   // Toggle helpers
+  const toggleBrand = (brand) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+    );
+  };
   const toggleGender = (gender) => {
     setSelectedGender((prev) =>
       prev.includes(gender) ? prev.filter((g) => g !== gender) : [...prev, gender]
@@ -132,18 +142,37 @@ export function Products() {
         <h2 style={{ fontSize: "1.6rem", margin: "0 0 24px 0" }}>Filter</h2>
         <nav className="filter-nav">
           <ul>
-            <li>Livsstil</li>            
+            <li>Livsstil</li>
             <li>Löpning</li>
             <li>Basket</li>
             <li>Fotboll</li>
-            <li>Träning och gym</li>                       
+            <li>Träning och gym</li>
             <li>Tennis</li>
             <li>Gång</li>
           </ul>
         </nav>
         <hr className="filter-divider" />
+
+        {/* Brand Filter */}
         <div className="filter-section">
-          <button className="filter-toggle">Kön</button>
+          <div className="filter-title">Varumärke</div>
+          <div className="filter-options brand-options">
+            {brandOptions.map((brand) => (
+              <label key={brand}>
+                <input
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => toggleBrand(brand)}
+                />{" "}
+                {brand}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Gender Filter */}
+        <div className="filter-section">
+          <div className="filter-title">Kön</div>
           <div className="filter-options gender-options">
             <label>
               <input
@@ -161,42 +190,57 @@ export function Products() {
             </label>
           </div>
         </div>
+
+        {/* Size Filter as Dropdown */}
         <div className="filter-section">
-          <button className="filter-toggle">Storlek</button>
-          <div className="filter-options size-options">
-            {sizeOptions.map((size) => (
-              <label key={size}>
-                <input
-                  type="checkbox"
-                  checked={selectedSizes.includes(size)}
-                  onChange={() => toggleSize(size)}
-                /> {size}
-              </label>
+          <div
+            className="filter-title size-title"
+            onClick={() => setSizeDropdownOpen((open) => !open)}
+            style={{ cursor: "pointer", userSelect: "none" }}
+          >
+            Storlek {sizeDropdownOpen ? "▲" : "▼"}
+          </div>
+          {sizeDropdownOpen && (
+            <div className="filter-options size-options">
+              {sizeOptions.map((size) => (
+                <label key={size}>
+                  <input
+                    type="checkbox"
+                    checked={selectedSizes.includes(size)}
+                    onChange={() => toggleSize(size)}
+                  />{" "}
+                  {size}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Color Filter */}
+        <div className="filter-section">
+          <div className="filter-title">Färg</div>
+          <div className="filter-options color-options">
+            {colorOptions.map((color) => (
+              <div key={color.value} className="color-circle-label">
+                <span
+                  className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
+                  style={{ backgroundColor: color.value }}
+                  title={color.name}
+                  onClick={() => toggleColor(color.value)}
+                >
+                  {selectedColors.includes(color.value) && (
+                    <span className="color-checkmark">&#10003;</span>
+                  )}
+                </span>
+                <span className="color-name">{color.name}</span>
+              </div>
             ))}
           </div>
         </div>
+
+        {/* Price Filter */}
         <div className="filter-section">
-          <button className="filter-toggle">Färg</button>
-          <div className="filter-options color-options">
-          {colorOptions.map((color) => (
-            <div key={color.value} className="color-circle-label">
-              <span
-                className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
-                style={{ backgroundColor: color.value }}
-                title={color.name}
-                onClick={() => toggleColor(color.value)}
-              >
-                {selectedColors.includes(color.value) && (
-                  <span className="color-checkmark">&#10003;</span>
-                )}
-              </span>
-              <span className="color-name">{color.name}</span>
-            </div>
-          ))}
-        </div>
-        </div>
-        <div className="filter-section">
-          <button className="filter-toggle">Shoppa efter pris</button>
+          <div className="filter-title">Shoppa efter pris</div>
           <div className="filter-options price-options">
             {priceOptions.map((range) => (
               <label key={range.label}>

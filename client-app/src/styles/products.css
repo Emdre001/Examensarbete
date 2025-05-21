@@ -1,26 +1,34 @@
 /* --- Product Grid (Our Collection) --- */
 .page-wrapper {
-    max-width: 1800px;    /* or 1200px, as you prefer */
+    max-width: 1800px;
     margin: 0 auto;
     padding: 32px 24px;
     width: 100%;
+    min-width: 0;
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
-    gap: 32px;
-    margin: 32px 0;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;           /* Reduced gap */
+    margin: 24px 0;      /* Slightly less margin */
+    width: 100%;
+    min-height: 400px;
+    box-sizing: border-box;
 }
-
 @media (max-width: 900px) {
     .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Responsive on mobile/tablet */
     }
 }
 .products-main {
-    flex: 1;
+    flex: 1 1 0%;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 .product-card {
     background: #fff;
@@ -108,8 +116,10 @@
     display: flex;
     align-items: flex-start;
     gap: 32px;
-    width: 100%;
-    max-width: none;
+    width: 100vw;         
+    max-width: 1800px;    
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 @media (max-width: 900px) {
@@ -137,6 +147,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex-shrink: 0; 
 }
 
 .filter-nav ul {
@@ -164,21 +175,28 @@
 }
 
 .filter-section {
-    margin-bottom: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.filter-toggle {
-    background: none;
-    border: none;
-    font-size: 1.08rem;
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.filter-title {
     font-weight: 600;
-    padding: 8px 0;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+    margin-top: 0;
+    color: #222;
+    letter-spacing: 0.01em;
+}
+
+.size-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    user-select: none;
 }
 
 .filter-options {
@@ -197,12 +215,23 @@
     gap: 6px;
 }
 
+.brand-options label,
+.gender-options label,
+.price-options label {
+    margin-bottom: 4px;
+    font-size: 1rem;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* Color filter circles (match ProductDetail style) */
 .color-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 14px; /* row gap, column gap */
-    max-width: 66px; /* 3 circles * (20px + 2*2px border + 2*gap) */
+    gap: 10px 14px; 
+    max-width: 66px; 
 }
 
 .color-circle-filter {
