@@ -11,6 +11,7 @@ public class SizeDbRepos
 {
     private readonly ILogger<SizeDbRepos> _logger;
     private readonly MainDbContext _dbContext;
+    
     public SizeDbRepos(ILogger<SizeDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
