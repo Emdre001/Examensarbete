@@ -51,6 +51,12 @@ public class AdminDbRepos
             BrandName = "Ugg",
             Products = new List<Product>()
         };
+        var brandDior = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Dior",
+            Products = new List<Product>()
+        };
 
         // Create colors
         var colorRed = new Color { ColorId = Guid.NewGuid(), ColorName = "Red", Products = new List<Product>() };
@@ -95,7 +101,7 @@ public class AdminDbRepos
             ProductId = Guid.NewGuid(),
             ProductName = "Nike Air Max DN Women",
             ProductType = "Sneaker",
-            ProductDescription = "Nike Air Max DN Womens shoes combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductDescription = "Nike Air Max DN Womens shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 1499,
             ProductRating = 4,
             ProductGender = "Woman",
@@ -110,9 +116,9 @@ public class AdminDbRepos
             ProductId = Guid.NewGuid(),
             ProductName = "Nike Air Force 1 '07",
             ProductType = "Sneaker",
-            ProductDescription = "Nike Air Force 1 '07 Man shoes combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductDescription = "Nike Air Force 1 '07 Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 1499,
-            ProductRating = 5,
+            ProductRating = 2,
             ProductGender = "Man",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorGrey },
@@ -120,17 +126,73 @@ public class AdminDbRepos
             ProductSizes = new List<ProductSize>() 
         };
 
-         var product3 = new Product
+        var product3 = new Product
         {
             ProductId = Guid.NewGuid(),
             ProductName = "Nike Air Max Plus",
             ProductType = "Sneaker",
-            ProductDescription = "Nike Air Max Plus Man shoes combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductDescription = "Nike Air Max Plus Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 2399,
-            ProductRating = 5,
+            ProductRating = 3,
             ProductGender = "Man",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorBrown },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product4 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Axel arigato clean 90",
+            ProductType = "Sneaker",
+            ProductDescription = "Axel arigato clean 90 elegant shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 2565,
+            ProductRating = 5,
+            ProductGender = "Unisex",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorBlue, colorGreen },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product5 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Axel arigato Area Lo",
+            ProductType = "Sneaker",
+            ProductDescription = "Axel arigato Area Lo shoe combine comfort and style with a cool design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 3723,
+            ProductRating = 4,
+            ProductGender = "Unisex",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorBlue, colorWhite },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product6 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Walk'n'Dior Platform Sneaker",
+            ProductType = "Sneaker",
+            ProductDescription = "Walk'n'Dior Platform Sneaker luxery shoe combine comfort and style with a cool design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 10232,
+            ProductRating = 5,
+            ProductGender = "Woman",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorGrey, colorWhite },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product7 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "New Balance 530",
+            ProductType = "Sneaker",
+            ProductDescription = "New Balance 530 shoe combine comfort and style with a sport design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 1270,
+            ProductRating = 5,
+            ProductGender = "Woman",
+            Brand = brandNike,
+            Colors = new List<Color> { colorGrey, colorWhite, colorPink },
             Orders = new List<Order>(),
             ProductSizes = new List<ProductSize>() 
         };
@@ -158,17 +220,51 @@ public class AdminDbRepos
             new() { Product = product3, Size = size43, Stock = 14 },
             new() { Product = product3, Size = size44, Stock = 6 },
 
+            new() { Product = product4, Size = size37, Stock = 14 },
+            new() { Product = product4, Size = size38, Stock = 6 },
+            new() { Product = product4, Size = size39, Stock = 8 },
+            new() { Product = product4, Size = size43, Stock = 16 },
+            new() { Product = product4, Size = size44, Stock = 5 },
+
+            new() { Product = product5, Size = size36, Stock = 7 },
+            new() { Product = product5, Size = size37, Stock = 12 },
+            new() { Product = product5, Size = size39, Stock = 16 },
+            new() { Product = product5, Size = size41, Stock = 8 },
+            new() { Product = product5, Size = size42, Stock = 9 },
+            new() { Product = product5, Size = size43, Stock = 5 },
+
+            new() { Product = product6, Size = size35, Stock = 6 },
+            new() { Product = product6, Size = size36, Stock = 8 },
+            new() { Product = product6, Size = size37, Stock = 15 },
+            new() { Product = product6, Size = size38, Stock = 12 },
+            new() { Product = product6, Size = size39, Stock = 7 },
+            new() { Product = product6, Size = size40, Stock = 5 },
+
+            new() { Product = product7, Size = size35, Stock = 5 },
+            new() { Product = product7, Size = size36, Stock = 7 },
+            new() { Product = product7, Size = size37, Stock = 6 },
+            new() { Product = product7, Size = size38, Stock = 13 },
+
+
         };
 
         // Assign to ProductSizes collections
         product1.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product1));
         product2.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product2));
         product3.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product3));
+        product4.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product4));
+        product5.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product5));
+        product6.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product6));
+        product7.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product7));
 
         // Reverse links (if needed for navigation)
         brandNike.Products.Add(product1);
         brandNike.Products.Add(product2);
         brandNike.Products.Add(product3);
+        brandAxelArigato.Products.Add(product4);
+        brandAxelArigato.Products.Add(product5);
+        brandDior.Products.Add(product6);
+        brandNewBalance.Products.Add(product7);
 
         colorWhite.Products.Add(product1);
         colorBlack.Products.Add(product1);
@@ -180,11 +276,28 @@ public class AdminDbRepos
         colorBlack.Products.Add(product3);
         colorBrown.Products.Add(product3);
 
+        colorBlack.Products.Add(product4);
+        colorBlue.Products.Add(product4);
+        colorGreen.Products.Add(product4);
+
+        colorBlack.Products.Add(product5);
+        colorBlue.Products.Add(product5);
+        colorWhite.Products.Add(product5);
+
+        colorBlack.Products.Add(product6);
+        colorGrey.Products.Add(product6);
+        colorWhite.Products.Add(product6);
+
+        colorGrey.Products.Add(product7);
+        colorWhite.Products.Add(product7);
+        colorPink.Products.Add(product7);
+
+
         // Add to DB
         _dbContext.Brands.AddRange(brandNike, brandAdidas);
         _dbContext.Colors.AddRange(colorRed, colorBlue, colorGreen, colorWhite, colorBlack, colorGrey, colorBrown, colorPink);
         _dbContext.Sizes.AddRange(sizes);
-        _dbContext.Products.AddRange(product1, product2, product3);
+        _dbContext.Products.AddRange(product1, product2, product3, product4, product5, product6, product7);
         _dbContext.AddRange(productSizes); 
 
         await _dbContext.SaveChangesAsync();
