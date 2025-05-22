@@ -65,6 +65,7 @@ public class ProductDbRepos
             ProductDescription = dto.ProductDescription,
             ProductPrice = dto.ProductPrice,
             ProductRating = dto.ProductRating,
+            
             Brand = brand,
             BrandId = brand?.BrandId ?? Guid.Empty, // Optional but good for clarity
             Colors = colors,
