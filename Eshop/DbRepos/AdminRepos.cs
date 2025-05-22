@@ -33,6 +33,24 @@ public class AdminDbRepos
             BrandName = "Adidas",
             Products = new List<Product>()
         };
+        var brandNewBalance = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "NewBalance",
+            Products = new List<Product>()
+        };
+        var brandAxelArigato = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Axel Arigato",
+            Products = new List<Product>()
+        };
+        var brandUgg = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Ugg",
+            Products = new List<Product>()
+        };
 
         // Create colors
         var colorRed = new Color { ColorId = Guid.NewGuid(), ColorName = "Red", Products = new List<Product>() };
@@ -47,6 +65,7 @@ public class AdminDbRepos
         // Create sizes
         var sizes = new List<Size>
         {
+            new() { SizeId = Guid.NewGuid(), SizeValue = 35, ProductSizes = new List<ProductSize>() },
             new() { SizeId = Guid.NewGuid(), SizeValue = 36, ProductSizes = new List<ProductSize>() },
             new() { SizeId = Guid.NewGuid(), SizeValue = 37, ProductSizes = new List<ProductSize>() },
             new() { SizeId = Guid.NewGuid(), SizeValue = 38, ProductSizes = new List<ProductSize>() },
@@ -55,8 +74,10 @@ public class AdminDbRepos
             new() { SizeId = Guid.NewGuid(), SizeValue = 41, ProductSizes = new List<ProductSize>() },
             new() { SizeId = Guid.NewGuid(), SizeValue = 42, ProductSizes = new List<ProductSize>() },
             new() { SizeId = Guid.NewGuid(), SizeValue = 43, ProductSizes = new List<ProductSize>() },
-            new() { SizeId = Guid.NewGuid(), SizeValue = 44, ProductSizes = new List<ProductSize>() }
+            new() { SizeId = Guid.NewGuid(), SizeValue = 44, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 45, ProductSizes = new List<ProductSize>() }
         };
+        var size35 = sizes.First(s => s.SizeValue == 35);
         var size36 = sizes.First(s => s.SizeValue == 36);
         var size37 = sizes.First(s => s.SizeValue == 37);
         var size38 = sizes.First(s => s.SizeValue == 38);
@@ -66,6 +87,7 @@ public class AdminDbRepos
         var size42 = sizes.First(s => s.SizeValue == 42);
         var size43 = sizes.First(s => s.SizeValue == 43);
         var size44 = sizes.First(s => s.SizeValue == 44);
+        var size45 = sizes.First(s => s.SizeValue == 45);
 
         // Create products
         var product1 = new Product
