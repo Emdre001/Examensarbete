@@ -67,4 +67,13 @@ public class BrandDbRepos
         await _dbContext.SaveChangesAsync();
         return true;
     }
+    public async Task DeleteAllBrandsAsync()
+    {
+        var allBrands = await _dbContext.Brands.ToListAsync();
+        if (allBrands.Any())
+        {
+            _dbContext.Brands.RemoveRange(allBrands);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }

@@ -11,6 +11,7 @@ import ForgotPassword from './ForgotPassword';
 import Cart from './Cart';
 import Footer from './footer';
 import Navbar from './navbar';
+import AdminPage from './admin';
 import { Toaster } from 'react-hot-toast';
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,6 +36,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </main>
         </div>        

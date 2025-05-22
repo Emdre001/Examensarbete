@@ -12,11 +12,12 @@ public class Product
     public string ProductDescription { get; set; }
     public int ProductPrice { get; set; }
     public int ProductRating { get; set; }
+    public string ProductGender { get; set; }
 
     public Guid BrandId { get; set; }
     public Brand Brand { get; set; }
     public List<Color> Colors { get; set; }
-    public List<Size> Sizes { get; set; }
+    public List<ProductSize> ProductSizes { get; set; }
     public List<Order> Orders { get; set; }
     
 }

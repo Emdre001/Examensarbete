@@ -18,19 +18,28 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Color> Colors { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<Brand> Brands { get; set; } 
+    public DbSet<Brand> Brands { get; set; }
     public DbSet<Size> Sizes { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<ProductSize> ProductSizes { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) 
-    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Many-to-Many: Product - Size
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.Sizes)
-            .WithMany(s => s.Products);
+        // Updated: Product - Size (with payload)
+        modelBuilder.Entity<ProductSize>()
+            .HasKey(ps => new { ps.ProductId, ps.SizeId });
+
+        modelBuilder.Entity<ProductSize>()
+            .HasOne(ps => ps.Product)
+            .WithMany(p => p.ProductSizes)
+            .HasForeignKey(ps => ps.ProductId);
+
+        modelBuilder.Entity<ProductSize>()
+            .HasOne(ps => ps.Size)
+            .WithMany(s => s.ProductSizes)
+            .HasForeignKey(ps => ps.SizeId);
 
         // Many-to-Many: Product - Color
         modelBuilder.Entity<Product>()
@@ -60,6 +69,5 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
             entity.Property(b => b.BrandName).IsRequired().HasMaxLength(100);
         });
     }
-
-
+    
 }

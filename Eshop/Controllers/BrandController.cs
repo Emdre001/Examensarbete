@@ -82,4 +82,10 @@ public class BrandController : Controller
 
         return NoContent(); // 204 No Content
     }
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAllBrands()
+    {
+        await _brandRepo.DeleteAllBrandsAsync();
+        return NoContent();
+    }
 }

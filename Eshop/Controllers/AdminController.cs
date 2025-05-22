@@ -34,6 +34,21 @@ public class AdminController : Controller
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+    
+    [HttpDelete("deleteall")]
+    public async Task<IActionResult> DeleteAllData()
+    {
+        try
+        {
+            await _adminDbRepos.DeleteAllDataAsync();
+            return Ok("All data deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete all data");
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 
 
 }   

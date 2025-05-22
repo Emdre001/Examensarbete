@@ -11,19 +11,19 @@ public class SizeDbRepos
 {
     private readonly ILogger<SizeDbRepos> _logger;
     private readonly MainDbContext _dbContext;
+    
     public SizeDbRepos(ILogger<SizeDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
         _dbContext = context;
     }
 
-     public async Task<Size> CreateSizeAsync(SizeDTO sizeDto)
+    public async Task<Size> CreateSizeAsync(SizeDTO sizeDto)
     {
         var size = new Size
         {
             SizeId = Guid.NewGuid(),
             SizeValue = sizeDto.SizeValue,
-            SizeStock = sizeDto.SizeStock,
         };
 
         _dbContext.Sizes.Add(size);
@@ -50,7 +50,6 @@ public class SizeDbRepos
         }
 
         size.SizeValue = sizeDto.SizeValue;
-        size.SizeStock = sizeDto.SizeStock;
         _dbContext.Sizes.Update(size);
         await _dbContext.SaveChangesAsync();
         return size;
@@ -68,4 +67,14 @@ public class SizeDbRepos
         await _dbContext.SaveChangesAsync();
         return true;
     }
+    public async Task DeleteAllSizesAsync()
+    {
+        var allSizes = await _dbContext.Sizes.ToListAsync();
+        if (allSizes.Any())
+        {
+            _dbContext.Sizes.RemoveRange(allSizes);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
 }

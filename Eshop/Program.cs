@@ -5,11 +5,21 @@ using DbRepos;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true;
-    options.JsonSerializerOptions.MaxDepth = 100; // Optional: increase if needed
+    options.JsonSerializerOptions.MaxDepth = 100;
 });
 
 //CORS stuff goes here
@@ -31,9 +41,15 @@ builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //Repos goes here
-builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<AdminDbRepos>();
-builder.Services.AddScoped<SizeDbRepos>(); 
+builder.Services.AddScoped<BrandDbRepos>();
+builder.Services.AddScoped<ColorDbRepos>(); 
+builder.Services.AddScoped<OrderDbRepos>();
+builder.Services.AddScoped<ProductDbRepos>();
+builder.Services.AddScoped<SizeDbRepos>();
+builder.Services.AddScoped<UserDbRepos>();
+
+
 
 var app = builder.Build();
 
@@ -47,19 +63,8 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
-app.MapGet("/", () => "Hello World!");
 
-// Example of a minimal endpoint using the MainDbContext
-app.MapGet("/products", async (MainDbContext dbContext) =>
-{
-    var products = await dbContext.Products.ToListAsync();
-    return Results.Ok(products);
-});
-
-
-app.UseAuthorization();
-app.MapControllers();
-
+app.UseCors("AllowLocalhost3000");
 
 app.UseAuthorization();
 app.MapControllers();

@@ -40,8 +40,7 @@ namespace Eshop.Migrations
                 columns: table => new
                 {
                     SizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SizeValue = table.Column<int>(type: "int", nullable: false),
-                    SizeStock = table.Column<int>(type: "int", nullable: false)
+                    SizeValue = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,6 +74,7 @@ namespace Eshop.Migrations
                     ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductPrice = table.Column<int>(type: "int", nullable: false),
                     ProductRating = table.Column<int>(type: "int", nullable: false),
+                    ProductGender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -135,24 +135,25 @@ namespace Eshop.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductSize",
+                name: "ProductSizes",
                 columns: table => new
                 {
-                    ProductsProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SizesSizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductSize", x => new { x.ProductsProductId, x.SizesSizeId });
+                    table.PrimaryKey("PK_ProductSizes", x => new { x.ProductId, x.SizeId });
                     table.ForeignKey(
-                        name: "FK_ProductSize_Products_ProductsProductId",
-                        column: x => x.ProductsProductId,
+                        name: "FK_ProductSizes_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductSize_Sizes_SizesSizeId",
-                        column: x => x.SizesSizeId,
+                        name: "FK_ProductSizes_Sizes_SizeId",
+                        column: x => x.SizeId,
                         principalTable: "Sizes",
                         principalColumn: "SizeId",
                         onDelete: ReferentialAction.Cascade);
@@ -203,9 +204,9 @@ namespace Eshop.Migrations
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductSize_SizesSizeId",
-                table: "ProductSize",
-                column: "SizesSizeId");
+                name: "IX_ProductSizes_SizeId",
+                table: "ProductSizes",
+                column: "SizeId");
         }
 
         /// <inheritdoc />
@@ -218,7 +219,7 @@ namespace Eshop.Migrations
                 name: "OrderProduct");
 
             migrationBuilder.DropTable(
-                name: "ProductSize");
+                name: "ProductSizes");
 
             migrationBuilder.DropTable(
                 name: "Colors");

@@ -17,103 +17,312 @@ public class AdminDbRepos
         _dbContext = context;
     }
 
-    public async Task CreateTestDataAsync()
-{
-    // Create brands
-    var brand1 = new Brand
+   public async Task CreateTestDataAsync()
     {
-        BrandId = Guid.NewGuid(),
-        BrandName = "Nike",
-        Products = new List<Product>()
-    };
+        // Create brands
+        var brandNike = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Nike",
+            Products = new List<Product>()
+        };
 
-    var brand2 = new Brand
+        var brandAdidas = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Adidas",
+            Products = new List<Product>()
+        };
+        var brandNewBalance = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "NewBalance",
+            Products = new List<Product>()
+        };
+        var brandAxelArigato = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Axel Arigato",
+            Products = new List<Product>()
+        };
+        var brandUgg = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Ugg",
+            Products = new List<Product>()
+        };
+        var brandDior = new Brand
+        {
+            BrandId = Guid.NewGuid(),
+            BrandName = "Dior",
+            Products = new List<Product>()
+        };
+
+        // Create colors
+        var colorRed = new Color { ColorId = Guid.NewGuid(), ColorName = "Red", Products = new List<Product>() };
+        var colorBlue = new Color { ColorId = Guid.NewGuid(), ColorName = "Blue", Products = new List<Product>() };
+        var colorGreen = new Color { ColorId = Guid.NewGuid(), ColorName = "Green", Products = new List<Product>() };
+        var colorWhite = new Color { ColorId = Guid.NewGuid(), ColorName = "White", Products = new List<Product>() };
+        var colorBlack = new Color { ColorId = Guid.NewGuid(), ColorName = "Black", Products = new List<Product>() };
+        var colorGrey = new Color { ColorId = Guid.NewGuid(), ColorName = "Grey", Products = new List<Product>() };
+        var colorBrown = new Color { ColorId = Guid.NewGuid(), ColorName = "Brown", Products = new List<Product>() };
+        var colorPink = new Color { ColorId = Guid.NewGuid(), ColorName = "Pink", Products = new List<Product>() };
+
+        // Create sizes
+        var sizes = new List<Size>
+        {
+            new() { SizeId = Guid.NewGuid(), SizeValue = 35, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 36, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 37, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 38, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 39, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 40, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 41, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 42, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 43, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 44, ProductSizes = new List<ProductSize>() },
+            new() { SizeId = Guid.NewGuid(), SizeValue = 45, ProductSizes = new List<ProductSize>() }
+        };
+        var size35 = sizes.First(s => s.SizeValue == 35);
+        var size36 = sizes.First(s => s.SizeValue == 36);
+        var size37 = sizes.First(s => s.SizeValue == 37);
+        var size38 = sizes.First(s => s.SizeValue == 38);
+        var size39 = sizes.First(s => s.SizeValue == 39);
+        var size40 = sizes.First(s => s.SizeValue == 40);
+        var size41 = sizes.First(s => s.SizeValue == 41);
+        var size42 = sizes.First(s => s.SizeValue == 42);
+        var size43 = sizes.First(s => s.SizeValue == 43);
+        var size44 = sizes.First(s => s.SizeValue == 44);
+        var size45 = sizes.First(s => s.SizeValue == 45);
+
+        // Create products
+        var product1 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Nike Air Max DN Women",
+            ProductType = "Sneaker",
+            ProductDescription = "Nike Air Max DN Womens shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 1499,
+            ProductRating = 4,
+            ProductGender = "Woman",
+            Brand = brandNike,
+            Colors = new List<Color> { colorWhite, colorBlack, colorBlue },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() // ✅ New
+        };
+
+        var product2 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Nike Air Force 1 '07",
+            ProductType = "Sneaker",
+            ProductDescription = "Nike Air Force 1 '07 Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 1499,
+            ProductRating = 2,
+            ProductGender = "Man",
+            Brand = brandNike,
+            Colors = new List<Color> { colorWhite, colorGrey },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+
+        var product3 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Nike Air Max Plus",
+            ProductType = "Sneaker",
+            ProductDescription = "Nike Air Max Plus Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 2399,
+            ProductRating = 3,
+            ProductGender = "Man",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorBrown },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product4 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Axel arigato clean 90",
+            ProductType = "Sneaker",
+            ProductDescription = "Axel arigato clean 90 elegant shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 2565,
+            ProductRating = 5,
+            ProductGender = "Unisex",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorBlue, colorGreen },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product5 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Axel arigato Area Lo",
+            ProductType = "Sneaker",
+            ProductDescription = "Axel arigato Area Lo shoe combine comfort and style with a cool design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 3723,
+            ProductRating = 4,
+            ProductGender = "Unisex",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorBlue, colorWhite },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product6 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "Walk'n'Dior Platform Sneaker",
+            ProductType = "Sneaker",
+            ProductDescription = "Walk'n'Dior Platform Sneaker luxery shoe combine comfort and style with a cool design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 10232,
+            ProductRating = 5,
+            ProductGender = "Woman",
+            Brand = brandNike,
+            Colors = new List<Color> { colorBlack, colorGrey, colorWhite },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+        var product7 = new Product
+        {
+            ProductId = Guid.NewGuid(),
+            ProductName = "New Balance 530",
+            ProductType = "Sneaker",
+            ProductDescription = "New Balance 530 shoe combine comfort and style with a sport design and responsive cushioning. Perfect for everyday wear.",
+            ProductPrice = 1270,
+            ProductRating = 5,
+            ProductGender = "Woman",
+            Brand = brandNike,
+            Colors = new List<Color> { colorGrey, colorWhite, colorPink },
+            Orders = new List<Order>(),
+            ProductSizes = new List<ProductSize>() 
+        };
+
+        // Create ProductSize entries (Stock is defined per product/size combo)
+        var productSizes = new List<ProductSize>
+        {
+            new() { Product = product1, Size = size36, Stock = 9 },
+            new() { Product = product1, Size = size37, Stock = 12 },
+            new() { Product = product1, Size = size38, Stock = 10 },
+            new() { Product = product1, Size = size39, Stock = 9 },
+            new() { Product = product1, Size = size40, Stock = 14 },
+
+            new() { Product = product2, Size = size38, Stock = 15 },
+            new() { Product = product2, Size = size39, Stock = 9 },
+            new() { Product = product2, Size = size40, Stock = 9 },
+            new() { Product = product2, Size = size41, Stock = 8 },
+            new() { Product = product2, Size = size42, Stock = 20 },
+            new() { Product = product2, Size = size43, Stock = 7 },
+            new() { Product = product2, Size = size44, Stock = 17 },
+
+            new() { Product = product3, Size = size40, Stock = 17 },
+            new() { Product = product3, Size = size41, Stock = 15 },
+            new() { Product = product3, Size = size42, Stock = 10 },
+            new() { Product = product3, Size = size43, Stock = 14 },
+            new() { Product = product3, Size = size44, Stock = 6 },
+
+            new() { Product = product4, Size = size37, Stock = 14 },
+            new() { Product = product4, Size = size38, Stock = 6 },
+            new() { Product = product4, Size = size39, Stock = 8 },
+            new() { Product = product4, Size = size43, Stock = 16 },
+            new() { Product = product4, Size = size44, Stock = 5 },
+
+            new() { Product = product5, Size = size36, Stock = 7 },
+            new() { Product = product5, Size = size37, Stock = 12 },
+            new() { Product = product5, Size = size39, Stock = 16 },
+            new() { Product = product5, Size = size41, Stock = 8 },
+            new() { Product = product5, Size = size42, Stock = 9 },
+            new() { Product = product5, Size = size43, Stock = 5 },
+
+            new() { Product = product6, Size = size35, Stock = 6 },
+            new() { Product = product6, Size = size36, Stock = 8 },
+            new() { Product = product6, Size = size37, Stock = 15 },
+            new() { Product = product6, Size = size38, Stock = 12 },
+            new() { Product = product6, Size = size39, Stock = 7 },
+            new() { Product = product6, Size = size40, Stock = 5 },
+
+            new() { Product = product7, Size = size35, Stock = 5 },
+            new() { Product = product7, Size = size36, Stock = 7 },
+            new() { Product = product7, Size = size37, Stock = 6 },
+            new() { Product = product7, Size = size38, Stock = 13 },
+
+
+        };
+
+        // Assign to ProductSizes collections
+        product1.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product1));
+        product2.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product2));
+        product3.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product3));
+        product4.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product4));
+        product5.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product5));
+        product6.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product6));
+        product7.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product7));
+
+        // Reverse links (if needed for navigation)
+        brandNike.Products.Add(product1);
+        brandNike.Products.Add(product2);
+        brandNike.Products.Add(product3);
+        brandAxelArigato.Products.Add(product4);
+        brandAxelArigato.Products.Add(product5);
+        brandDior.Products.Add(product6);
+        brandNewBalance.Products.Add(product7);
+
+        colorWhite.Products.Add(product1);
+        colorBlack.Products.Add(product1);
+        colorBlue.Products.Add(product1);
+
+        colorWhite.Products.Add(product2);
+        colorGrey.Products.Add(product2);
+
+        colorBlack.Products.Add(product3);
+        colorBrown.Products.Add(product3);
+
+        colorBlack.Products.Add(product4);
+        colorBlue.Products.Add(product4);
+        colorGreen.Products.Add(product4);
+
+        colorBlack.Products.Add(product5);
+        colorBlue.Products.Add(product5);
+        colorWhite.Products.Add(product5);
+
+        colorBlack.Products.Add(product6);
+        colorGrey.Products.Add(product6);
+        colorWhite.Products.Add(product6);
+
+        colorGrey.Products.Add(product7);
+        colorWhite.Products.Add(product7);
+        colorPink.Products.Add(product7);
+
+
+        // Add to DB
+        _dbContext.Brands.AddRange(brandNike, brandAdidas);
+        _dbContext.Colors.AddRange(colorRed, colorBlue, colorGreen, colorWhite, colorBlack, colorGrey, colorBrown, colorPink);
+        _dbContext.Sizes.AddRange(sizes);
+        _dbContext.Products.AddRange(product1, product2, product3, product4, product5, product6, product7);
+        _dbContext.AddRange(productSizes); 
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAllDataAsync()
     {
-        BrandId = Guid.NewGuid(),
-        BrandName = "Adidas",
-        Products = new List<Product>()
-    };
+        try
+        {
+            // Radera i omvänd ordning av relationshierarkin för att undvika FK-problem
+            _dbContext.Orders.RemoveRange(_dbContext.Orders);
+            _dbContext.Products.RemoveRange(_dbContext.Products);
+            _dbContext.Brands.RemoveRange(_dbContext.Brands);
+            _dbContext.Colors.RemoveRange(_dbContext.Colors);
+            _dbContext.Sizes.RemoveRange(_dbContext.Sizes);
 
-    // Create colors
-    var colorRed = new Color { ColorId = Guid.NewGuid(), ColorName = "Red", Products = new List<Product>() };
-    var colorBlue = new Color { ColorId = Guid.NewGuid(), ColorName = "Blue", Products = new List<Product>() };
-    var colorGreen = new Color { ColorId = Guid.NewGuid(), ColorName = "Green", Products = new List<Product>() };
-    var colorWhite = new Color { ColorId = Guid.NewGuid(), ColorName = "White", Products = new List<Product>() };
-    var colorBlack = new Color { ColorId = Guid.NewGuid(), ColorName = "Black", Products = new List<Product>() };
-    var colorGrey = new Color { ColorId = Guid.NewGuid(), ColorName = "Grey", Products = new List<Product>() };
-
-    // Create sizes
-    var sizes = new List<Size>
-    {
-        new() { SizeId = Guid.NewGuid(), SizeValue = 36, SizeStock = 16, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 37, SizeStock = 22, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 38, SizeStock = 9, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 39, SizeStock = 14, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 40, SizeStock = 15, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 41, SizeStock = 20, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 42, SizeStock = 18, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 43, SizeStock = 12, Products = new List<Product>() },
-        new() { SizeId = Guid.NewGuid(), SizeValue = 44, SizeStock = 8, Products = new List<Product>() }
-    };
-
-    // Pick some sizes to assign
-    var size38 = sizes.First(s => s.SizeValue == 38);
-    var size40 = sizes.First(s => s.SizeValue == 40);
-    var size42 = sizes.First(s => s.SizeValue == 42);
-
-    // Create products
-    var product1 = new Product
-    {
-        ProductId = Guid.NewGuid(),
-        ProductName = "Shoe A",
-        ProductType = "Sneaker",
-        ProductDescription = "Shoe A Desc",
-        ProductPrice = 899,
-        ProductRating = 4,
-        Brand = brand1,
-        Colors = new List<Color> { colorWhite, colorBlack },
-        Sizes = new List<Size> { size38, size40 },
-        Orders = new List<Order>()
-    };
-
-    var product2 = new Product
-    {
-        ProductId = Guid.NewGuid(),
-         ProductName = "Shoe B",
-        ProductType = "Sneaker",
-        ProductDescription = "Shoe B Desc",
-        ProductPrice = 649,
-        ProductRating = 5,
-        Brand = brand2,
-        Colors = new List<Color> { colorBlue, colorRed },
-        Sizes = new List<Size> { size40, size42 },
-        Orders = new List<Order>()
-    };
-
-    // Reverse links
-    brand1.Products.Add(product1);
-    brand2.Products.Add(product2);
-
-    colorWhite.Products.Add(product1);
-    colorBlack.Products.Add(product1);
-    colorBlue.Products.Add(product2);
-    colorRed.Products.Add(product2);
-
-    size38.Products.Add(product1);
-    size40.Products.Add(product1);
-    size40.Products.Add(product2);
-    size42.Products.Add(product2);
-
-    // Save to database
-    _dbContext.Brands.AddRange(brand1, brand2);
-    _dbContext.Colors.AddRange(colorRed, colorBlue, colorGreen, colorWhite, colorBlack, colorGrey);
-    _dbContext.Sizes.AddRange(sizes);
-    _dbContext.Products.AddRange(product1, product2);
-
-     await _dbContext.SaveChangesAsync();
-}
-
-
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting all data");
+            throw;
+        }
+    }
+    
 }
 
 

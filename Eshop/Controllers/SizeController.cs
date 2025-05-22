@@ -4,7 +4,6 @@ using Models;
 using Models.DTO;
 using DbRepos;
 
-
 namespace Controllers;
 
 [ApiController]
@@ -81,5 +80,12 @@ public class SizeController : Controller
         }
 
         return NoContent(); // 204 No Content
+    }
+    
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAllSizes()
+    {
+        await _sizeRepo.DeleteAllSizesAsync();
+        return NoContent();
     }
 }
