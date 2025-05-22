@@ -3,7 +3,32 @@ import './styles/products.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useCartStore from './CartStore';
 
-// Example product data with gender, color, size, and brand
+const brandOptions = [
+  "Nike", "Adidas", "New Balance", "Axel Arigato", "Ugg", "Dior"
+];
+const colorOptions = [
+  { name: "Red", value: "#ff0000" },
+  { name: "Blue", value: "#007aff" },
+  { name: "Green", value: "#228B22" },
+  { name: "White", value: "#ffffff" },
+  { name: "Black", value: "#000000" },
+  { name: "Grey", value: "#888888" },
+  { name: "Brown", value: "#8B5C2A" },
+  { name: "Pink", value: "#ff69b4" },
+  { name: "Beige", value: "#f5f5dc" }
+];
+const sizeOptions = Array.from({ length: 11 }, (_, i) => 35 + i);
+const categoryOptions = [
+  "Sneaker", "Boots"
+];
+const priceOptions = [
+  { label: "0 kr - 1000 kr", min: 0, max: 1000 },
+  { label: "1000 kr - 2000 kr", min: 1000, max: 2000 },
+  { label: "2000 kr - 5000 kr", min: 2000, max: 5000 },
+  { label: "5000+ kr", min: 5000, max: Infinity },
+];
+
+// Product data 
 const products = [
   {
     id: 1,
@@ -12,19 +37,19 @@ const products = [
     price: 1499,
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen.png",
     gender: "Women",
-    category: "Lifestyle",
-    colors: ["#000000", "#ffffff", "#007aff"],
+    category: "Sneaker",
+    colors: ["#ffffff", "#ff69b4", "#888888"], // White/Pink/Grey
     sizes: [36, 37, 38, 39, 40],
   },
   {
     id: 2,
     name: "Nike Air Force 1 '07",
-    price: 1499,
     brand: "Nike",
-    image: process.env.PUBLIC_URL + "/Assets/img/AirForce1.png",
+    price: 1499,
+    image: process.env.PUBLIC_URL + "/Assets/img/AIR force.jpg",
     gender: "Men",
-    category: "Basket",
-    colors: ["#ffffff", "#888888"],
+    category: "Sneaker",
+    colors: ["#ffffff", ],
     sizes: [38, 39, 40, 41, 42, 43, 44],
   },
   {
@@ -32,49 +57,145 @@ const products = [
     name: "Nike Air Max Plus",
     brand: "Nike",
     price: 2399,
-    image: process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.png",
+    image: process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.webp",
     gender: "Men",
-    category: "Running",
+    category: "Sneaker",
     colors: ["#000000", "#8B5C2A"],
     sizes: [40, 41, 42, 43, 44],
   },
   {
     id: 4,
-    name: "Coming Soon Product",
-    brand: "Adidas",
-    price: 0,
-    image: "",
-    gender: "Women",
-    category: "Training and Gym",
-    colors: [],
-    sizes: [],
+    name: "Axel arigato Area Lo Sneaker",
+    brand: "Axel Arigato",
+    price: 2565,
+    image: process.env.PUBLIC_URL + "/Assets/img/AxelArigato.jpg",
+    gender: "Unisex",
+    category: "Sneaker",
+    colors: ["#ffffff", "#f5f5dc"], // White/Beige
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
   },
-];
-
-// Filter options
-const brandOptions = ["Nike", "Adidas", "Puma", "Jordan"];
-const colorOptions = [
-  { name: "Black", value: "#000000" },
-  { name: "White", value: "#ffffff" },
-  { name: "Grey", value: "#888888" },
-  { name: "Blue", value: "#007aff" },
-  { name: "Brown", value: "#8B5C2A" },
-];
-const sizeOptions = Array.from({ length: 9 }, (_, i) => 36 + i);
-const priceOptions = [
-  { label: "0 kr - 500 kr", min: 0, max: 500 },
-  { label: "500 kr - 1000 kr", min: 500, max: 1000 },
-  { label: "1000 kr - 1500 kr", min: 1000, max: 1500 },
-  { label: "1500+ kr", min: 1500, max: Infinity },
-];
-const categoryOptions = [
-  "Lifestyle",
-  "Running",
-  "Basket",
-  "Football",
-  "Training and Gym",
-  "Tennis",
-  "Walking"
+  {
+    id: 5,
+    name: "Axel arigato Clean 90 Mocha",
+    brand: "Axel Arigato",
+    price: 3723,
+    image: process.env.PUBLIC_URL + "/Assets/img/Arigattooo.jpg",
+    gender: "Unisex",
+    category: "Sneaker",
+    colors: ["#000000", "#ffffff"], // Black/White
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 6,
+    name: "Walk'n'Dior Platform Sneaker",
+    brand: "Dior",
+    price: 10232,
+    image: process.env.PUBLIC_URL + "/Assets/img/Dior.jpg",
+    gender: "Women",
+    category: "Sneaker",
+    colors: ["#ffffff", "#f5f5dc"], // White/Beige
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 7,
+    name: "New Balance 530",
+    brand: "New Balance",
+    price: 1270,
+    image: process.env.PUBLIC_URL + "/Assets/img/NewBalance.jpg",
+    gender: "Women",
+    category: "Sneaker",
+    colors: ["#ffffff"], // White
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 8,
+    name: "New Balance 530 Beige",
+    brand: "New Balance",
+    price: 1070,
+    image: process.env.PUBLIC_URL + "/Assets/img/NewBalanceBeige.jpg",
+    gender: "Women",
+    category: "Sneaker",
+    colors: ["#f5f5dc"], // Beige
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 9,
+    name: "Nike Dunk Low Pink",
+    brand: "Nike",
+    price: 799,
+    image: process.env.PUBLIC_URL + "/Assets/img/NikebabyPink.jpg",
+    gender: "Women",
+    category: "Sneaker",
+    colors: ["#ff69b4"], // Pink
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 10,
+    name: "Nike Dunk Low Olive Green",
+    brand: "Nike",
+    price: 1045,
+    image: process.env.PUBLIC_URL + "/Assets/img/NikeGreen.jpg",
+    gender: "Men",
+    category: "Sneaker",
+    colors: ["#228B22", "#ffffff"], // Olive Green/White
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 11,
+    name: "Nike Dunks Low Panda",
+    brand: "Nike",
+    price: 1245,
+    image: process.env.PUBLIC_URL + "/Assets/img/NikePanda.jpg",
+    gender: "Unisex",
+    category: "Sneaker",
+    colors: ["#000000", "#ffffff"], // Black/White
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 12,
+    name: "Ugg Mini",
+    brand: "Ugg",
+    price: 2745,
+    image: process.env.PUBLIC_URL + "/Assets/img/uggMiniSvart.jpeg",
+    gender: "Women",
+    category: "Boots",
+    colors: ["#000000"], // Black
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 13,
+    name: "Ugg Ultra Mini",
+    brand: "Ugg",
+    price: 2859,
+    image: process.env.PUBLIC_URL + "/Assets/img/UggsLow.jpg",
+    gender: "Women",
+    category: "Boots",
+     colors: ["#f5f5dc"], // Beige
+    sizes: [36, 37, 38, 39, 40,],
+  },
+  {
+    id: 14,
+    name: "Adidas Campus",
+    brand: "Adidas",
+    price: 1355,
+    image: process.env.PUBLIC_URL + "/Assets/img/AdidasCampus.jpg",
+    gender: "Unisex",
+    category: "Sneaker",
+    colors: ["#888888", "#ffffff"], // Grey/White
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  {
+    id: 15,
+    name: "Nike Dunk Low Baby blue",
+    brand: "Nike",
+    price: 1170,
+    image: process.env.PUBLIC_URL + "/Assets/img/NikeDunkBlue.jpg",
+    gender: "Unisex",
+    category: "Sneaker",
+    colors: ["#007aff"], // Blue
+    sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+  },
+  
 ];
 
 export function Products() {
@@ -224,25 +345,32 @@ export function Products() {
         </div>
 
         {/* Gender Filter */}
-        <div className="filter-section">
-          <div className="filter-title">Gender</div>
-          <div className="filter-options gender-options">
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedGender.includes("Men")}
-                onChange={() => toggleGender("Men")}
-              /> Men
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedGender.includes("Women")}
-                onChange={() => toggleGender("Women")}
-              /> Women
-            </label>
-          </div>
-        </div>
+            <div className="filter-section">
+      <div className="filter-title">Gender</div>
+      <div className="filter-options gender-options">
+        <label>
+          <input
+            type="checkbox"
+            checked={selectedGender.includes("Men")}
+            onChange={() => toggleGender("Men")}
+          /> Men
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={selectedGender.includes("Women")}
+            onChange={() => toggleGender("Women")}
+          /> Women
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={selectedGender.includes("Unisex")}
+            onChange={() => toggleGender("Unisex")}
+          /> Unisex
+        </label>
+      </div>
+    </div>
 
         {/* Size Filter as Dropdown */}
         <div className="filter-section">

@@ -142,12 +142,15 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     padding: 24px 16px;
     height: fit-content;
+    max-height: 80vh;      
+    overflow-y: auto;      
     position: sticky;
     top: 32px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     flex-shrink: 0; 
+    scrollbar-width: thin; 
 }
 
 .filter-nav ul {
@@ -335,14 +338,17 @@
 }
 
 .product-image {
-    max-height: 160px;
+    width: 100%;
+    max-width: 260px;      
+    height: 240px;         
     object-fit: contain;
-    margin-bottom: 1rem;
+    display: block;
+    margin: 0 auto 1rem auto;
     background: #f7f7f7;
     border-radius: 12px 12px 0 0;
-    width: 100%;
+    box-shadow: none;
+    padding: 10px;
 }
-
 .product-title {
     font-weight: 700;
     font-size: 1.13rem;

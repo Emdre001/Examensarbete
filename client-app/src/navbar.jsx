@@ -13,15 +13,10 @@ import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import useCartStore from './CartStore';
 import './styles/navbar.css';
 
-const brandOptions = ['Nike', 'Adidas', 'Puma', 'Jordan'];
-const categoryOptions = [
-  'Lifestyle',
-  'Running',
-  'Basket',
-  'Football',
-  'Training and Gym',
-  'Tennis',
-  'Walking',
+// Only these categories
+const categoryOptions = ['Sneaker', 'Boots'];
+const brandOptions = [
+  'Nike', 'Adidas', 'New Balance', 'Axel Arigato', 'Ugg', 'Dior'
 ];
 
 const CustomNavbar = () => {
@@ -71,14 +66,8 @@ const CustomNavbar = () => {
         <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
             {/* Men's Shoes */}
-            <Dropdown
-              as={Nav.Item}
-              className="me-2"
-            >
-              <Dropdown.Toggle
-                as={Nav.Link}
-                id="men-dropdown"
-              >
+            <Dropdown as={Nav.Item} className="me-2">
+              <Dropdown.Toggle as={Nav.Link} id="men-dropdown">
                 Men's Shoes
               </Dropdown.Toggle>
               <Dropdown.Menu className="mega-menu-dropdown" data-dropdown="true">
@@ -118,14 +107,8 @@ const CustomNavbar = () => {
             </Dropdown>
 
             {/* Women's Shoes */}
-            <Dropdown
-              as={Nav.Item}
-              className="me-2"
-            >
-              <Dropdown.Toggle
-                as={Nav.Link}
-                id="women-dropdown"
-              >
+            <Dropdown as={Nav.Item} className="me-2">
+              <Dropdown.Toggle as={Nav.Link} id="women-dropdown">
                 Women's Shoes
               </Dropdown.Toggle>
               <Dropdown.Menu className="mega-menu-dropdown" data-dropdown="true">
