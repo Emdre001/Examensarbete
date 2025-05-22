@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './styles/products.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useCartStore from './CartStore';
+import ToastNotification from './ToastNotification';
 
 const brandOptions = [
   "Nike", "Adidas", "New Balance", "Axel Arigato", "Ugg", "Dior"
@@ -170,8 +171,8 @@ const products = [
     image: process.env.PUBLIC_URL + "/Assets/img/UggsLow.jpg",
     gender: "Women",
     category: "Boots",
-     colors: ["#f5f5dc"], // Beige
-    sizes: [36, 37, 38, 39, 40,],
+    colors: ["#f5f5dc"], // Beige
+    sizes: [36, 37, 38, 39, 40],
   },
   {
     id: 14,
@@ -195,13 +196,16 @@ const products = [
     colors: ["#007aff"], // Blue
     sizes: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
   },
-  
 ];
 
 export function Products() {
   const navigate = useNavigate();
   const location = useLocation();
   const addToCart = useCartStore((state) => state.addToCart);
+
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const toastTimeout = useRef(null);
 
   // Parse filters from URL
   const params = new URLSearchParams(location.search);
@@ -267,7 +271,9 @@ export function Products() {
       image: product.image,
       size: null,
     });
-    alert("Product added to cart!");
+    setShowToast(true);
+    if (toastTimeout.current) clearTimeout(toastTimeout.current);
+    toastTimeout.current = setTimeout(() => setShowToast(false), 1800);
   };
 
   // Toggle helpers
@@ -305,179 +311,182 @@ export function Products() {
   };
 
   return (
-    <div className="products-layout">
-      <aside className="filter-sidebar">
-        <h2 style={{ fontSize: "1.6rem", margin: "0 0 24px 0" }}>Filter</h2>
-        <nav className="filter-nav">
-          <ul>
-            {categoryOptions.map((cat) => (
-              <li
-                key={cat}
-                style={{
-                  fontWeight: selectedCategories.includes(cat) ? 700 : 500,
-                  color: selectedCategories.includes(cat) ? "#7d2ae8" : undefined,
-                  cursor: "pointer"
-                }}
-                onClick={() => toggleCategory(cat)}
-              >
-                {cat}
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <hr className="filter-divider" />
+    <>
+      <ToastNotification show={showToast} message="Product added to cart!" />
+      <div className="products-layout">
+        <aside className="filter-sidebar">
+          <h2 style={{ fontSize: "1.6rem", margin: "0 0 24px 0" }}>Filter</h2>
+          <nav className="filter-nav">
+            <ul>
+              {categoryOptions.map((cat) => (
+                <li
+                  key={cat}
+                  style={{
+                    fontWeight: selectedCategories.includes(cat) ? 700 : 500,
+                    color: selectedCategories.includes(cat) ? "#7d2ae8" : undefined,
+                    cursor: "pointer"
+                  }}
+                  onClick={() => toggleCategory(cat)}
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <hr className="filter-divider" />
 
-        {/* Brand Filter */}
-        <div className="filter-section">
-          <div className="filter-title">Brand</div>
-          <div className="filter-options brand-options">
-            {brandOptions.map((brand) => (
-              <label key={brand}>
-                <input
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand)}
-                  onChange={() => toggleBrand(brand)}
-                />{" "}
-                {brand}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Gender Filter */}
-            <div className="filter-section">
-      <div className="filter-title">Gender</div>
-      <div className="filter-options gender-options">
-        <label>
-          <input
-            type="checkbox"
-            checked={selectedGender.includes("Men")}
-            onChange={() => toggleGender("Men")}
-          /> Men
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={selectedGender.includes("Women")}
-            onChange={() => toggleGender("Women")}
-          /> Women
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={selectedGender.includes("Unisex")}
-            onChange={() => toggleGender("Unisex")}
-          /> Unisex
-        </label>
-      </div>
-    </div>
-
-        {/* Size Filter as Dropdown */}
-        <div className="filter-section">
-          <div
-            className="filter-title size-title"
-            onClick={() => setSizeDropdownOpen((open) => !open)}
-            style={{ cursor: "pointer", userSelect: "none" }}
-          >
-            Size {sizeDropdownOpen ? "▲" : "▼"}
-          </div>
-          {sizeDropdownOpen && (
-            <div className="filter-options size-options">
-              {sizeOptions.map((size) => (
-                <label key={size}>
+          {/* Brand Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Brand</div>
+            <div className="filter-options brand-options">
+              {brandOptions.map((brand) => (
+                <label key={brand}>
                   <input
                     type="checkbox"
-                    checked={selectedSizes.includes(size)}
-                    onChange={() => toggleSize(size)}
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => toggleBrand(brand)}
                   />{" "}
-                  {size}
+                  {brand}
                 </label>
               ))}
             </div>
-          )}
-        </div>
-
-        {/* Color Filter */}
-        <div className="filter-section">
-          <div className="filter-title">Color</div>
-          <div className="filter-options color-options">
-            {colorOptions.map((color) => (
-              <div key={color.value} className="color-circle-label">
-                <span
-                  className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
-                  style={{ backgroundColor: color.value }}
-                  title={color.name}
-                  onClick={() => toggleColor(color.value)}
-                >
-                  {selectedColors.includes(color.value) && (
-                    <span className="color-checkmark">&#10003;</span>
-                  )}
-                </span>
-                <span className="color-name">{color.name}</span>
-              </div>
-            ))}
           </div>
-        </div>
 
-        {/* Price Filter */}
-        <div className="filter-section">
-          <div className="filter-title">Price</div>
-          <div className="filter-options price-options">
-            {priceOptions.map((range) => (
-              <label key={range.label}>
+          {/* Gender Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Gender</div>
+            <div className="filter-options gender-options">
+              <label>
                 <input
                   type="checkbox"
-                  checked={selectedPrices.some((r) => r.min === range.min && r.max === range.max)}
-                  onChange={() => togglePrice(range)}
-                /> {range.label}
+                  checked={selectedGender.includes("Men")}
+                  onChange={() => toggleGender("Men")}
+                /> Men
               </label>
-            ))}
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedGender.includes("Women")}
+                  onChange={() => toggleGender("Women")}
+                /> Women
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedGender.includes("Unisex")}
+                  onChange={() => toggleGender("Unisex")}
+                /> Unisex
+              </label>
+            </div>
           </div>
-        </div>
-      </aside>
-      <main className="products-main">
-        <div className="page-wrapper">
-          <div className="products-header">
-            <h2>Our Collection</h2>
-            <div className="products-subheader">Discover our latest sneakers for every style</div>
-            <hr className="products-divider" />
-          </div>
-          <div className="product-grid">
-            {filteredProducts.length === 0 && (
-              <div style={{ gridColumn: "1/-1", textAlign: "center", color: "#888" }}>
-                No products match your filters.
+
+          {/* Size Filter as Dropdown */}
+          <div className="filter-section">
+            <div
+              className="filter-title size-title"
+              onClick={() => setSizeDropdownOpen((open) => !open)}
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
+              Size {sizeDropdownOpen ? "▲" : "▼"}
+            </div>
+            {sizeDropdownOpen && (
+              <div className="filter-options size-options">
+                {sizeOptions.map((size) => (
+                  <label key={size}>
+                    <input
+                      type="checkbox"
+                      checked={selectedSizes.includes(size)}
+                      onChange={() => toggleSize(size)}
+                    />{" "}
+                    {size}
+                  </label>
+                ))}
               </div>
             )}
-            {filteredProducts.map((product) => (
-              <div className="product-card" key={product.id}>
-                {product.image && (
-                  <img src={product.image} alt={product.name} className="product-image" />
-                )}
-                <div className="product-details">
-                  <div className="product-title">{product.name}</div>
-                  <div className="product-price">
-                    {product.price > 0 ? `${product.price} kr` : 'Coming soon'}
-                  </div>
-                </div>
-                <button
-                  className="view-details"
-                  onClick={() => navigate(`/products/${product.id}`)}
-                >
-                  View details
-                </button>
-                <button
-                  className="add-to-cart"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={product.price === 0}
-                >
-                  Add to cart
-                </button>
-              </div>
-            ))}
           </div>
-        </div>
-      </main>
-    </div>
+
+          {/* Color Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Color</div>
+            <div className="filter-options color-options">
+              {colorOptions.map((color) => (
+                <div key={color.value} className="color-circle-label">
+                  <span
+                    className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
+                    style={{ backgroundColor: color.value }}
+                    title={color.name}
+                    onClick={() => toggleColor(color.value)}
+                  >
+                    {selectedColors.includes(color.value) && (
+                      <span className="color-checkmark">&#10003;</span>
+                    )}
+                  </span>
+                  <span className="color-name">{color.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Price</div>
+            <div className="filter-options price-options">
+              {priceOptions.map((range) => (
+                <label key={range.label}>
+                  <input
+                    type="checkbox"
+                    checked={selectedPrices.some((r) => r.min === range.min && r.max === range.max)}
+                    onChange={() => togglePrice(range)}
+                  /> {range.label}
+                </label>
+              ))}
+            </div>
+          </div>
+        </aside>
+        <main className="products-main">
+          <div className="page-wrapper">
+            <div className="products-header">
+              <h2>Our Collection</h2>
+              <div className="products-subheader">Discover our latest sneakers for every style</div>
+              <hr className="products-divider" />
+            </div>
+            <div className="product-grid">
+              {filteredProducts.length === 0 && (
+                <div style={{ gridColumn: "1/-1", textAlign: "center", color: "#888" }}>
+                  No products match your filters.
+                </div>
+              )}
+              {filteredProducts.map((product) => (
+                <div className="product-card" key={product.id}>
+                  {product.image && (
+                    <img src={product.image} alt={product.name} className="product-image" />
+                  )}
+                  <div className="product-details">
+                    <div className="product-title">{product.name}</div>
+                    <div className="product-price">
+                      {product.price > 0 ? `${product.price} kr` : 'Coming soon'}
+                    </div>
+                  </div>
+                  <button
+                    className="view-details"
+                    onClick={() => navigate(`/products/${product.id}`)}
+                  >
+                    View details
+                  </button>
+                  <button
+                    className="add-to-cart"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={product.price === 0}
+                  >
+                    Add to cart
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
 

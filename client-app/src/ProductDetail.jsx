@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './styles/ProductDetail.css';
 import useCartStore from './CartStore';
+import ToastNotification from './ToastNotification';
 
 const productData = {
   1: {
@@ -193,6 +194,7 @@ export function ProductDetail() {
   const { id } = useParams();
   const product = productData[id];
   const addToCart = useCartStore((state) => state.addToCart);
+  const [showToast, setShowToast] = useState(false);
 
   // Start with first image or video as selected
   const [selectedMedia, setSelectedMedia] = useState(
@@ -223,10 +225,13 @@ export function ProductDetail() {
       size: selectedSize,
       color: selectedColor,
     });
-    alert("Product has been added to your cart!");
+     setShowToast(true);
+    setTimeout(() => setShowToast(false), 1800);
   };
 
   return (
+    <>
+    <ToastNotification show={showToast} message="Product added to cart!" />
     <div className="product-detail-container">
       <div className="product-gallery">
         {/* Show video as first thumbnail if it exists */}
@@ -315,6 +320,7 @@ export function ProductDetail() {
         </button>
       </div>
     </div>
+    </>
   );
 }
 
