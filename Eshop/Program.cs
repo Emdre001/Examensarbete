@@ -5,11 +5,21 @@ using DbRepos;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true;
-    options.JsonSerializerOptions.MaxDepth = 100; // Optional: increase if needed
+    options.JsonSerializerOptions.MaxDepth = 100;
 });
 
 //CORS stuff goes here
@@ -54,6 +64,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors("AllowLocalhost3000");
 
 app.UseAuthorization();
 app.MapControllers();
