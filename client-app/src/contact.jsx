@@ -4,12 +4,31 @@ import { FaEnvelope } from 'react-icons/fa';
 
 export default function Contact() {
     return (
+
+        <div className="home-wrapper">
+      {/* 🔙 Bakgrundsbild som ligger bakom allt */}
+      <div
+        className="background-image"
+        style={{
+          backgroundImage: 'url("/Assets/img/ShoesWall.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          opacity: 0.12,
+          zIndex: -1
+        }}
+      ></div>
         <section className="Contact">
             <div className="page-wrapper">
-                <h1 className="contact-title">Kontakta oss</h1>
+                <h1 className="contact-title">Contact us</h1>
                 <p className="contact-lead">
-                    Vi ser fram emot att höra från dig! Har du några frågor eller funderingar? Tveka inte att skicka oss ett mail.
-                </p>
+                We look forward to hearing from you! Do you have any questions or concerns? Do not hesitate to send us an email.                </p>
 
                 <p className="contact-email">
                     <FaEnvelope size={20} />
@@ -18,7 +37,7 @@ export default function Contact() {
                 </p>
 
                 <p className="contact-address">
-                    <strong>Adress:</strong> Malmvägen 1, 115 41, Stockholm, Sverige
+                    <strong>Address:</strong> Malmvägen 1, 115 41, Stockholm, Sverige
                 </p>
 
                 <div className="map-container">
@@ -32,6 +51,7 @@ export default function Contact() {
                 </div>
             </div>
         </section>
+        </div>
     );
 }
 
