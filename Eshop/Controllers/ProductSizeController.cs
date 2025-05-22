@@ -18,8 +18,8 @@ public class ProductSizesController : ControllerBase
     }
 
     // GET: api/ProductSizes
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductSizeDTO>>> GetAll()
+    [HttpGet("/api/GetAllProductSizes")]
+    public async Task<ActionResult<IEnumerable<ProductSizeDTO>>> GetAllProductSizes()
     {
         var productSizes = await _context.ProductSizes
             .Select(ps => new ProductSizeDTO
@@ -34,8 +34,8 @@ public class ProductSizesController : ControllerBase
     }
 
     // GET: api/ProductSizes/{productId}/{sizeId}
-    [HttpGet("{productId:guid}/{sizeId:guid}")]
-    public async Task<ActionResult<ProductSizeDTO>> Get(Guid productId, Guid sizeId)
+    [HttpGet("/api/GetProductSizeById/{productId:guid}/{sizeId:guid}")]
+    public async Task<ActionResult<ProductSizeDTO>> GetProductSizeByIds(Guid productId, Guid sizeId)
     {
         var ps = await _context.ProductSizes.FindAsync(productId, sizeId);
 
@@ -51,8 +51,8 @@ public class ProductSizesController : ControllerBase
     }
 
     // POST: api/ProductSizes
-    [HttpPost]
-    public async Task<ActionResult<ProductSizeDTO>> Post(ProductSizeDTO dto)
+    [HttpPost("/api/CreateProductSize")]
+    public async Task<ActionResult<ProductSizeDTO>> CreateProductSize(ProductSizeDTO dto)
     {
         var exists = await _context.ProductSizes.FindAsync(dto.ProductId, dto.SizeId);
         if (exists != null)
@@ -68,12 +68,12 @@ public class ProductSizesController : ControllerBase
         _context.ProductSizes.Add(entity);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { productId = dto.ProductId, sizeId = dto.SizeId }, dto);
+        return CreatedAtAction(nameof(GetProductSizeByIds), new { productId = dto.ProductId, sizeId = dto.SizeId }, dto);
     }
 
     // PUT: api/ProductSizes/{productId}/{sizeId}
-    [HttpPut("{productId:guid}/{sizeId:guid}")]
-    public async Task<IActionResult> Put(Guid productId, Guid sizeId, ProductSizeDTO dto)
+    [HttpPut("/api/updateProductSize/{productId:guid}/{sizeId:guid}")]
+    public async Task<IActionResult> UpdateProductSizeByIds(Guid productId, Guid sizeId, ProductSizeDTO dto)
     {
         if (productId != dto.ProductId || sizeId != dto.SizeId)
             return BadRequest("Mismatched product/size IDs.");
@@ -91,8 +91,8 @@ public class ProductSizesController : ControllerBase
     }
 
     // DELETE: api/ProductSizes/{productId}/{sizeId}
-    [HttpDelete("{productId:guid}/{sizeId:guid}")]
-    public async Task<IActionResult> Delete(Guid productId, Guid sizeId)
+    [HttpDelete("/api/DeleteProductSizeById/{productId:guid}/{sizeId:guid}")]
+    public async Task<IActionResult> DeleteProductSizeByIds(Guid productId, Guid sizeId)
     {
         var entity = await _context.ProductSizes.FindAsync(productId, sizeId);
         if (entity == null)
