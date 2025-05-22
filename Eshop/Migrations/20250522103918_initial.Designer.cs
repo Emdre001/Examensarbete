@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eshop.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20250521120256_initial")]
+    [Migration("20250522103918_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -111,6 +111,10 @@ namespace Eshop.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductGender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -34,6 +34,7 @@ public class AdminController : Controller
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+    
     [HttpDelete("deleteall")]
     public async Task<IActionResult> DeleteAllData()
     {

@@ -74,6 +74,7 @@ namespace Eshop.Migrations
                     ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductPrice = table.Column<int>(type: "int", nullable: false),
                     ProductRating = table.Column<int>(type: "int", nullable: false),
+                    ProductGender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

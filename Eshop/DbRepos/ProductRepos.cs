@@ -65,6 +65,7 @@ public class ProductDbRepos
             ProductDescription = dto.ProductDescription,
             ProductPrice = dto.ProductPrice,
             ProductRating = dto.ProductRating,
+            ProductGender = dto.ProductGender,
             Brand = brand,
             BrandId = brand?.BrandId ?? Guid.Empty, // Optional but good for clarity
             Colors = colors,
@@ -91,6 +92,7 @@ public class ProductDbRepos
         product.ProductDescription = dto.ProductDescription;
         product.ProductPrice = dto.ProductPrice;
         product.ProductRating = dto.ProductRating;
+        product.ProductGender = dto.ProductGender;
 
         product.Brand = await _dbContext.Brands.FindAsync(dto.BrandId);
         product.Colors = await _dbContext.Colors.Where(c => dto.ColorsId.Contains(c.ColorId)).ToListAsync();
