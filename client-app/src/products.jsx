@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/products.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useCartStore from './CartStore';
 
 // Example product data with gender, color, size, and brand
@@ -11,7 +11,8 @@ const products = [
     brand: "Nike",
     price: 1499,
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen.png",
-    gender: "Kvinnor",
+    gender: "Women",
+    category: "Lifestyle",
     colors: ["#000000", "#ffffff", "#007aff"],
     sizes: [36, 37, 38, 39, 40],
   },
@@ -21,7 +22,8 @@ const products = [
     price: 1499,
     brand: "Nike",
     image: process.env.PUBLIC_URL + "/Assets/img/AirForce1.png",
-    gender: "Män",
+    gender: "Men",
+    category: "Basket",
     colors: ["#ffffff", "#888888"],
     sizes: [38, 39, 40, 41, 42, 43, 44],
   },
@@ -31,7 +33,8 @@ const products = [
     brand: "Nike",
     price: 2399,
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.png",
-    gender: "Män",
+    gender: "Men",
+    category: "Running",
     colors: ["#000000", "#8B5C2A"],
     sizes: [40, 41, 42, 43, 44],
   },
@@ -41,7 +44,8 @@ const products = [
     brand: "Adidas",
     price: 0,
     image: "",
-    gender: "Kvinnor",
+    gender: "Women",
+    category: "Training and Gym",
     colors: [],
     sizes: [],
   },
@@ -50,11 +54,11 @@ const products = [
 // Filter options
 const brandOptions = ["Nike", "Adidas", "Puma", "Jordan"];
 const colorOptions = [
-  { name: "Svart", value: "#000000" },
-  { name: "Vit", value: "#ffffff" },
-  { name: "Grå", value: "#888888" },
-  { name: "Blå", value: "#007aff" },
-  { name: "Brun", value: "#8B5C2A" },
+  { name: "Black", value: "#000000" },
+  { name: "White", value: "#ffffff" },
+  { name: "Grey", value: "#888888" },
+  { name: "Blue", value: "#007aff" },
+  { name: "Brown", value: "#8B5C2A" },
 ];
 const sizeOptions = Array.from({ length: 9 }, (_, i) => 36 + i);
 const priceOptions = [
@@ -63,10 +67,27 @@ const priceOptions = [
   { label: "1000 kr - 1500 kr", min: 1000, max: 1500 },
   { label: "1500+ kr", min: 1500, max: Infinity },
 ];
+const categoryOptions = [
+  "Lifestyle",
+  "Running",
+  "Basket",
+  "Football",
+  "Training and Gym",
+  "Tennis",
+  "Walking"
+];
 
 export function Products() {
   const navigate = useNavigate();
+  const location = useLocation();
   const addToCart = useCartStore((state) => state.addToCart);
+
+  // Parse filters from URL
+  const params = new URLSearchParams(location.search);
+  const urlGender = params.get('gender');
+  const urlBrand = params.get('brand');
+  const urlCategory = params.get('category');
+  const urlSearch = params.get('search')?.toLowerCase() || '';
 
   // Filter states
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -74,7 +95,24 @@ export function Products() {
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrices, setSelectedPrices] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
+
+  // Set filters from URL on mount or when URL changes
+  useEffect(() => {
+    // Gender
+    if (urlGender === 'men') setSelectedGender(['Men']);
+    else if (urlGender === 'women') setSelectedGender(['Women']);
+    else setSelectedGender([]);
+
+    // Brand
+    if (urlBrand && brandOptions.includes(urlBrand)) setSelectedBrands([urlBrand]);
+    else setSelectedBrands([]);
+
+    // Category
+    if (urlCategory && categoryOptions.includes(urlCategory)) setSelectedCategories([urlCategory]);
+    else setSelectedCategories([]);
+  }, [urlGender, urlBrand, urlCategory]);
 
   // Filtering logic
   const filteredProducts = products.filter((product) => {
@@ -82,6 +120,8 @@ export function Products() {
     if (selectedBrands.length && !selectedBrands.includes(product.brand)) return false;
     // Gender filter
     if (selectedGender.length && !selectedGender.includes(product.gender)) return false;
+    // Category filter
+    if (selectedCategories.length && !selectedCategories.includes(product.category)) return false;
     // Color filter
     if (selectedColors.length && !product.colors.some((c) => selectedColors.includes(c))) return false;
     // Size filter
@@ -93,6 +133,8 @@ export function Products() {
       );
       if (!inRange) return false;
     }
+    // Search filter
+    if (urlSearch && !product.name.toLowerCase().includes(urlSearch)) return false;
     return true;
   });
 
@@ -104,7 +146,7 @@ export function Products() {
       image: product.image,
       size: null,
     });
-    alert("Produkten har lagts till i shoppingbagen!");
+    alert("Product added to cart!");
   };
 
   // Toggle helpers
@@ -135,6 +177,11 @@ export function Products() {
         : [...prev, range]
     );
   };
+  const toggleCategory = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    );
+  };
 
   return (
     <div className="products-layout">
@@ -142,20 +189,26 @@ export function Products() {
         <h2 style={{ fontSize: "1.6rem", margin: "0 0 24px 0" }}>Filter</h2>
         <nav className="filter-nav">
           <ul>
-            <li>Livsstil</li>
-            <li>Löpning</li>
-            <li>Basket</li>
-            <li>Fotboll</li>
-            <li>Träning och gym</li>
-            <li>Tennis</li>
-            <li>Gång</li>
+            {categoryOptions.map((cat) => (
+              <li
+                key={cat}
+                style={{
+                  fontWeight: selectedCategories.includes(cat) ? 700 : 500,
+                  color: selectedCategories.includes(cat) ? "#7d2ae8" : undefined,
+                  cursor: "pointer"
+                }}
+                onClick={() => toggleCategory(cat)}
+              >
+                {cat}
+              </li>
+            ))}
           </ul>
         </nav>
         <hr className="filter-divider" />
 
         {/* Brand Filter */}
         <div className="filter-section">
-          <div className="filter-title">Varumärke</div>
+          <div className="filter-title">Brand</div>
           <div className="filter-options brand-options">
             {brandOptions.map((brand) => (
               <label key={brand}>
@@ -172,21 +225,21 @@ export function Products() {
 
         {/* Gender Filter */}
         <div className="filter-section">
-          <div className="filter-title">Kön</div>
+          <div className="filter-title">Gender</div>
           <div className="filter-options gender-options">
             <label>
               <input
                 type="checkbox"
-                checked={selectedGender.includes("Män")}
-                onChange={() => toggleGender("Män")}
-              /> Män
+                checked={selectedGender.includes("Men")}
+                onChange={() => toggleGender("Men")}
+              /> Men
             </label>
             <label>
               <input
                 type="checkbox"
-                checked={selectedGender.includes("Kvinnor")}
-                onChange={() => toggleGender("Kvinnor")}
-              /> Kvinnor
+                checked={selectedGender.includes("Women")}
+                onChange={() => toggleGender("Women")}
+              /> Women
             </label>
           </div>
         </div>
@@ -198,7 +251,7 @@ export function Products() {
             onClick={() => setSizeDropdownOpen((open) => !open)}
             style={{ cursor: "pointer", userSelect: "none" }}
           >
-            Storlek {sizeDropdownOpen ? "▲" : "▼"}
+            Size {sizeDropdownOpen ? "▲" : "▼"}
           </div>
           {sizeDropdownOpen && (
             <div className="filter-options size-options">
@@ -218,7 +271,7 @@ export function Products() {
 
         {/* Color Filter */}
         <div className="filter-section">
-          <div className="filter-title">Färg</div>
+          <div className="filter-title">Color</div>
           <div className="filter-options color-options">
             {colorOptions.map((color) => (
               <div key={color.value} className="color-circle-label">
@@ -240,7 +293,7 @@ export function Products() {
 
         {/* Price Filter */}
         <div className="filter-section">
-          <div className="filter-title">Shoppa efter pris</div>
+          <div className="filter-title">Price</div>
           <div className="filter-options price-options">
             {priceOptions.map((range) => (
               <label key={range.label}>
@@ -257,14 +310,14 @@ export function Products() {
       <main className="products-main">
         <div className="page-wrapper">
           <div className="products-header">
-            <h2>Vår Kollektion</h2>
-            <div className="products-subheader">Upptäck våra senaste sneakers för alla stilar</div>
+            <h2>Our Collection</h2>
+            <div className="products-subheader">Discover our latest sneakers for every style</div>
             <hr className="products-divider" />
           </div>
           <div className="product-grid">
             {filteredProducts.length === 0 && (
               <div style={{ gridColumn: "1/-1", textAlign: "center", color: "#888" }}>
-                Inga produkter matchar dina filter.
+                No products match your filters.
               </div>
             )}
             {filteredProducts.map((product) => (
@@ -275,21 +328,21 @@ export function Products() {
                 <div className="product-details">
                   <div className="product-title">{product.name}</div>
                   <div className="product-price">
-                    {product.price > 0 ? `${product.price} kr` : 'Snart tillgänglig'}
+                    {product.price > 0 ? `${product.price} kr` : 'Coming soon'}
                   </div>
                 </div>
                 <button
                   className="view-details"
                   onClick={() => navigate(`/products/${product.id}`)}
                 >
-                  Visa detaljer
+                  View details
                 </button>
                 <button
                   className="add-to-cart"
                   onClick={() => handleAddToCart(product)}
                   disabled={product.price === 0}
                 >
-                  Lägg i shoppingbagen
+                  Add to cart
                 </button>
               </div>
             ))}
