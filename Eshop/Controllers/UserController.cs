@@ -1,8 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Models.DTO;
 using DbRepos;
+using DbContext;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Controllers;
 
@@ -10,6 +13,45 @@ namespace Controllers;
 [Route("api/[controller]/[action]")]
 public class UserController : Controller
 {
+    private readonly MainDbContext _context;
+    private readonly IConfiguration _configuration;
+    public UserController(MainDbContext context, IConfiguration configuration)
+    {
+        _context = context;
+        _configuration = configuration;
+    }
+
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginDto loginDto)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.UserEmail == loginDto.Email && u.UserPassword == loginDto.Password);
+        if (user == null)
+        {
+            return Unauthorized("Invalid email or password.");
+        }
+
+        var jwtSettings = _configuration.GetSection("Jwt");
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.UserEmail),
+            new Claim(ClaimTypes.Role, user.UserRole)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["ExpiresInMinutes"])),
+            signingCredentials: creds
+        );
+
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+    }
+
     private readonly ILogger<UserController> _logger;
     private readonly UserDbRepos _userRepo;
 

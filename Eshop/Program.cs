@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,7 +52,26 @@ builder.Services.AddScoped<ProductDbRepos>();
 builder.Services.AddScoped<SizeDbRepos>();
 builder.Services.AddScoped<UserDbRepos>();
 
-
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is missing in configuration.")))
+    };
+});
 
 var app = builder.Build();
 
@@ -66,6 +88,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowLocalhost3000");
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
