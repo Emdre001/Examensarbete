@@ -61,7 +61,7 @@ const products = [
     image: process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.webp",
     gender: "Men",
     category: "Sneaker",
-    colors: ["#000000", "#8B5C2A"],
+    colors: ["#000000"],
     sizes: [40, 41, 42, 43, 44],
   },
   {

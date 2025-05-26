@@ -15,6 +15,10 @@ import AdminPage from './admin';
 import { Toaster } from 'react-hot-toast';
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Profile from './Profile';
+import Orders from './Orders';
+import Checkout from './Checkout';
+
 
 function App() {
   return (
@@ -37,6 +41,9 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </main>
         </div>        

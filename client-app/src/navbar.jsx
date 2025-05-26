@@ -13,6 +13,7 @@ import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import useCartStore from './CartStore';
 import './styles/navbar.css';
 
+
 // Only these categories
 const categoryOptions = ['Sneaker', 'Boots'];
 const brandOptions = [
@@ -23,6 +24,10 @@ const CustomNavbar = () => {
   const cartCount = useCartStore((state) =>
     state.cart.reduce((total, item) => total + item.quantity, 0)
   );
+  const ordersCount = (() => {
+     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    return orders.length;
+  })();
   const [language, setLanguage] = useState('en');
   const [search, setSearch] = useState('');
   const toggleLanguage = () =>
@@ -216,9 +221,12 @@ const CustomNavbar = () => {
               <Dropdown.Item as={Link} to="/settings">
                 Settings
               </Dropdown.Item>
-              <Dropdown.Item as={Link} to="/orders">
-                Orders
-              </Dropdown.Item>
+              <Dropdown.Item as={Link} to="/orders" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              Orders
+              {ordersCount > 0 && (
+                <span className="orders-badge">{ordersCount}</span>
+              )}
+            </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 

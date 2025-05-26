@@ -2,9 +2,11 @@ import React from 'react';
 import useCartStore from './CartStore';
 import './styles/cart.css';
 import { FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCartStore();
+  const navigate = useNavigate();
 
   const totalPrice = cart.reduce((sum, item) => {
     const price = item.discount
@@ -67,7 +69,12 @@ const Cart = () => {
               <p>Shipping: <span>Free</span></p>
               <p className="summary-total">Total: <span>{totalPrice.toFixed(2)} kr</span></p>
             </div>
-            <button className="checkout-button">Checkout</button>
+            <button
+              className="checkout-button"
+              onClick={() => navigate('/checkout')}
+            >
+              Checkout
+            </button>
             <button className="clear-cart-button" onClick={clearCart}>
               Clear Cart
             </button>

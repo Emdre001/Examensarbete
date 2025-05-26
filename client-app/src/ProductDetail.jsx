@@ -40,7 +40,7 @@ const productData = {
     ],
     video: "",
     sizes: ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44"],
-    colors: ["#000000", "#8B5C2A"],
+    colors: ["#000000"],
     description: "Nike Air Max Plus Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
   },
    4: {

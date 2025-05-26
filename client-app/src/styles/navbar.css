@@ -258,3 +258,15 @@
   font-weight: 600;
   margin-bottom: 10px;
 }
+
+.orders-badge {
+  background: #7d2ae8;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  margin-left: 8px;
+  min-width: 22px;
+  text-align: center;
+  display: inline-block;
+}
