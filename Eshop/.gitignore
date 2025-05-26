@@ -16,3 +16,6 @@
 # Ignore the obj & bin directory
 obj/
 bin/
+
+# Ignore Migration files
+Migrations/
