@@ -13,5 +13,6 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-# Ignore the obj directory where this file is located
+# Ignore the obj & bin directory
 obj/
+bin/
