@@ -7,14 +7,37 @@
   padding: 32px 24px;
 }
 .profile-info > div {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  color: #444;
 }
-.profile-links {
-  margin-top: 24px;
-  text-align: center;
+.profile-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.profile-links a {
+.profile-link {
   color: #7d2ae8;
   text-decoration: none;
-  margin: 0 8px;
+  font-weight: 500;
+  padding: 8px 0;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.profile-link:hover {
+  background: #f3eaff;
+}
+.profile-logout {
+  background: #7d2ae8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.profile-logout:hover {
+  background: #5a1bbd;
 }
