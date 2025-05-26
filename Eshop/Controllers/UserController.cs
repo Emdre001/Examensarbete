@@ -6,6 +6,9 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
+using Models;
 
 namespace Controllers;
 
@@ -62,10 +65,44 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] UserDTO dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        var user = await _userRepo.CreateUserAsync(dto);
-        return Ok(user);
+        if (_context.Users.Any(u => u.UserEmail == dto.Email))
+            return BadRequest("Email already registered.");
+
+        byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: dto.Password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
+
+        var user = new UserDTO
+        {
+            UserId = Guid.NewGuid(),
+            UserEmail = dto.Email,
+            UserPassword = hashed,
+            UserRole = dto.Role ?? "User", // Default to "User"
+            UserSalt = Convert.ToBase64String(salt)
+        };
+
+        var userEntity = new User
+        {
+            UserId = user.UserId,
+            UserName = user.UserName,
+            UserEmail = user.UserEmail,
+            UserPassword = user.UserPassword,
+            UserAddress = user.UserAddress,
+            UserPhoneNr = user.UserPhoneNr,
+            UserRole = user.UserRole,
+            Orders = []
+        };
+
+        _context.Users.Add(userEntity);
+        await _context.SaveChangesAsync();
+
+        return Ok("User registered successfully.");
     }
 
     [HttpGet]
