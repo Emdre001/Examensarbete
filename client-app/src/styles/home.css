@@ -52,7 +52,7 @@ body, html, #root {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  aspect-ratio: 2 / 1; /* 💥 Gör att ytan aldrig ändras! */
+  aspect-ratio: 2 / 1; 
   display: block;
   margin: 0 auto;
 }
