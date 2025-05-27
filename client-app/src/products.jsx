@@ -263,13 +263,17 @@ export function Products() {
     return true;
   });
 
-  const handleAddToCart = (product) => {
+ const handleAddToCart = (product) => {
+    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
+    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
+
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
-      size: null,
+      size: defaultSize,
+      color: defaultColor,
     });
     setShowToast(true);
     if (toastTimeout.current) clearTimeout(toastTimeout.current);
@@ -509,5 +513,5 @@ export function Products() {
     </>
   );
 }
-
+export { products };
 export default Products;

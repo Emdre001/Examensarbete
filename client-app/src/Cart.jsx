@@ -3,6 +3,19 @@ import useCartStore from './CartStore';
 import './styles/cart.css';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { products } from './products';
+
+const colorNames = {
+  "#ff0000": "Red",
+  "#007aff": "Blue",
+  "#228B22": "Olive Green",
+  "#ffffff": "White",
+  "#000000": "Black",
+  "#888888": "Grey",
+  "#8B5C2A": "Brown",
+  "#ff69b4": "Pink",
+  "#f5f5dc": "Beige"
+};
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCartStore();
@@ -15,53 +28,71 @@ const Cart = () => {
     return sum + price * item.quantity;
   }, 0);
 
+  const getProduct = (id) => products.find(p => p.id === id);
+
   return (
     <div className="cart-page">
       <h2 className="cart-title">Shoppingbag</h2>
-
       {cart.length === 0 ? (
         <p className="empty-cart-message">Your cart is empty.</p>
       ) : (
         <div className="cart-content">
           <div className="cart-items">
-            {cart.map((item) => (
-              <div key={`${item.id}-${item.size}`} className="cart-item">
-                <img src={item.image} alt={item.name} className="cart-item-image" />
-                <div className="cart-item-details">
-                  <h3 className="cart-item-name">{item.name}</h3>
-                  <p className="cart-item-size">Size: {item.size}</p>
-                  <p className="cart-item-price">
-                    {item.discount
-                      ? `Price: ${(item.price * (1 - item.discount / 100)).toFixed(2)} kr`
-                      : `Price: ${item.price} kr`}
-                  </p>
-                  <div className="cart-item-quantity">
-                    <button
-                      className="quantity-button"
-                      onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                      disabled={item.quantity === 1}
-                    >
-                      -
-                    </button>
-                    <span className="quantity-display">{item.quantity}</span>
-                    <button
-                      className="quantity-button"
-                      onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                    >
-                      +
-                    </button>
+            {cart.map((item) => {
+              const product = getProduct(item.id);
+              return (
+                <div key={`${item.id}-${item.size}-${item.color}`} className="cart-item">
+                  <img src={item.image} alt={item.name} className="cart-item-image" />
+                  <div className="cart-item-details">
+                    <h3 className="cart-item-name">{item.name}</h3>
+                    <div className="cart-item-options">
+                      {/* Size row */}
+                     <div className="cart-size-row">
+                      <span>Size:</span>
+                      <span className="cart-size-value">{item.size}</span>
+                    </div>
+                      {/* Color row */}
+                      <div className="cart-color-row">
+                        <span>Color:</span>
+                        <span
+                          className="cart-color-circle"
+                          style={{ background: item.color }}
+                        ></span>
+                        <span className="cart-color-name">{colorNames[item.color] || item.color}</span>
+                      </div>
+                    </div>
+                    <p className="cart-item-price">
+                      {item.discount
+                        ? `Price: ${(item.price * (1 - item.discount / 100)).toFixed(2)} kr`
+                        : `Price: ${item.price} kr`}
+                    </p>
+                    <div className="cart-item-quantity">
+                      <button
+                        className="quantity-button"
+                        onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
+                        disabled={item.quantity === 1}
+                      >
+                        -
+                      </button>
+                      <span className="quantity-display">{item.quantity}</span>
+                      <button
+                        className="quantity-button"
+                        onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
+                  <button
+                    className="remove-button"
+                    onClick={() => removeFromCart(item.id, item.size)}
+                  >
+                    <FaTrash />
+                  </button>
                 </div>
-                <button
-                  className="remove-button"
-                  onClick={() => removeFromCart(item.id, item.size)}
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
           <div className="cart-summary">
             <h3>Summary</h3>
             <div className="summary-details">
