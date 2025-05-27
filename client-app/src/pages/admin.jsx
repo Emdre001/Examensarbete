@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:5066/api/Product";
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   function dereferenceJsonNet(obj) {
     if (!obj || typeof obj !== "object") return obj;
@@ -97,18 +99,8 @@ const AdminPage = () => {
                 {product.productName || "Unnamed Product"}
               </span>
               <div className="product-actions">
-                <button
-                  onClick={() => alert("Update not implemented")}
-                  className="update-btn"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => alert("Delete not implemented")}
-                  className="delete-btn"
-                >
-                  Delete
-                </button>
+                <button onClick={() => navigate(`/admin/editProduct/${product.productId}`)} className="update-btn">Update</button>
+                <button onClick={() => alert("Delete not implemented")} className="delete-btn">Delete</button>
               </div>
             </div>
           ))}
