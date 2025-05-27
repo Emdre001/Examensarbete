@@ -3,7 +3,7 @@ import useCartStore from './CartStore';
 import './styles/cart.css';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { products } from './products';
+
 
 const colorNames = {
   "#ff0000": "Red",
@@ -28,7 +28,7 @@ const Cart = () => {
     return sum + price * item.quantity;
   }, 0);
 
-  const getProduct = (id) => products.find(p => p.id === id);
+  
 
   return (
     <div className="cart-page">
@@ -38,8 +38,7 @@ const Cart = () => {
       ) : (
         <div className="cart-content">
           <div className="cart-items">
-            {cart.map((item) => {
-              const product = getProduct(item.id);
+            {cart.map((item) => {              
               return (
                 <div key={`${item.id}-${item.size}-${item.color}`} className="cart-item">
                   <img src={item.image} alt={item.name} className="cart-item-image" />
