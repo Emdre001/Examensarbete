@@ -253,3 +253,13 @@
 .profile-save-btn:hover {
   background: #5a1bbd;
 }
+.profile-password-label {
+  position: relative;
+}
+.profile-password-label .profile-edit-link {
+  position: absolute;
+  bottom: 10; 
+  right: 0;
+  font-size: 0.9rem;
+}
+
