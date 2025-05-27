@@ -356,3 +356,5 @@ C:\Users\nicol\OneDrive\Skrivbord\Examensarbete\Examentsarbete\Eshop\obj\Debug\n
 C:\Users\nicol\OneDrive\Skrivbord\Examensarbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.pdb
 C:\Users\nicol\OneDrive\Skrivbord\Examensarbete\Examentsarbete\Eshop\obj\Debug\net9.0\Eshop.genruntimeconfig.cache
 C:\Users\nicol\OneDrive\Skrivbord\Examensarbete\Examentsarbete\Eshop\obj\Debug\net9.0\ref\Eshop.dll
+C:\Examensarbete\Eshop\bin\Debug\net9.0\Eshop.xml
+C:\Examensarbete\Eshop\obj\Debug\net9.0\Eshop.xml
