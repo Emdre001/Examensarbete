@@ -11,7 +11,7 @@ import ForgotPassword from './ForgotPassword';
 import Cart from './Cart';
 import Footer from './footer';
 import Navbar from './navbar';
-import AdminPage from './admin';
+import AdminPage from './pages/admin';
 import { Toaster } from 'react-hot-toast';
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
