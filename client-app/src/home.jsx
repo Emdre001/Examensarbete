@@ -96,16 +96,25 @@ const Home = () => {
 
 
 
-        <section className="collection-section">
-  <div className="collection-card" onClick={() => navigate("/products")}>
+       <section className="collection-section">
+  <div
+    className="collection-card"
+    onClick={() => navigate("/products?gender=men")}
+  >
     <img src="/Assets/img/MAN.jpg" alt="Men" className="collection-img" />
     <div className="collection-label">MEN</div>
   </div>
-  <div className="collection-card center-card" onClick={() => navigate("/products")}>
+  <div
+    className="collection-card center-card"
+    onClick={() => navigate("/products")}
+  >
     <img src="/Assets/img/Together.jpg" alt="Our Collection" className="collection-img" />
     <div className="collection-label">OUR COLLECTION</div>
   </div>
-  <div className="collection-card" onClick={() => navigate("/products")}>
+  <div
+    className="collection-card"
+    onClick={() => navigate("/products?gender=women")}
+  >
     <img src="/Assets/img/DAM.jpg" alt="Women" className="collection-img" />
     <div className="collection-label">WOMEN</div>
   </div>

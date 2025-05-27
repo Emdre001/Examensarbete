@@ -263,13 +263,17 @@ export function Products() {
     return true;
   });
 
-  const handleAddToCart = (product) => {
+ const handleAddToCart = (product) => {
+    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
+    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
+
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
-      size: null,
+      size: defaultSize,
+      color: defaultColor,
     });
     setShowToast(true);
     if (toastTimeout.current) clearTimeout(toastTimeout.current);
@@ -456,32 +460,52 @@ export function Products() {
                   No products match your filters.
                 </div>
               )}
-              {filteredProducts.map((product) => (
-                <div className="product-card" key={product.id}>
-                  {product.image && (
-                    <img src={product.image} alt={product.name} className="product-image" />
-                  )}
-                  <div className="product-details">
-                    <div className="product-title">{product.name}</div>
-                    <div className="product-price">
-                      {product.price > 0 ? `${product.price} kr` : 'Coming soon'}
-                    </div>
-                  </div>
-                  <button
-                    className="view-details"
+             {filteredProducts.map((product) => (
+              <div className="product-card" key={product.id}>
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="product-image"
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/products/${product.id}`)}
-                  >
-                    View details
-                  </button>
-                  <button
-                    className="add-to-cart"
-                    onClick={() => handleAddToCart(product)}
-                    disabled={product.price === 0}
-                  >
-                    Add to cart
-                  </button>
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") navigate(`/products/${product.id}`);
+                    }}
+                  />
+                )}
+                <div
+                  className="product-title"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/products/${product.id}`)}
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === "Enter" || e.key === " ") navigate(`/products/${product.id}`);
+                  }}
+                >
+                  {product.name}
                 </div>
-              ))}
+                <div className="product-details">
+                  <div className="product-price">
+                    {product.price > 0 ? `${product.price} kr` : 'Coming soon'}
+                  </div>
+                </div>
+                <button
+                  className="view-details"
+                  onClick={() => navigate(`/products/${product.id}`)}
+                >
+                  View details
+                </button>
+                <button
+                  className="add-to-cart"
+                  onClick={() => handleAddToCart(product)}
+                  disabled={product.price === 0}
+                >
+                  Add to cart
+                </button>
+              </div>
+            ))}
             </div>
           </div>
         </main>
@@ -489,5 +513,5 @@ export function Products() {
     </>
   );
 }
-
+export { products };
 export default Products;
