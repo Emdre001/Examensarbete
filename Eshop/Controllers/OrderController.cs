@@ -7,7 +7,6 @@ namespace Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = "Admin,User")]
 public class OrderController : Controller
 {
     private readonly OrderDbRepos _orderRepo;
@@ -25,7 +24,6 @@ public class OrderController : Controller
     }
 
     [HttpGet] 
-    [Authorize(Roles = "User")]
     public async Task<IActionResult> GetAll()
     {
         var orders = await _orderRepo.GetAllOrdersAsync();

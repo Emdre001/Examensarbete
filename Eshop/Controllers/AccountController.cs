@@ -9,23 +9,18 @@ namespace Controllers;
 [Route("api/[controller]/[action]")]
 public class AccountController : ControllerBase
 {
-    private readonly JwtService _jwtService;
-    private readonly AccountRepos _registrationRepos;
+    private readonly AccountRepos _accountRepos;
 
-    public AccountController(JwtService jwtService, AccountRepos registrationRepos)
-    {
-        _jwtService = jwtService;
-        _registrationRepos = registrationRepos;
-    }
+    public AccountController(AccountRepos accountRepos) => _accountRepos = accountRepos;
 
     [HttpPost]
-    public async Task<ActionResult<LoginResponseModel>> Login([FromBody] LoginRequestModel request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestModel dto)
     {
-        var result = await _jwtService.Authenticate(request);
-        if (result == null)
-            return Unauthorized();
+        var user = await _accountRepos.LoginAsync(dto.Username, dto.Password);
+        if (user == null)
+            return Unauthorized("Invalid username or password.");
 
-        return result;
+        return Ok(new { user.UserName, user.Role });
     }
 
     [HttpPost]
@@ -39,7 +34,7 @@ public class AccountController : ControllerBase
             Role = "User"
         };
 
-        var result = await _registrationRepos.RegisterAsync(user);
+        var result = await _accountRepos.RegisterAsync(user);
         if (!result)
             return BadRequest("Registration failed. Please try again.");
 
@@ -49,14 +44,14 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AccountDto>>> GetAllAccounts()
     {
-        var users = await _registrationRepos.GetAllUsersAsync();
+        var users = await _accountRepos.GetAllUsersAsync();
         return Ok(users);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<AccountDto>> GetAccountById(Guid id)
     {
-        var user = await _registrationRepos.GetUserByIdAsync(id);
+        var user = await _accountRepos.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
         return Ok(user);
@@ -65,7 +60,7 @@ public class AccountController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] AccountDto dto)
     {
-        var updated = await _registrationRepos.UpdateUserAsync(id, dto);
+        var updated = await _accountRepos.UpdateUserAsync(id, dto);
         if (!updated)
             return NotFound();
         return Ok("User updated successfully.");
@@ -74,7 +69,7 @@ public class AccountController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAccount(Guid id)
     {
-        var deleted = await _registrationRepos.DeleteUserAsync(id);
+        var deleted = await _accountRepos.DeleteUserAsync(id);
         if (!deleted)
             return NotFound();
         return Ok("User deleted successfully.");

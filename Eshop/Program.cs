@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using Eshop.DbRepos;
+using Microsoft.AspNetCore.Authentication;
+using Eshop.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +30,6 @@ var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop"
 builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-//Service registrations
-builder.Services.AddScoped<JwtService>();
-
 // Repos registration
 builder.Services.AddScoped<AdminDbRepos>();
 builder.Services.AddScoped<BrandDbRepos>();
@@ -44,35 +40,16 @@ builder.Services.AddScoped<SizeDbRepos>();
 builder.Services.AddScoped<UserDbRepos>();
 builder.Services.AddScoped<AccountRepos>();
 
-// JWT Authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        RoleClaimType = "role",
-    };
-});
-
-builder.Services.AddAuthorization();
+builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
 
 // Swagger with JWT support
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -81,13 +58,13 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT"
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        Description = "Basic Authentication header"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -98,7 +75,7 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = "basic"
                 }
             },
             Array.Empty<string>()
