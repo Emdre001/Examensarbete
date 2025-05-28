@@ -22,23 +22,50 @@ export function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [showToast, setShowToast] = useState(false);
+  const [sizes, setSizes] = useState([]);
+
 
   const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
-        if (!response.ok) throw new Error('Product not found');
-        const data = await response.json();
-        setProduct(data);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-      }
-    };
+  const fetchProduct = async () => {
+    try {
+      const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
+      if (!response.ok) throw new Error('Product not found');
+      const data = await response.json();
+      setProduct(data);
 
-    fetchProduct();
-  }, [productId]);
+      const sizeValues = data.productSizes?.$values || [];
+      const fetchedSizes = await Promise.all(
+      sizeValues.map(async (s) => {
+        const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${s.sizeId}`);
+        const sizeData = await res.json();
+        return {
+          sizeId: s.sizeId,
+          sizeValue: sizeData.sizeValue
+        };
+      })
+    );
+
+    // Sort sizes numerically (or lexicographically if needed)
+    fetchedSizes.sort((a, b) => {
+      const aVal = parseFloat(a.sizeValue);
+      const bVal = parseFloat(b.sizeValue);
+      return aVal - bVal;
+    });
+
+    setSizes(fetchedSizes);
+
+
+      setSizes(fetchedSizes);
+    } catch (error) {
+      console.error('Error fetching product or sizes:', error);
+    }
+  };
+
+  fetchProduct();
+}, [productId]);
+
 
   if (!product) {
     return <div>Loading product...</div>;
@@ -84,17 +111,17 @@ export function ProductDetail() {
           <p className="product-description">{product.productDescription}</p>
 
           <h3>Select size:</h3>
-          <div className="size-selector">
-            {extractedSizes.map((sizeId, index) => (
-              <button
-                key={index}
-                className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
-                onClick={() => setSelectedSize(sizeId)}
-              >
-                {sizeId.slice(0, 4)}...
-              </button>
-            ))}
-          </div>
+            <div className="size-selector">
+              {sizes.map(({ sizeId, sizeValue }) => (
+                <button
+                  key={sizeId}
+                  className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
+                  onClick={() => setSelectedSize(sizeId)}
+                >
+                  {sizeValue}
+                </button>
+              ))}
+            </div>
 
           <h3>Select color:</h3>
           <div className="color-circles">
