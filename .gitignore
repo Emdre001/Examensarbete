@@ -1,0 +1,47 @@
+# Ignore node_modules and package-lock/yarn.lock at solution level
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ignore logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore build output at solution level
+dist/
+build/
+out/
+
+# Ignore IDE/editor folders at solution level
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+
+# Ignore by default, but allow project-level .gitignore to override
+!*/
