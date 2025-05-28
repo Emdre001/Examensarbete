@@ -19,7 +19,6 @@ const colorOptions = [
 export function ProductDetail() {
   const { productId } = useParams(); 
   const [product, setProduct] = useState(null);
-  const [selectedMedia, setSelectedMedia] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [showToast, setShowToast] = useState(false);
@@ -29,12 +28,10 @@ export function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        console.log("Fetching product with ID:", productId);
         const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
         if (!response.ok) throw new Error('Product not found');
         const data = await response.json();
         setProduct(data);
-        setSelectedMedia(data.video || data.images?.[0]);
       } catch (error) {
         console.error('Error fetching product:', error);
       }
@@ -47,6 +44,9 @@ export function ProductDetail() {
     return <div>Loading product...</div>;
   }
 
+  const extractedColors = product.colors?.$values?.map(c => c.colorName) || [];
+  const extractedSizes = product.productSizes?.$values?.map(s => s.sizeId) || [];
+
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
       alert("Please select size and color before adding to cart.");
@@ -54,10 +54,10 @@ export function ProductDetail() {
     }
 
     addToCart({
-      productId,
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
+      productId: product.productId,
+      name: product.productName,
+      price: product.productPrice,
+      image: "", // no image in API response
       size: selectedSize,
       color: selectedColor,
     });
@@ -70,54 +70,28 @@ export function ProductDetail() {
     <>
       <ToastNotification show={showToast} message="Product added to cart!" />
       <div className="product-detail-container">
-        <div className="product-gallery">
-          {product.video && (
-            <div
-              className={`thumbnail${selectedMedia === product.video ? " selected" : ""}`}
-              onMouseEnter={() => setSelectedMedia(product.video)}
-              style={{ cursor: "pointer" }}
-            >
-              <video className="thumbnail-video" autoPlay loop muted>
-                <source src={product.video} type="video/mp4" />
-              </video>
-            </div>
-          )}
-          {product.images.map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`Product ${index}`}
-              className={`thumbnail${selectedMedia === img ? " selected" : ""}`}
-              onMouseEnter={() => setSelectedMedia(img)}
-              style={{ cursor: "pointer" }}
-            />
-          ))}
-        </div>
-
         <div className="product-main-image">
-          {selectedMedia && selectedMedia.endsWith(".mp4") ? (
-            <video controls autoPlay className="main-video">
-              <source src={selectedMedia} type="video/mp4" />
-            </video>
-          ) : (
-            <img src={selectedMedia} alt="Selected Product" className="main-image" />
-          )}
+          <img
+            src="/placeholder-image.png"
+            alt="Product"
+            className="main-image"
+          />
         </div>
 
         <div className="product-info">
-          <h1>{product.name}</h1>
-          <p className="product-price">{product.price} kr</p>
-          <p className="product-description">{product.description}</p>
+          <h1>{product.productName}</h1>
+          <p className="product-price">{product.productPrice} kr</p>
+          <p className="product-description">{product.productDescription}</p>
 
           <h3>Select size:</h3>
           <div className="size-selector">
-            {product.sizes.map((size, index) => (
+            {extractedSizes.map((sizeId, index) => (
               <button
                 key={index}
-                className={`size-button ${selectedSize === size ? "selected" : ""}`}
-                onClick={() => setSelectedSize(size)}
+                className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
+                onClick={() => setSelectedSize(sizeId)}
               >
-                {size}
+                {sizeId.slice(0, 4)}...
               </button>
             ))}
           </div>
@@ -125,7 +99,7 @@ export function ProductDetail() {
           <h3>Select color:</h3>
           <div className="color-circles">
             {colorOptions
-              .filter(color => product.colors?.includes(color.value))
+              .filter(color => extractedColors.includes(color.name))
               .map((color) => (
                 <div
                   key={color.value}
