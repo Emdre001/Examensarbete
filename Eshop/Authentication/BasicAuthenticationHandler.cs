@@ -49,7 +49,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
         // Here you validate the username and password against the database.
         var user = await _context.Users
-            .FirstAsync(u => u.UserName == username && u.Password == password);
+            .FirstOrDefaultAsync(u => u.UserName == username && u.Password == password);
 
         if (user == null)
         {
