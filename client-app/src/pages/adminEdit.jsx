@@ -23,6 +23,9 @@ const EditProduct = () => {
   const [selectedColorIds, setSelectedColorIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [sizes, setSizes] = useState([]);
+  const [sizeStocks, setSizeStocks] = useState({});
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +67,44 @@ const EditProduct = () => {
       }
     };
 
+    const fetchSizes = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/GetAllProductSizes`);
+        const data = await res.json();
+        const dereferenced = dereferenceJsonNet(data);
+
+        const filteredSizes = dereferenced.$values.filter(
+          (item) => item.productId.toString() === id.toString()
+        );
+
+        const sizeDetails = await Promise.all(
+          filteredSizes.map(async (size) => {
+            const res = await fetch(`${API_BASE}/Size/GetSizeById/${size.sizeId}`);
+            const sizeData = await res.json();
+            const derefSize = dereferenceJsonNet(sizeData);
+            return {
+              sizeId: size.sizeId,
+              sizeStock: size.sizeStock,
+              sizeValue: derefSize.sizeValue,
+            };
+          })
+        );
+
+        setSizes(sizeDetails);
+
+        // Autofill stocks as strings
+        const initialStocks = {};
+        sizeDetails.forEach((s) => {
+          initialStocks[s.sizeId] = s.sizeStock.toString();
+        });
+        setSizeStocks(initialStocks);
+      } catch (err) {
+        console.error("Failed to fetch sizes:", err);
+      }
+    };
+
     fetchData();
+    fetchSizes();
   }, [id]);
 
   const handleInputChange = (e) => {
@@ -83,6 +123,35 @@ const EditProduct = () => {
     setSelectedColorIds((prev) =>
       checked ? [...prev, value] : prev.filter((id) => id !== value)
     );
+  };
+
+  const handleStockChange = (sizeId, newStock) => {
+    setSizeStocks((prev) => ({
+      ...prev,
+      [sizeId]: newStock,
+    }));
+  };
+
+  const updateSizeStock = async (sizeId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/updateProductSize/${id}/${sizeId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sizeStock: parseInt(sizeStocks[sizeId], 10) }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update stock");
+      }
+
+      alert("Stock updated!");
+    } catch (err) {
+      console.error(err);
+      alert("Error updating stock");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -159,7 +228,6 @@ const EditProduct = () => {
           onChange={handleInputChange}
         />
 
-        {/* Brand Dropdown */}
         <div>
           <label htmlFor="brand" className="block font-medium mb-1">
             Brand:
@@ -179,7 +247,6 @@ const EditProduct = () => {
           </select>
         </div>
 
-        {/* Color Checkboxes */}
         <div>
           <label className="block font-medium mb-1">Colors:</label>
           <div className="flex flex-wrap gap-2">
@@ -204,6 +271,45 @@ const EditProduct = () => {
           Save Changes
         </button>
       </form>
+
+      {/* Sizes Table */}
+      <div className="mt-10">
+        <h3 className="text-xl font-semibold mb-4">Sizes & Stock</h3>
+        <table className="w-full border border-gray-300 text-left">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 border">Size</th>
+              <th className="p-2 border">Stock</th>
+              <th className="p-2 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sizes.map((size) => (
+              <tr key={size.sizeId}>
+                <td className="p-2 border">{size.sizeValue}</td>
+                <td className="p-2 border">
+                  <input
+                    type="number"
+                    className="border rounded p-1 w-20"
+                    value={sizeStocks[size.sizeId] ?? ""}
+                    onChange={(e) =>
+                      handleStockChange(size.sizeId, e.target.value)
+                    }
+                  />
+                </td>
+                <td className="p-2 border">
+                  <button
+                    onClick={() => updateSizeStock(size.sizeId)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                  >
+                    Save
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
