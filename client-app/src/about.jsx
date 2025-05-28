@@ -4,7 +4,7 @@ import './styles/about.css';
 export function About() {
   return (
     <div className="home-wrapper">
-      {/* 🔙 Bakgrundsbild som ligger bakom allt */}
+      {/* Bakgrundsbild som ligger bakom allt */}
       <div
         className="background-image"
         style={{
