@@ -48,3 +48,43 @@ body, html, #root, .products-layout, .page-wrapper {
     cursor: default !important;
     user-select: auto !important;
 }
+.product-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  gap: 1rem;
+}
+
+.product-name {
+  flex: 1 1 auto;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1rem;
+}
+
+.product-actions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.product-actions button {
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  background-color: transparent;
+  color: #2563eb; /* blue-600 */
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.product-actions button:hover {
+  text-decoration: underline;
+}
+
+.product-actions button.delete {
+  color: #dc2626; /* red-600 */
+}
