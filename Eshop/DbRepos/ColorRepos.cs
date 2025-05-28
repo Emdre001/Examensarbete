@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 using Models;
 using Models.DTO;
 using DbContext;

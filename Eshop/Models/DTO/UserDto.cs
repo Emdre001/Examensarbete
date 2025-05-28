@@ -10,11 +10,10 @@ public class UserDTO
     public string UserEmail { get; set; }
     public string UserPassword { get; set; }
     public string UserAddress { get; set; }
-    public int UserPhoneNr { get; set; }
+    public string UserPhoneNr { get; set; }
     public string UserRole { get; set; }
 
     public string UserSalt { get; set; } = null;
 
     public virtual List<Guid> OrdersId { get; set; } = null;
-
 }
