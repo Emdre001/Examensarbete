@@ -50,8 +50,6 @@ const productImages = {
 
 };
 
-
-
 function resolveRefs(obj) {
   const byId = {};
   const refs = [];
@@ -238,7 +236,117 @@ export function Products() {
       <ToastNotification show={showToast} message="Product added to cart!" />
       <div className="products-layout">
         <aside className="filter-sidebar">
-          {/* ... all your filter UI code stays unchanged */}
+          <h2 style={{ fontSize: "1.6rem", margin: "0 0 24px 0" }}>Filter</h2>
+          
+          <hr className="filter-divider" />
+
+          {/* Brand Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Brand</div>
+            <div className="filter-options brand-options">
+              {brandOptions.map((brand) => (
+                <label key={brand}>
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => toggleBrand(brand)}
+                  />{" "}
+                  {brand}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Gender Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Gender</div>
+            <div className="filter-options gender-options">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedGender.includes("Men")}
+                  onChange={() => toggleGender("Men")}
+                /> Men
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedGender.includes("Women")}
+                  onChange={() => toggleGender("Women")}
+                /> Women
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedGender.includes("Unisex")}
+                  onChange={() => toggleGender("Unisex")}
+                /> Unisex
+              </label>
+            </div>
+          </div>
+
+          {/* Size Filter as Dropdown */}
+          <div className="filter-section">
+            <div
+              className="filter-title size-title"
+              onClick={() => setSizeDropdownOpen((open) => !open)}
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
+              Size {sizeDropdownOpen ? "▲" : "▼"}
+            </div>
+            {sizeDropdownOpen && (
+              <div className="filter-options size-options">
+                {sizeOptions.map((size) => (
+                  <label key={size}>
+                    <input
+                      type="checkbox"
+                      checked={selectedSizes.includes(size)}
+                      onChange={() => toggleSize(size)}
+                    />{" "}
+                    {size}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Color Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Color</div>
+            <div className="filter-options color-options">
+              {colorOptions.map((color) => (
+                <div key={color.value} className="color-circle-label">
+                  <span
+                    className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
+                    style={{ backgroundColor: color.value }}
+                    title={color.name}
+                    onClick={() => toggleColor(color.value)}
+                  >
+                    {selectedColors.includes(color.value) && (
+                      <span className="color-checkmark">&#10003;</span>
+                    )}
+                  </span>
+                  <span className="color-name">{color.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Price</div>
+            <div className="filter-options price-options">
+              {priceOptions.map((range) => (
+                <label key={range.label}>
+                  <input
+                    type="checkbox"
+                    checked={selectedPrices.some((r) => r.min === range.min && r.max === range.max)}
+                    onChange={() => togglePrice(range)}
+                  /> {range.label}
+                </label>
+              ))}
+            </div>
+          </div>
         </aside>
         <main className="products-main">
           <div className="page-wrapper">
