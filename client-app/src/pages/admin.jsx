@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:5066/api/Product";
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   function dereferenceJsonNet(obj) {
     if (!obj || typeof obj !== "object") return obj;
@@ -70,6 +72,15 @@ const AdminPage = () => {
       // dereferencedData.$values is now a fully dereferenced array of products
       const actualProducts = dereferencedData?.$values ?? [];
 
+      // Sort alphabetically by productName (case-insensitive)
+      actualProducts.sort((a, b) => {
+        const nameA = (a.productName || "").toLowerCase();
+        const nameB = (b.productName || "").toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+
       setProducts(actualProducts);
     } catch (err) {
       console.error("Error fetching products", err);
@@ -78,13 +89,41 @@ const AdminPage = () => {
     }
   };
 
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  return (
+  const handleDelete = async (productId) => {
+      if (!window.confirm("Are you sure you want to delete this product?")) {
+        return; // User canceled deletion
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/Delete/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to delete product with id ${productId}`);
+        }
+
+        // On success, remove product from state
+        setProducts((prevProducts) =>
+          prevProducts.filter((p) => p.productId !== productId)
+        );
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product. Please try again.");
+      }
+    };
+
+//Add above H2 - <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded" onClick={() => navigate("/admin/addProduct")}>Add New Product</button>
+  
+return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Page</h2>
+      <h3>All Products</h3>
       {loading ? (
         <p>Loading...</p>
       ) : products.length === 0 ? (
@@ -97,18 +136,8 @@ const AdminPage = () => {
                 {product.productName || "Unnamed Product"}
               </span>
               <div className="product-actions">
-                <button
-                  onClick={() => alert("Update not implemented")}
-                  className="update-btn"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => alert("Delete not implemented")}
-                  className="delete-btn"
-                >
-                  Delete
-                </button>
+                <button onClick={() => navigate(`/admin/editProduct/${product.productId}`)} className="update-btn">Update</button>
+                <button onClick={() => handleDelete(product.productId)} className="delete-btn">Delete</button>
               </div>
             </div>
           ))}

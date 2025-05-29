@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +22,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true;
     options.JsonSerializerOptions.MaxDepth = 100;
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
+
 
 //CORS stuff goes here
 
