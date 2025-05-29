@@ -16,6 +16,35 @@ const colorOptions = [
   { name: "Beige", value: "#f5f5dc" }
 ];
 
+const productImages = {
+  "79eee69d-a383-4303-b0be-021070a57d45": [ '/Assets/img/NewBalanceBasic.jpg', ],
+  "1dbcfcb3-090f-45f0-a78d-3eb7da6c5468": [ '/Assets/img/NewBalanceBeige.jpg', ],
+  "cb45cbe5-600f-41bc-84fc-81997c96e5f3": [ '/Assets/img/AIR force.jpg', ],
+  "7fb89bfd-a86e-4cfa-8eae-3acbde1abbfd": [ '/Assets/img/AirMaxPlus.webp', ],
+  "5d4c227b-fcca-42f3-b0b1-b1a89de47ef5": [
+  '/Assets/Video/AirMaxWomenVid.mp4',
+  '/Assets/img/AirMaxWomen.png',
+  '/Assets/img/AirMaxWomen2.png',
+  '/Assets/img/AirMaxWomen3.png',
+  '/Assets/img/AirMaxWomen4.png',
+  '/Assets/img/AirMaxWomen5.png',
+  '/Assets/img/AirMaxWomen6.png',
+  ],
+  "59d157e9-7e82-4254-8163-341acef2cc51": [ '/Assets/img/UggsLow.jpg', ],
+  "02ac4c55-eef5-4722-b19d-877e917cd7cb": [ '/Assets/img/uggMiniSvart.jpg', ],
+  "134890f0-fa0e-4d71-826b-829cb5deab30": [ '/Assets/img/AdidasCampus.jpg', ],
+  "fe07d1b5-af4f-4392-ad03-a03cd825dd22": [ 'Assets/img/BabyDunk.jpg', ],
+  "eb9aea7c-a7fa-4ed5-8799-4dbe130f8d76": [ '/Assets/img/NikeGreen.jpg', ],
+  "73d20b7a-1a01-42b7-baf6-58070f3e1954": [ '/Assets/img/NikeDunkBlue.jpg', ],
+  "f2ebfe0c-080d-4951-b6da-55bbb2b7337c": [ '/Assets/img/NikebabyPink.jpg', ],
+  "5f21de1b-b31c-4b47-9192-4cb8a9d09213": [ '/Assets/img/NikePanda.jpg', ],
+  "ca3dbabf-c551-4bae-82d7-feafa6c0e3bb": [ '/Assets/img/AxelArigato.jpg', ],
+  "f7e815f3-06a4-4d56-a6ad-d2c49c5849b7": [ '/Assets/img/Arigattooo.jpg', ],
+  "a502ef7b-b3d0-4fb0-949a-c4aabae18060": [ '/Assets/img/Dior.jpg', ],
+  //"ProductID here": 'Image Link Here',
+
+};
+
 export function ProductDetail() {
   const { productId } = useParams(); 
   const [product, setProduct] = useState(null);
