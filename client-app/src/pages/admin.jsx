@@ -84,6 +84,30 @@ const AdminPage = () => {
     fetchProducts();
   }, []);
 
+  const handleDelete = async (productId) => {
+      if (!window.confirm("Are you sure you want to delete this product?")) {
+        return; // User canceled deletion
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/Delete/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to delete product with id ${productId}`);
+        }
+
+        // On success, remove product from state
+        setProducts((prevProducts) =>
+          prevProducts.filter((p) => p.productId !== productId)
+        );
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product. Please try again.");
+      }
+    };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Page</h2>
@@ -100,7 +124,7 @@ const AdminPage = () => {
               </span>
               <div className="product-actions">
                 <button onClick={() => navigate(`/admin/editProduct/${product.productId}`)} className="update-btn">Update</button>
-                <button onClick={() => alert("Delete not implemented")} className="delete-btn">Delete</button>
+                <button onClick={() => handleDelete(product.productId)} className="delete-btn">Delete</button>
               </div>
             </div>
           ))}
