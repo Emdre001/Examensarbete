@@ -72,6 +72,15 @@ const AdminPage = () => {
       // dereferencedData.$values is now a fully dereferenced array of products
       const actualProducts = dereferencedData?.$values ?? [];
 
+      // Sort alphabetically by productName (case-insensitive)
+      actualProducts.sort((a, b) => {
+        const nameA = (a.productName || "").toLowerCase();
+        const nameB = (b.productName || "").toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+
       setProducts(actualProducts);
     } catch (err) {
       console.error("Error fetching products", err);
@@ -79,6 +88,7 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchProducts();
@@ -111,6 +121,7 @@ const AdminPage = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Page</h2>
+      <h3>All Products</h3>
       {loading ? (
         <p>Loading...</p>
       ) : products.length === 0 ? (
