@@ -23,6 +23,7 @@ public class ProductDbRepos
             .Include(p => p.Brand)
             .Include(p => p.Colors)
             .Include(p => p.ProductSizes)
+            .Include(p => p.ProductImages)
             .ToListAsync();
     }
 

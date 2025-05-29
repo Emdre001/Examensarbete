@@ -29,26 +29,7 @@ const priceOptions = [
   { label: "5000+ kr", min: 5000, max: Infinity },
 ];
 
-const productImages = {
-  "79eee69d-a383-4303-b0be-021070a57d45": '/Assets/img/NewBalanceBasic.jpg',
-  "1dbcfcb3-090f-45f0-a78d-3eb7da6c5468": '/Assets/img/NewBalanceBeige.jpg',
-  "cb45cbe5-600f-41bc-84fc-81997c96e5f3": '/Assets/img/AIR force.jpg',
-  "7fb89bfd-a86e-4cfa-8eae-3acbde1abbfd": '/Assets/img/AirMaxPlus.webp',
-  "5d4c227b-fcca-42f3-b0b1-b1a89de47ef5": '/Assets/img/AirMaxWomen.png',
-  "59d157e9-7e82-4254-8163-341acef2cc51": '/Assets/img/UggsLow.jpg',
-  "02ac4c55-eef5-4722-b19d-877e917cd7cb": '/Assets/img/uggMiniSvart.jpg',
-  "134890f0-fa0e-4d71-826b-829cb5deab30": '/Assets/img/AdidasCampus.jpg',
-  "fe07d1b5-af4f-4392-ad03-a03cd825dd22": 'Assets/img/BabyDunk.jpg',
-  "eb9aea7c-a7fa-4ed5-8799-4dbe130f8d76": '/Assets/img/NikeGreen.jpg',
-  "73d20b7a-1a01-42b7-baf6-58070f3e1954": '/Assets/img/NikeDunkBlue.jpg',
-  "f2ebfe0c-080d-4951-b6da-55bbb2b7337c": '/Assets/img/NikebabyPink.jpg',
-  "5f21de1b-b31c-4b47-9192-4cb8a9d09213": '/Assets/img/NikePanda.jpg',
-  "ca3dbabf-c551-4bae-82d7-feafa6c0e3bb": '/Assets/img/AxelArigato.jpg',
-  "f7e815f3-06a4-4d56-a6ad-d2c49c5849b7": '/Assets/img/Arigattooo.jpg',
-  "a502ef7b-b3d0-4fb0-949a-c4aabae18060": '/Assets/img/Dior.jpg',
-  //"ProductID here": 'Image Link Here',
-
-};
+const BACKEND_BASE_URL = 'http://localhost:5066';
 
 function resolveRefs(obj) {
   const byId = {};
@@ -73,18 +54,14 @@ function resolveRefs(obj) {
 
     return obj;
   }
-
   const root = recurse(obj);
-
   for (const ref of refs) {
     const resolved = byId[ref.$ref];
     Object.assign(ref, resolved);
     delete ref.$ref;
   }
-
   return root;
 }
-
 
 export function Products() {
   const navigate = useNavigate();
@@ -119,29 +96,47 @@ export function Products() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5066/api/Product/GetAll');
-      const data = await response.json();
-      const resolved = resolveRefs(data);
+      const [productRes, imageRes] = await Promise.all([
+        fetch('http://localhost:5066/api/Product/GetAll'),
+        fetch('http://localhost:5066/api/ProductImage/GetAll')
+      ]);
 
-      const formatted = resolved?.$values?.map(product => ({
-        id: product.productId,
-        name: product.productName,
-        type: product.productType,
-        description: product.productDescription,
-        price: product.productPrice,
-        rating: product.productRating,
-        gender: product.productGender,
-        brand: product.brand?.brandName || 'Unknown',
-        colors: product.colors?.$values?.map(c => c.colorName) || [],
-        sizes: product.sizes?.$values || [], // <— include sizes if used in filtering
-        image: productImages[product.productId] || product.imageUrl || '', // <— make sure `image` is available
-        category: product.productType || '', // assuming productType is the category
+      const productData = await productRes.json();
+      const imageData = await imageRes.json();
 
-      })) || [];
+      const resolvedProducts = resolveRefs(productData);
+      const resolvedImages = resolveRefs(imageData);
 
-      setProducts(formatted);
+      const imageMap = {};
+      for (const img of resolvedImages?.$values || []) {
+        if (!imageMap[img.productId]) {
+          imageMap[img.productId] = [];
+        }
+        imageMap[img.productId].push(img.imageUrl);
+      }
+
+      const formattedProducts = resolvedProducts?.$values?.map(product => {
+        const productImages = imageMap[product.productId] || [];
+        return {
+          id: product.productId,
+          name: product.productName,
+          type: product.productType,
+          description: product.productDescription,
+          price: product.productPrice,
+          rating: product.productRating,
+          gender: product.productGender,
+          brand: product.brand?.brandName || 'Unknown',
+          colors: product.colors?.$values?.map(c => c.colorName) || [],
+          sizes: product.sizes?.$values || [],
+          image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
+          images: productImages,          // All images if needed later
+          category: product.productType || '',
+        };
+      }) || [];
+
+      setProducts(formattedProducts);
     } catch (err) {
-      console.error('Error fetching products:', err);
+      console.error('Error fetching products or images:', err);
       setError('Failed to load products.');
     } finally {
       setLoading(false);
@@ -150,6 +145,7 @@ export function Products() {
 
   fetchProducts();
 }, []);
+
 
   // Filters from URL
   useEffect(() => {

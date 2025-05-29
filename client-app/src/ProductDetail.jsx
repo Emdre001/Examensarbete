@@ -23,49 +23,63 @@ export function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [sizes, setSizes] = useState([]);
+  const [images, setImages] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0); // NEW
 
+  // Helper to prefix image URLs with backend base URL
+  const getImageUrl = (relativePath) => `http://localhost:5066${relativePath}`;
 
   const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
-  const fetchProduct = async () => {
-    try {
-      const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
-      if (!response.ok) throw new Error('Product not found');
-      const data = await response.json();
-      setProduct(data);
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
+        if (!response.ok) throw new Error('Product not found');
+        const data = await response.json();
+        setProduct(data);
 
-      const sizeValues = data.productSizes?.$values || [];
-      const fetchedSizes = await Promise.all(
-      sizeValues.map(async (s) => {
-        const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${s.sizeId}`);
-        const sizeData = await res.json();
-        return {
-          sizeId: s.sizeId,
-          sizeValue: sizeData.sizeValue
-        };
-      })
-    );
+        const sizeValues = data.productSizes?.$values || [];
+        const fetchedSizes = await Promise.all(
+          sizeValues.map(async (s) => {
+            const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${s.sizeId}`);
+            const sizeData = await res.json();
+            return {
+              sizeId: s.sizeId,
+              sizeValue: sizeData.sizeValue
+            };
+          })
+        );
 
-    // Sort sizes numerically (or lexicographically if needed)
-    fetchedSizes.sort((a, b) => {
-      const aVal = parseFloat(a.sizeValue);
-      const bVal = parseFloat(b.sizeValue);
-      return aVal - bVal;
-    });
+        // Sort sizes numerically (or lexicographically if needed)
+        fetchedSizes.sort((a, b) => {
+          const aVal = parseFloat(a.sizeValue);
+          const bVal = parseFloat(b.sizeValue);
+          return aVal - bVal;
+        });
 
-    setSizes(fetchedSizes);
+        setSizes(fetchedSizes);
+      } catch (error) {
+        console.error('Error fetching product or sizes:', error);
+      }
+    };
 
+    fetchProduct();
 
-      setSizes(fetchedSizes);
-    } catch (error) {
-      console.error('Error fetching product or sizes:', error);
-    }
-  };
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`http://localhost:5066/api/ProductImage/GetImagesByProductId/${productId}`);
+        if (!response.ok) throw new Error('Images not found');
+        const data = await response.json();
+        setImages(data?.$values || []); // API returns images array in $values
+        setSelectedImageIndex(0); // reset main image to first on images load
+      } catch (error) {
+        console.error('Error fetching product images:', error);
+      }
+    };
 
-  fetchProduct();
-}, [productId]);
-
+    fetchImages();
+  }, [productId]);
 
   if (!product) {
     return <div>Loading product...</div>;
@@ -84,7 +98,7 @@ export function ProductDetail() {
       productId: product.productId,
       name: product.productName,
       price: product.productPrice,
-      image: "", // no image in API response
+      image: "", // no image in API response for cart
       size: selectedSize,
       color: selectedColor,
     });
@@ -97,12 +111,45 @@ export function ProductDetail() {
     <>
       <ToastNotification show={showToast} message="Product added to cart!" />
       <div className="product-detail-container">
-        <div className="product-main-image">
-          <img
-            src="/placeholder-image.png"
-            alt="Product"
-            className="main-image"
-          />
+        <div className="product-main-image-container" style={{ display: 'flex', gap: '10px' }}>
+          {/* Thumbnails on the left */}
+          <div className="thumbnail-column" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {images.map((img, index) => (
+              <img
+                key={index}
+                src={getImageUrl(img.imageUrl)}
+                alt={`Thumbnail ${index}`}
+                className="thumbnail"
+                style={{
+                  cursor: 'pointer',
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'cover',
+                  border: selectedImageIndex === index ? '2px solid #007aff' : 'none'
+                }}
+                onClick={() => setSelectedImageIndex(index)}
+              />
+            ))}
+          </div>
+
+          {/* Main image */}
+          <div className="main-image-wrapper">
+            {images.length > 0 ? (
+              <img
+                src={getImageUrl(images[selectedImageIndex].imageUrl)}
+                alt="Product"
+                className="main-image"
+                style={{ width: '400px', height: '400px', objectFit: 'contain' }}
+              />
+            ) : (
+              <img
+                src="/placeholder-image.png"
+                alt="Product"
+                className="main-image"
+                style={{ width: '400px', height: '400px', objectFit: 'contain' }}
+              />
+            )}
+          </div>
         </div>
 
         <div className="product-info">
@@ -111,17 +158,17 @@ export function ProductDetail() {
           <p className="product-description">{product.productDescription}</p>
 
           <h3>Select size:</h3>
-            <div className="size-selector">
-              {sizes.map(({ sizeId, sizeValue }) => (
-                <button
-                  key={sizeId}
-                  className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
-                  onClick={() => setSelectedSize(sizeId)}
-                >
-                  {sizeValue}
-                </button>
-              ))}
-            </div>
+          <div className="size-selector">
+            {sizes.map(({ sizeId, sizeValue }) => (
+              <button
+                key={sizeId}
+                className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
+                onClick={() => setSelectedSize(sizeId)}
+              >
+                {sizeValue}
+              </button>
+            ))}
+          </div>
 
           <h3>Select color:</h3>
           <div className="color-circles">

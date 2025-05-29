@@ -105,11 +105,14 @@ public class AdminDbRepos
             ProductDescription = "Nike Air Max DN Womens shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 1499,
             ProductRating = 4,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorBlack, colorBlue },
             Orders = new List<Order>(),
-            ProductSizes = new List<ProductSize>() // ✅ New
+            ProductSizes = new List<ProductSize>()
+            {
+                
+            }
         };
 
         var product2 = new Product
@@ -120,7 +123,7 @@ public class AdminDbRepos
             ProductDescription = "Nike Air Force 1 '07 Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 1499,
             ProductRating = 2,
-            ProductGender = "Man",
+            ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorGrey },
             Orders = new List<Order>(),
@@ -135,7 +138,7 @@ public class AdminDbRepos
             ProductDescription = "Nike Air Max Plus Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 2399,
             ProductRating = 3,
-            ProductGender = "Man",
+            ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorBrown },
             Orders = new List<Order>(),
@@ -177,7 +180,7 @@ public class AdminDbRepos
             ProductDescription = "Walk'n'Dior Platform Sneaker luxery shoe combine comfort and style with a cool design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 10232,
             ProductRating = 5,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandDior,
             Colors = new List<Color> { colorBlack, colorGrey, colorWhite },
             Orders = new List<Order>(),
@@ -191,7 +194,7 @@ public class AdminDbRepos
             ProductDescription = "New Balance 530 shoe combine comfort and style with a sport design and responsive cushioning. Perfect for everyday wear.",
             ProductPrice = 1270,
             ProductRating = 5,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandNewBalance,
             Colors = new List<Color> { colorGrey, colorWhite, colorPink },
             Orders = new List<Order>(),
@@ -205,7 +208,7 @@ public class AdminDbRepos
             ProductDescription = "New Balance 530 Beige basic bih shoe combine comfort and style with a sport design and responsive cushioning. Perfect for everyday wear duuh.",
             ProductPrice = 1070,
             ProductRating = 3,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandNewBalance,
             Colors = new List<Color> { colorGrey, colorWhite, colorBeige },
             Orders = new List<Order>(),
@@ -219,7 +222,7 @@ public class AdminDbRepos
             ProductDescription = "Nike Baby pink shoe combine comfort and style with a girliee design and responsive cushioning. Perfect for everyday slay.",
             ProductPrice = 799,
             ProductRating = 4,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorPink, colorBeige },
             Orders = new List<Order>(),
@@ -233,7 +236,7 @@ public class AdminDbRepos
             ProductDescription = "Nike Olive Green shoe combine perfect comfort and style with a bad boy design and responsive cushioning. Perfect for everyday and you will become a real MAN.",
             ProductPrice = 1045,
             ProductRating = 3,
-            ProductGender = "Man",
+            ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorRed, colorBlue, colorGreen },
             Orders = new List<Order>(),
@@ -261,7 +264,7 @@ public class AdminDbRepos
             ProductDescription = "Ugg mini shoe combine perfect comfort like walking on the clouds with a premium design and responsive cushioning. Perfect for everyday for all the girlies queen.",
             ProductPrice = 2745,
             ProductRating = 5,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandUgg,
             Colors = new List<Color> { colorBlack, colorBeige, colorBrown },
             Orders = new List<Order>(),
@@ -275,7 +278,7 @@ public class AdminDbRepos
             ProductDescription = "Ugg ultra mini shoe combine perfect comfort like walking on the clouds with a premium design and responsive cushioning. Perfect for everyday for all the girlies queen.",
             ProductPrice = 2859,
             ProductRating = 3,
-            ProductGender = "Woman",
+            ProductGender = "Women",
             Brand = brandUgg,
             Colors = new List<Color> { colorBlack, colorBeige, colorBrown },
             Orders = new List<Order>(),
@@ -317,7 +320,7 @@ public class AdminDbRepos
             ProductDescription = "Nike Jordans mid shoe combine perfect comfort with a cool vibe design and responsive cushioning. Perfect for everyday in a rush.",
             ProductPrice = 1499,
             ProductRating = 3,
-            ProductGender = "Man",
+            ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorWhite, colorGrey },
             Orders = new List<Order>(),
@@ -423,6 +426,33 @@ public class AdminDbRepos
 
         };
 
+        var images = new List<ProductImage>
+        {
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen2.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen3.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen4.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen5.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen6.png"},
+
+            new ProductImage {ProductId = product2.ProductId, ImageUrl = "/img/AirForce.jpg"},
+            new ProductImage {ProductId = product3.ProductId, ImageUrl = "/img/AirMaxPlus.webp"},
+            new ProductImage {ProductId = product4.ProductId, ImageUrl = "/img/Arigattooo.jpg"},
+            new ProductImage {ProductId = product5.ProductId, ImageUrl = "/img/AxelArigato.jpg"},
+            new ProductImage {ProductId = product6.ProductId, ImageUrl = "/img/dior.jpg"},
+            new ProductImage {ProductId = product7.ProductId, ImageUrl = "/img/NewBalanceBasic.jpg"},
+            new ProductImage {ProductId = product8.ProductId, ImageUrl = "/img/NewBalanceBeige.jpg"},
+            new ProductImage {ProductId = product9.ProductId, ImageUrl = "/img/NikebabyPink.jpg"},
+            new ProductImage {ProductId = product10.ProductId, ImageUrl = "/img/NikeGreen.jpg"},
+            new ProductImage {ProductId = product11.ProductId, ImageUrl = "/img/NikePanda.jpg"},
+            new ProductImage {ProductId = product12.ProductId, ImageUrl = "/img/uggMiniSvart.jpg"},
+            new ProductImage {ProductId = product13.ProductId, ImageUrl = "/img/UggsLow.jpg"},
+            new ProductImage {ProductId = product14.ProductId, ImageUrl = "/img/AdidasCampus.jpg"},
+            new ProductImage {ProductId = product15.ProductId, ImageUrl = "/img/NikeDunkBlue.jpg"},
+            new ProductImage {ProductId = product16.ProductId, ImageUrl = "/img/Jordan.png"},
+
+        };
+
         // Assign to ProductSizes collections
         product1.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product1));
         product2.ProductSizes.AddRange(productSizes.Where(ps => ps.Product == product2));
@@ -525,7 +555,8 @@ public class AdminDbRepos
         _dbContext.Colors.AddRange(colorRed, colorBlue, colorGreen, colorWhite, colorBlack, colorGrey, colorBrown, colorPink, colorBeige);
         _dbContext.Sizes.AddRange(sizes);
         _dbContext.Products.AddRange(product1, product2, product3, product4, product5, product6, product7, product8, product9, product10, product11, product12, product13, product14, product15, product16);
-        _dbContext.AddRange(productSizes); 
+        _dbContext.AddRange(productSizes);
+        _dbContext.ProductImages.AddRange(images);
 
         await _dbContext.SaveChangesAsync();
     }

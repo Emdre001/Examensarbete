@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +68,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowLocalhost3000");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "img")),  // adjust path as needed
+    RequestPath = "/img"
+});
 
 app.UseAuthorization();
 app.MapControllers();

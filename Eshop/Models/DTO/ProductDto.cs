@@ -18,4 +18,6 @@ public class ProductDTO
     public virtual List<Guid> OrdersId { get; set; } = null;
     public virtual List<Guid> SizesId { get; set; } = null;
 
+    
+
 }
