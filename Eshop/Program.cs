@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
 using Microsoft.OpenApi.Models;
+using System.Text.Json;
 using Eshop.DbRepos;
 using Microsoft.AspNetCore.Authentication;
 using Eshop.Services;
@@ -26,9 +27,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
-
-
-//CORS stuff goes here
 
 // Fetch the connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop");
