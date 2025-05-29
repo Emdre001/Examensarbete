@@ -449,7 +449,7 @@ public class AdminDbRepos
             new ProductImage {ProductId = product13.ProductId, ImageUrl = "/img/UggsLow.jpg"},
             new ProductImage {ProductId = product14.ProductId, ImageUrl = "/img/AdidasCampus.jpg"},
             new ProductImage {ProductId = product15.ProductId, ImageUrl = "/img/NikeDunkBlue.jpg"},
-            new ProductImage {ProductId = product16.ProductId, ImageUrl = "/img/Jordan.png"},
+            new ProductImage {ProductId = product16.ProductId, ImageUrl = "/img/AirJordan1.jpg"},
 
         };
 
