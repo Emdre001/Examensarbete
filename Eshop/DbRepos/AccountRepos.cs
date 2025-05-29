@@ -14,10 +14,10 @@ namespace Eshop.DbRepos
             _context = context;
         }
 
-        public async Task<User?> LoginAsync(string username, string password)
+        public async Task<User?> LoginAsync(string identifier, string password)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(u => u.UserName == username && u.Password == password);
+                .FirstOrDefaultAsync(u => u.UserName == identifier || u.Email == identifier && u.Password == password);
         }
 
         public async Task<bool> RegisterAsync(User newUser)

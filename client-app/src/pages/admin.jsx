@@ -62,7 +62,12 @@ const AdminPage = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE}/GetAll`);
+      const auth = localStorage.getItem('auth');
+      const res = await fetch(`${API_BASE}/GetAll`, {
+        headers: {
+          'Authorization': `Basic ${auth}`
+        }
+      });
       const data = await res.json();
 
       const dereferencedData = dereferenceJsonNet(data);

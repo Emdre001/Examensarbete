@@ -16,9 +16,9 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequestModel dto)
     {
-        var user = await _accountRepos.LoginAsync(dto.Username, dto.Password);
+        var user = await _accountRepos.LoginAsync(dto.UsernameOrEmail, dto.Password);
         if (user == null)
-            return Unauthorized("Invalid username or password.");
+            return Unauthorized("Invalid Username/Email or password.");
 
         return Ok(new { user.UserName, user.Role });
     }
