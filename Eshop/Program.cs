@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
 using Microsoft.OpenApi.Models;
+using System.Text.Json;
 using Eshop.DbRepos;
 using Microsoft.AspNetCore.Authentication;
 using Eshop.Services;
@@ -23,9 +24,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true;
     options.JsonSerializerOptions.MaxDepth = 100;
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
-// Database context registration
+// Fetch the connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop");
 builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(connectionString));
