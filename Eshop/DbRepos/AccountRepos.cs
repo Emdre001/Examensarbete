@@ -41,6 +41,26 @@ namespace Eshop.DbRepos
             return await _context.Users.FindAsync(id);
         }
 
+        public async Task<UserDTO?> GetUserByNameAsync(string userName)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+
+            if (user == null)
+                return null;
+
+            return new UserDTO
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                UserEmail = user.Email,
+                UserAddress = user.Address,
+                UserPhoneNr = user.PhoneNr,
+                OrdersId = [.. user.Orders.Select(o => o.OrderId)],
+                UserRole = user.Role
+            };
+        }
+
         public async Task<bool> UpdateUserAsync(Guid id, AccountDto dto)
         {
             var user = await _context.Users.FindAsync(id);

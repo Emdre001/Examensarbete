@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Eshop.DbRepos;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -56,6 +57,32 @@ public class AccountController : ControllerBase
             return NotFound();
         return Ok(user);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdStr))
+            return Unauthorized();
+
+        var userId = _accountRepos.GetUserByNameAsync(userIdStr).Result.UserId;
+        var user = await _accountRepos.GetUserByIdAsync(userId);
+        if (user == null)
+            return NotFound();
+
+        var userDto = new 
+        {
+            user.UserId,
+            user.UserName,
+            user.Email,
+            user.Address,
+            user.PhoneNr,
+            user.Role
+        };
+
+        return Ok(userDto);
+    }
+
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] AccountDto dto)

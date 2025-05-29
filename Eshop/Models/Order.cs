@@ -13,6 +13,5 @@ public class Order
     public virtual int OrderAmount { get; set; }
 
     public virtual List<Product> Products { get; set; }
-    public Guid UserId { get; set; }
     public virtual User User { get; set; }
 }
