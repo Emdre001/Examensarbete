@@ -33,6 +33,26 @@ public class ProductSizesController : ControllerBase
         return Ok(productSizes);
     }
 
+    [HttpGet("/api/GetProductSizesByProductId/{productId:guid}")]
+    public async Task<ActionResult<IEnumerable<ProductSizeDTO>>> GetProductSizesByProductId(Guid productId)
+    {
+        var productSizes = await _context.ProductSizes
+            .Where(ps => ps.ProductId == productId)
+            .ToListAsync();
+
+        if (productSizes == null || !productSizes.Any())
+            return NotFound();
+
+        var result = productSizes.Select(ps => new ProductSizeDTO
+        {
+            ProductId = ps.ProductId,
+            SizeId = ps.SizeId,
+            Stock = ps.Stock
+        });
+
+        return Ok(result);
+    }
+
     // GET: api/ProductSizes/{productId}/{sizeId}
     [HttpGet("/api/GetProductSizeById/{productId:guid}/{sizeId:guid}")]
     public async Task<ActionResult<ProductSizeDTO>> GetProductSizeByIds(Guid productId, Guid sizeId)

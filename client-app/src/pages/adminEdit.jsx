@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { dereferenceJsonNet } from "../Dereferencer"; // <-- centralized dereferencer
+import { dereferenceJsonNet } from "../Dereferencer";
+import "../styles/EditProduct.css";
 
 const API_BASE = "http://localhost:5066/api";
 
@@ -69,33 +70,39 @@ const EditProduct = () => {
 
     const fetchSizes = async () => {
       try {
-        const res = await fetch(`${API_BASE}/GetAllProductSizes`);
+        const res = await fetch(`${API_BASE}/GetProductSizesByProductId/${id}`);
         const data = await res.json();
         const dereferenced = dereferenceJsonNet(data);
 
-        const filteredSizes = dereferenced.$values.filter(
-          (item) => item.productId.toString() === id.toString()
-        );
-
         const sizeDetails = await Promise.all(
-          filteredSizes.map(async (size) => {
-            const res = await fetch(`${API_BASE}/Size/GetSizeById/${size.sizeId}`);
-            const sizeData = await res.json();
+          dereferenced.$values.map(async (entry) => {
+            const sizeRes = await fetch(`${API_BASE}/Size/GetSizeById/${entry.sizeId}`);
+            const sizeData = await sizeRes.json();
             const derefSize = dereferenceJsonNet(sizeData);
             return {
-              sizeId: size.sizeId,
-              sizeStock: size.sizeStock,
+              sizeId: entry.sizeId,
+              sizeStock: entry.stock,
               sizeValue: derefSize.sizeValue,
             };
           })
         );
 
-        setSizes(sizeDetails);
+        const sortedSizes = sizeDetails.sort((a, b) => {
+          const sizeA = parseFloat(a.sizeValue);
+          const sizeB = parseFloat(b.sizeValue);
 
-        // Autofill stocks as strings
+          if (isNaN(sizeA) || isNaN(sizeB)) {
+            return a.sizeValue.localeCompare(b.sizeValue);
+          }
+
+          return sizeA - sizeB;
+        });
+
+        setSizes(sortedSizes);
+
         const initialStocks = {};
-        sizeDetails.forEach((s) => {
-          initialStocks[s.sizeId] = s.sizeStock.toString();
+        sortedSizes.forEach((s) => {
+          initialStocks[s.sizeId] = s.sizeStock?.toString() ?? "0";
         });
         setSizeStocks(initialStocks);
       } catch (err) {
@@ -132,28 +139,6 @@ const EditProduct = () => {
     }));
   };
 
-  const updateSizeStock = async (sizeId) => {
-    try {
-      const response = await fetch(
-        `${API_BASE}/updateProductSize/${id}/${sizeId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sizeStock: parseInt(sizeStocks[sizeId], 10) }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update stock");
-      }
-
-      alert("Stock updated!");
-    } catch (err) {
-      console.error(err);
-      alert("Error updating stock");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -165,30 +150,46 @@ const EditProduct = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE}/Product/Update/${id}`, {
+      const productResponse = await fetch(`${API_BASE}/Product/Update/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProduct),
       });
 
-      if (!response.ok) {
+      if (!productResponse.ok) {
         throw new Error("Failed to update product");
       }
 
-      alert("Product updated successfully!");
+      const stockUpdatePromises = Object.entries(sizeStocks).map(
+        async ([sizeId, stockValue]) => {
+          const res = await fetch(`${API_BASE}/updateProductSize/${id}/${sizeId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sizeStock: parseInt(stockValue, 10) }),
+          });
+
+          if (!res.ok) {
+            throw new Error(`Failed to update stock for size ${sizeId}`);
+          }
+        }
+      );
+
+      await Promise.all(stockUpdatePromises);
+
+      alert("Product and stock updated successfully!");
       navigate("/");
     } catch (error) {
-      console.error("Error updating product:", error);
-      alert("An error occurred while updating the product.");
+      console.error("Error updating product or stock:", error);
+      alert("An error occurred while updating the product or stock.");
     }
   };
 
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="edit-product-container">
+      <h2 className="edit-product-title">Edit Product</h2>
+      <form onSubmit={handleSubmit} className="edit-product-form">
         <TextField
           label="Name"
           name="productName"
@@ -228,15 +229,15 @@ const EditProduct = () => {
           onChange={handleInputChange}
         />
 
-        <div>
-          <label htmlFor="brand" className="block font-medium mb-1">
+        <div className="form-group">
+          <label htmlFor="brand" className="form-label">
             Brand:
           </label>
           <select
             id="brand"
             value={selectedBrandId}
             onChange={handleBrandChange}
-            className="w-full border p-2 rounded"
+            className="form-select"
           >
             <option value="">Select a brand</option>
             {brands.map((brand) => (
@@ -247,11 +248,11 @@ const EditProduct = () => {
           </select>
         </div>
 
-        <div>
-          <label className="block font-medium mb-1">Colors:</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="form-group">
+          <label className="form-label">Colors:</label>
+          <div className="color-options">
             {colors.map((color) => (
-              <label key={color.colorId} className="flex items-center space-x-2">
+              <label key={color.colorId} className="checkbox-label">
                 <input
                   type="checkbox"
                   value={color.colorId}
@@ -264,59 +265,46 @@ const EditProduct = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        <div className="sizes-section">
+          <h3 className="sizes-title">Sizes & Stock</h3>
+          <table className="sizes-table">
+            <thead>
+              <tr>
+                <th>Size</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sizes.map((size) => (
+                <tr key={size.sizeId}>
+                  <td>{size.sizeValue}</td>
+                  <td>
+                    <input
+                      type="number"
+                      className="stock-input"
+                      value={sizeStocks[size.sizeId] ?? ""}
+                      onChange={(e) =>
+                        handleStockChange(size.sizeId, e.target.value)
+                      }
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <button type="submit" className="btn-submit">
           Save Changes
         </button>
       </form>
-
-      {/* Sizes Table */}
-      <div className="mt-10">
-        <h3 className="text-xl font-semibold mb-4">Sizes & Stock</h3>
-        <table className="w-full border border-gray-300 text-left">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">Size</th>
-              <th className="p-2 border">Stock</th>
-              <th className="p-2 border">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sizes.map((size) => (
-              <tr key={size.sizeId}>
-                <td className="p-2 border">{size.sizeValue}</td>
-                <td className="p-2 border">
-                  <input
-                    type="number"
-                    className="border rounded p-1 w-20"
-                    value={sizeStocks[size.sizeId] ?? ""}
-                    onChange={(e) =>
-                      handleStockChange(size.sizeId, e.target.value)
-                    }
-                  />
-                </td>
-                <td className="p-2 border">
-                  <button
-                    onClick={() => updateSizeStock(size.sizeId)}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                  >
-                    Save
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };
 
 const TextField = ({ label, name, value, onChange, type = "text" }) => (
-  <div>
-    <label htmlFor={name} className="block font-medium mb-1">
+  <div className="form-group">
+    <label htmlFor={name} className="form-label">
       {label}:
     </label>
     <input
@@ -325,7 +313,7 @@ const TextField = ({ label, name, value, onChange, type = "text" }) => (
       id={name}
       value={value}
       onChange={onChange}
-      className="w-full border p-2 rounded"
+      className="form-input"
     />
   </div>
 );

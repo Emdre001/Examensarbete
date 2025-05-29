@@ -67,6 +67,7 @@ public class SizeDbRepos
         await _dbContext.SaveChangesAsync();
         return true;
     }
+    
     public async Task DeleteAllSizesAsync()
     {
         var allSizes = await _dbContext.Sizes.ToListAsync();

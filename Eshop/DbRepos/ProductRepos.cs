@@ -88,6 +88,7 @@ public class ProductDbRepos
 
         if (product == null) return null;
 
+        // Update scalar properties
         product.ProductName = dto.ProductName;
         product.ProductType = dto.ProductType;
         product.ProductDescription = dto.ProductDescription;
@@ -95,13 +96,47 @@ public class ProductDbRepos
         product.ProductRating = dto.ProductRating;
         product.ProductGender = dto.ProductGender;
 
+        // Update brand
         product.Brand = await _dbContext.Brands.FindAsync(dto.BrandId);
-        product.Colors = await _dbContext.Colors.Where(c => dto.ColorsId.Contains(c.ColorId)).ToListAsync();
-        product.ProductSizes = await _dbContext.ProductSizes.Where(s => dto.SizesId.Contains(s.SizeId)).ToListAsync();
+
+        // Update colors
+        var colors = await _dbContext.Colors
+            .Where(c => dto.ColorsId.Contains(c.ColorId))
+            .ToListAsync();
+        product.Colors.Clear();
+        foreach (var color in colors)
+        {
+            product.Colors.Add(color);
+        }
+
+        // Update product sizes
+        // Remove sizes not in the DTO
+        var dtoSizeIds = dto.ProductSizes.Select(ps => ps.SizeId).ToHashSet();
+        product.ProductSizes.RemoveAll(ps => !dtoSizeIds.Contains(ps.SizeId));
+
+        // Update existing sizes and add new ones
+        foreach (var psDto in dto.ProductSizes)
+        {
+            var existing = product.ProductSizes.FirstOrDefault(ps => ps.SizeId == psDto.SizeId);
+            if (existing != null)
+            {
+                existing.Stock = psDto.Stock; // Update stock
+            }
+            else
+            {
+                product.ProductSizes.Add(new ProductSize
+                {
+                    ProductId = product.ProductId,
+                    SizeId = psDto.SizeId,
+                    Stock = psDto.Stock
+                });
+            }
+        }
 
         await _dbContext.SaveChangesAsync();
         return product;
     }
+
 
     public async Task<bool> DeleteProductAsync(Guid id)
     {
