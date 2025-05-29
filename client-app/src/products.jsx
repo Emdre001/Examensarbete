@@ -50,8 +50,6 @@ const productImages = {
 
 };
 
-
-
 function resolveRefs(obj) {
   const byId = {};
   const refs = [];
