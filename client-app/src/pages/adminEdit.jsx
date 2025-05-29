@@ -139,18 +139,37 @@ const EditProduct = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prepare productSizes array
+    const productSizes = Object.entries(sizeStocks).map(([sizeId, stockValue]) => ({
+      sizeId,
+      stock: parseInt(stockValue, 10),
+      productId: id, // Optional if backend doesn't require it
+    }));
+
     const updatedProduct = {
-      productId: id,
-      ...formData,
-      brandId: selectedBrandId,
-      colorIds: selectedColorIds,
-    };
+    productName: formData.productName,
+    productType: formData.productType,
+    productDescription: formData.productDescription,
+    productPrice: parseInt(formData.productPrice, 10),
+    productRating: parseInt(formData.productRating, 10),
+    productGender: formData.productGender,
+    brandId: selectedBrandId,
+    colorsId: selectedColorIds,
+    ordersId: [],
+    sizesId: sizes.map(size => size.sizeId),
+    productSizes: Object.entries(sizeStocks).map(([sizeId, stock]) => ({
+      productId: id,    // autofilled product ID here
+      sizeId: sizeId,
+      stock: parseInt(stock, 10),
+    })),
+  };
 
     try {
-      const productResponse = await fetch(`${API_BASE}/Product/Update/${id}`, {
+      console.log("Sending to backend:", JSON.stringify(updatedProduct, null, 2));
+      const productResponse = await fetch(`${API_BASE}/Product/Update/Update/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProduct),
@@ -160,27 +179,11 @@ const EditProduct = () => {
         throw new Error("Failed to update product");
       }
 
-      const stockUpdatePromises = Object.entries(sizeStocks).map(
-        async ([sizeId, stockValue]) => {
-          const res = await fetch(`${API_BASE}/updateProductSize/${id}/${sizeId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sizeStock: parseInt(stockValue, 10) }),
-          });
-
-          if (!res.ok) {
-            throw new Error(`Failed to update stock for size ${sizeId}`);
-          }
-        }
-      );
-
-      await Promise.all(stockUpdatePromises);
-
-      alert("Product and stock updated successfully!");
+      alert("Product updated successfully!");
       navigate("/");
     } catch (error) {
-      console.error("Error updating product or stock:", error);
-      alert("An error occurred while updating the product or stock.");
+      console.error("Error updating product:", error);
+      alert("An error occurred while updating the product.");
     }
   };
 

@@ -42,13 +42,16 @@ public class ProductController : Controller
         return Ok(product);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] ProductDTO dto)
     {
-        var product = await _productRepo.UpdateProductAsync(id, dto);
-        if (product == null) return NotFound();
-        return Ok(product);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        await _productRepo.UpdateProductAsync(id, dto);
+        return Ok();
     }
+
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
