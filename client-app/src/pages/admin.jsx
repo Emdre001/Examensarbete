@@ -118,7 +118,9 @@ const AdminPage = () => {
       }
     };
 
-  return (
+//Add above H2 - <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded" onClick={() => navigate("/admin/addProduct")}>Add New Product</button>
+  
+return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Page</h2>
       <h3>All Products</h3>

@@ -12,6 +12,7 @@ import Cart from './Cart';
 import Footer from './footer';
 import Navbar from './navbar';
 import AdminPage from './pages/admin';
+import AdminAddProduct from './pages/AdminAddProduct';
 import EditProduct  from './pages/adminEdit';
 import { Toaster } from 'react-hot-toast';
 import './styles/App.css';
@@ -19,6 +20,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Profile from './Profile';
 import Orders from './Orders';
 import Checkout from './Checkout';
+
 
 
 function App() {
@@ -43,6 +45,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/admin/editProduct/:id" element={<EditProduct />} />
+              <Route path="/admin/AddProduct" element={<AdminAddProduct />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/checkout" element={<Checkout />} />
