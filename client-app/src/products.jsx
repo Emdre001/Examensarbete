@@ -29,6 +29,14 @@ const priceOptions = [
   { label: "5000+ kr", min: 5000, max: Infinity },
 ];
 
+const productImages = {
+  "8198b3f7-52cb-41f8-8fe9-122e751f6160": '/Assets/img/uggMiniSvart.jpg',
+  //"ProductID here": 'Image Link Here',
+
+};
+
+
+
 function resolveRefs(obj) {
   const byId = {};
   const refs = [];
@@ -113,9 +121,8 @@ export function Products() {
         brand: product.brand?.brandName || 'Unknown',
         colors: product.colors?.$values?.map(c => c.colorName) || [],
         sizes: product.sizes?.$values || [], // <— include sizes if used in filtering
-        image: product.imageUrl || '',        // <— make sure `image` is available
+        image: productImages[product.productId] || product.imageUrl || '', // <— make sure `image` is available
         category: product.productType || '', // assuming productType is the category
-        sizes: product.sizes?.$values || [],
 
       })) || [];
 
