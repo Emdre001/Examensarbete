@@ -185,19 +185,20 @@
 
 .product-main-image-gallery {
     display: flex;
-    flex-direction: column;       /* Vertikal layout */
-    overflow-y: auto;             /* Scrolla upp och ner */
-    max-height: 500px;            /* Justera höjd efter behov */
-    scroll-snap-type: y mandatory; /* Snap till varje bild */
+    flex-direction: column;     
+    overflow-y: auto;            
+    max-height: 500px;            
+    scroll-snap-type: y mandatory; 
     gap: 10px;
   }
   
   .main-image {
     width: 100%;
     height: auto;
-    max-height: 500px;             /* Visa hela bilden */
-    object-fit: contain;           /* Viktigt: ingen beskärning */
-    scroll-snap-align: start;      /* Snap-position */
+    max-height: 500px;
+    object-fit: contain;
+    scroll-snap-align: start;
     border-radius: 8px;
   }
+  
   

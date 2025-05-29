@@ -22,6 +22,7 @@ const productImages = {
   "cb45cbe5-600f-41bc-84fc-81997c96e5f3": [ '/Assets/img/AIR force.jpg', ],
   "7fb89bfd-a86e-4cfa-8eae-3acbde1abbfd": [ '/Assets/img/AirMaxPlus.webp', ],
   "5d4c227b-fcca-42f3-b0b1-b1a89de47ef5": [
+  '/Assets/Video/AirMaxWomenVid.mp4',
   '/Assets/img/AirMaxWomen.png',
   '/Assets/img/AirMaxWomen2.png',
   '/Assets/img/AirMaxWomen3.png',
@@ -125,16 +126,33 @@ export function ProductDetail() {
     <>
       <ToastNotification show={showToast} message="Product added to cart!" />
       <div className="product-detail-container">
-      <div className="product-main-image-gallery">
-      {(productImages[product.productId] || ['/placeholder-image.png']).map((imgSrc, index) => (
-        <img
+      <div className="product-main-image-gallery" tabIndex="0">
+      {(productImages[product.productId] || ['/placeholder-image.png']).map((media, index) => {
+        const isVideo = media.endsWith('.mp4') || media.endsWith('.webm');
+
+        return isVideo ? (
+          <video
           key={index}
-          src={imgSrc}
-          alt={`${product.productName} bild ${index + 1}`}
+          autoPlay
+          muted
+          loop
+          playsInline
           className="main-image"
-        />
-      ))}
+        >
+          <source src={media} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>        
+        ) : (
+          <img
+            key={index}
+            src={media}
+            alt={`${product.productName} bild ${index + 1}`}
+            className="main-image"
+          />
+        );
+      })}
     </div>
+
         <div className="product-info">
           <h1>{product.productName}</h1>
           <p className="product-price">{product.productPrice} kr</p>
