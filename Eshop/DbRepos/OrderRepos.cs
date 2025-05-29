@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Models;
@@ -11,13 +10,14 @@ public class OrderDbRepos
 {
     private readonly ILogger<OrderDbRepos> _logger;
     private readonly MainDbContext _dbContext;
+    
     public OrderDbRepos(ILogger<OrderDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
         _dbContext = context;
     }
 
-     public async Task<List<Order>> GetAllOrdersAsync()
+    public async Task<List<Order>> GetAllOrdersAsync()
     {
         return await _dbContext.Orders
             .Include(o => o.Products)

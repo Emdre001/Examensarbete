@@ -7,11 +7,11 @@ public class User
 {
     public virtual Guid UserId { get; set; }
     public virtual string UserName { get; set; }
-    public virtual string UserEmail { get; set; }
-    public virtual string UserPassword { get; set; }
-    public virtual string UserAddress { get; set; }
-    public virtual int UserPhoneNr { get; set; }
-    public virtual string UserRole { get; set; }
+    public virtual string Email { get; set; }
+    public virtual string Password { get; set; }
+    public virtual string? Address { get; set; }
+    public virtual string? PhoneNr { get; set; }
+    public virtual string Role { get; set; }
 
     public virtual List<Order> Orders { get; set; }
 }

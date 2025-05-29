@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Models.DTO;
 using DbRepos;
 
@@ -10,12 +9,10 @@ namespace Controllers;
 [Route("api/[controller]/[action]")]
 public class OrderController : Controller
 {
-    private readonly ILogger<OrderController> _logger;
     private readonly OrderDbRepos _orderRepo;
 
-    public OrderController(ILogger<OrderController> logger, OrderDbRepos orderRepo)
+    public OrderController(OrderDbRepos orderRepo)
     {
-        _logger = logger;
         _orderRepo = orderRepo;
     }
 
@@ -26,7 +23,7 @@ public class OrderController : Controller
         return Ok(order);
     }
 
-    [HttpGet]
+    [HttpGet] 
     public async Task<IActionResult> GetAll()
     {
         var orders = await _orderRepo.GetAllOrdersAsync();
