@@ -127,7 +127,7 @@ export function Products() {
           gender: product.productGender,
           brand: product.brand?.brandName || 'Unknown',
           colors: product.colors?.$values?.map(c => c.colorName) || [],
-          sizes: product.sizes?.$values || [],
+          sizes: product.sizes?.$values?.map(Number) || [],
           image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
           images: productImages,          // All images if needed later
           category: product.productType || '',
@@ -165,7 +165,7 @@ export function Products() {
     if (selectedGender.length && !selectedGender.includes(product.gender)) return false;
     if (selectedCategories.length && !selectedCategories.includes(product.category)) return false;
     if (selectedColors.length && !product.colors?.some((c) => selectedColors.includes(c))) return false;
-    if (selectedSizes.length && !product.sizes?.some((s) => selectedSizes.includes(s))) return false;
+    if (selectedSizes.length && !product.sizes?.some((s) => selectedSizes.includes(Number(s)))) return false;
     if (selectedPrices.length) {
       const inRange = selectedPrices.some(({ min, max }) =>
         product.price >= min && product.price < max
@@ -204,11 +204,11 @@ export function Products() {
       prev.includes(gender) ? prev.filter((g) => g !== gender) : [...prev, gender]
     );
   };
-  const toggleColor = (color) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
+  const toggleColor = (colorName) => {
+  setSelectedColors((prev) =>
+    prev.includes(colorName) ? prev.filter((c) => c !== colorName) : [...prev, colorName]
+  );
+};
   const toggleSize = (size) => {
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
@@ -313,12 +313,12 @@ export function Products() {
               {colorOptions.map((color) => (
                 <div key={color.value} className="color-circle-label">
                   <span
-                    className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
+                    className={`color-circle-filter${selectedColors.includes(color.name) ? " selected" : ""}`}
                     style={{ backgroundColor: color.value }}
                     title={color.name}
-                    onClick={() => toggleColor(color.value)}
+                    onClick={() => toggleColor(color.name)}
                   >
-                    {selectedColors.includes(color.value) && (
+                    {selectedColors.includes(color.name) && (
                       <span className="color-checkmark">&#10003;</span>
                     )}
                   </span>
