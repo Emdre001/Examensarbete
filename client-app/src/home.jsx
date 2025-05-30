@@ -10,7 +10,6 @@ const Home = () => {
 
   return (
     <div className="home-wrapper">
-      {/* 🔙 Bakgrundsbild som ligger bakom allt */}
       <div
         className="background-image"
         style={{
@@ -29,7 +28,6 @@ const Home = () => {
         }}
       ></div>
 
-      {/* 🔝 Innehållet */}
       <div className="page-wrapper">
         <section className="hero">
           <h1 className="hero-title">Step into Style with SoleMate</h1>
