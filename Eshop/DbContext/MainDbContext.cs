@@ -1,11 +1,5 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Models.DTO;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Npgsql.Replication;
 
 
 namespace DbContext;
