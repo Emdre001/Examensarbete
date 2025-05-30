@@ -5,7 +5,10 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using Eshop.DbRepos;
 using Microsoft.AspNetCore.Authentication;
-using Eshop.Services;
+using Eshop.Services;using Microsoft.Extensions.FileProviders;
+using System.IO;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,6 +102,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowLocalhost3000");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "img")),  // adjust path as needed
+    RequestPath = "/img"
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

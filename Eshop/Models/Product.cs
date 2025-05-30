@@ -18,6 +18,7 @@ public class Product
     public Brand Brand { get; set; }
     public List<Color> Colors { get; set; }
     public List<ProductSize> ProductSizes { get; set; }
+    public List<ProductImage> ProductImages { get; set; }
     public List<Order> Orders { get; set; }
     
 }
