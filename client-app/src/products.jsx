@@ -93,78 +93,88 @@ export function Products() {
   // Fetch products from backend
   useEffect(() => {
   async function fetchProducts() {
-  setLoading(true);
-  setError(null);
+    setLoading(true);
+    setError(null);
 
-  try {
-    const [productRes, imageRes] = await Promise.all([
-      fetch(`${BACKEND_BASE_URL}/api/Product/GetAll`),
-      fetch(`${BACKEND_BASE_URL}/api/ProductImage/GetAll`)
-    ]);
+    try {
+      const [productRes, imageRes, sizeRes] = await Promise.all([
+        fetch(`${BACKEND_BASE_URL}/api/Product/GetAll`),
+        fetch(`${BACKEND_BASE_URL}/api/ProductImage/GetAll`),
+        fetch(`${BACKEND_BASE_URL}/api/Size/GetAllSizes`)
+      ]);
 
-    const productData = await productRes.json();
-    const imageData = await imageRes.json();
+      const productData = await productRes.json();
+      const imageData = await imageRes.json();
+      const sizeData = await sizeRes.json();
 
-    const resolvedProducts = resolveRefs(productData);
-    const resolvedImages = resolveRefs(imageData);
+      const resolvedProducts = resolveRefs(productData);
+      const resolvedImages = resolveRefs(imageData);
+      const resolvedSizes = resolveRefs(sizeData)?.$values || [];
 
-    const imageMap = {};
-    for (const img of resolvedImages?.$values || []) {
-      if (!imageMap[img.productId]) {
-        imageMap[img.productId] = [];
+      // Create a map of sizeValue → sizeId
+      const sizeValueToIdMap = {};
+      resolvedSizes.forEach((s) => {
+        sizeValueToIdMap[s.sizeValue] = s.sizeId;
+      });
+
+      const imageMap = {};
+      for (const img of resolvedImages?.$values || []) {
+        if (!imageMap[img.productId]) {
+          imageMap[img.productId] = [];
+        }
+        imageMap[img.productId].push(img.imageUrl);
       }
-      imageMap[img.productId].push(img.imageUrl);
+
+      const formattedProducts = await Promise.all(
+        resolvedProducts?.$values?.map(async (product) => {
+          const productImages = (imageMap[product.productId] || []).sort();
+
+          const productSizesRes = await fetch(
+            `${BACKEND_BASE_URL}/api/GetProductSizesByProductId/${product.productId}`
+          );
+          const productSizesData = await productSizesRes.json();
+          const productSizes = resolveRefs(productSizesData)?.$values || [];
+
+          // Get sizeValues and map them to their sizeIds
+          const sizeEntries = await Promise.all(productSizes.map(async (ps) => {
+            const sizeRes = await fetch(`${BACKEND_BASE_URL}/api/Size/GetSizeById/${ps.sizeId}`);
+            const sizeData = await sizeRes.json();
+            return {
+              sizeValue: sizeData?.sizeValue,
+              sizeId: ps.sizeId,
+            };
+          }));
+
+          return {
+            id: product.productId,
+            name: product.productName,
+            type: product.productType,
+            description: product.productDescription,
+            price: product.productPrice,
+            rating: product.productRating,
+            gender: product.productGender,
+            brand: product.brand?.brandName || 'Unknown',
+            colors: product.colors?.$values?.map((c) => c.colorName) || [],
+            sizes: sizeEntries,
+            image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
+            images: productImages,
+            category: product.productType || '',
+          };
+        })
+      );
+
+      setProducts(formattedProducts);
+    } catch (err) {
+      console.error('Error fetching products or sizes:', err);
+      setError('Failed to load products.');
+    } finally {
+      setLoading(false);
     }
-
-    const formattedProducts = await Promise.all(
-      resolvedProducts?.$values?.map(async (product) => {
-        const productImages = (imageMap[product.productId] || []).sort();
-
-        // Step 1: Fetch ProductSizes (sizeId + stock)
-        const productSizesRes = await fetch(
-          `${BACKEND_BASE_URL}/api/GetProductSizesByProductId/${product.productId}`
-        );
-        const productSizesData = await productSizesRes.json();
-        const productSizes = resolveRefs(productSizesData)?.$values || [];
-
-        // Step 2: Fetch size values for each sizeId
-        const sizeValuePromises = productSizes.map(async (ps) => {
-          const sizeRes = await fetch(`${BACKEND_BASE_URL}/api/Size/GetSizeById/${ps.sizeId}`);
-          const sizeData = await sizeRes.json();
-          return sizeData?.sizeValue;
-        });
-        const sizeValues = await Promise.all(sizeValuePromises);
-
-        return {
-          id: product.productId,
-          name: product.productName,
-          type: product.productType,
-          description: product.productDescription,
-          price: product.productPrice,
-          rating: product.productRating,
-          gender: product.productGender,
-          brand: product.brand?.brandName || 'Unknown',
-          colors: product.colors?.$values?.map((c) => c.colorName) || [],
-          sizes: sizeValues || [],
-          image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
-          images: productImages,
-          category: product.productType || '',
-        };
-      })
-    );
-
-    setProducts(formattedProducts);
-  } catch (err) {
-    console.error('Error fetching products or sizes:', err);
-    setError('Failed to load products.');
-  } finally {
-    setLoading(false);
   }
-}
-
 
   fetchProducts();
 }, []);
+
 
 
   // Filters from URL
@@ -197,21 +207,25 @@ export function Products() {
   });
 
   const handleAddToCart = (product) => {
-    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
-    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
+  const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
+  const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
 
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      size: defaultSize,
-      color: defaultColor,
-    });
-    setShowToast(true);
-    if (toastTimeout.current) clearTimeout(toastTimeout.current);
-    toastTimeout.current = setTimeout(() => setShowToast(false), 1800);
-  };
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image,
+    size: defaultSize?.sizeId, // ✅ Use sizeId directly
+    color: defaultColor,
+  });
+
+  setShowToast(true);
+  if (toastTimeout.current) clearTimeout(toastTimeout.current);
+  toastTimeout.current = setTimeout(() => setShowToast(false), 1800);
+};
+
+
+
 
  // Toggle helpers
   const toggleBrand = (brand) => {
