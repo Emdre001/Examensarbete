@@ -20,4 +20,6 @@ public class ProductDTO
     public virtual List<ProductSizeDTO> ProductSizes { get; set; } = null;
 
 
+    
+
 }
