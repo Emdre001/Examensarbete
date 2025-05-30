@@ -2,11 +2,48 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:5066/api/Product";
+const ACCOUNT_API = "http://localhost:5066/api/Account/GetCurrentUser";
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+    useEffect(() => {
+    const checkAdmin = async () => {
+      const auth = localStorage.getItem('auth');
+      if (!auth) {
+        navigate('/login');
+        return;
+      }
+      try {
+        const res = await fetch(ACCOUNT_API, {
+          headers: { 'Authorization': `Basic ${auth}` }
+        });
+        if (!res.ok) {
+          navigate('/login');
+          return;
+        }
+        const user = await res.json();
+        if (user.role !== "Admin") {
+          alert("You must be an admin to access this page.");
+          navigate('/');
+          return;
+        }
+        setCheckingAuth(false);
+      } catch {
+        navigate('/login');
+      }
+    };
+    checkAdmin();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!checkingAuth) fetchProducts();
+    // eslint-disable-next-line
+  }, [checkingAuth]);
 
   function dereferenceJsonNet(obj) {
     if (!obj || typeof obj !== "object") return obj;
