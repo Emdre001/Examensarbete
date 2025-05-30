@@ -33,6 +33,15 @@ public class OrderDbRepos
             .FirstOrDefaultAsync(o => o.OrderId == id);
     }
 
+    public async Task<List<Order>> GetOrdersByUserIdAsync(Guid userId)
+    {
+        return await _dbContext.Orders
+            .Include(o => o.Products)
+            .Include(o => o.User)
+            .Where(o => o.userId == userId)
+            .ToListAsync();
+    }
+
     public async Task<Order> CreateOrderAsync(OrderDTO dto)
     {
         var order = new Order

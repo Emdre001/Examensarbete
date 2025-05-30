@@ -6,8 +6,7 @@ const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     identifier: '',
-    password: '',
-    rememberMe: false
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -129,16 +128,6 @@ const Login = ({ onLoginSuccess }) => {
           </div>
 
           <div className="options">
-            <div className="checkbox">
-              <input
-                type="checkbox"
-                id="remember"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-              />
-              <label htmlFor="remember">Remember me</label>
-            </div>
             <button 
               type="button" 
               className="forgot-password"
