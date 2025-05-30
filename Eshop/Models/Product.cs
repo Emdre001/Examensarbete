@@ -19,6 +19,6 @@ public class Product
     public List<Color> Colors { get; set; }
     public List<ProductSize> ProductSizes { get; set; }
     public List<ProductImage> ProductImages { get; set; }
-    public List<Order> Orders { get; set; }
+    public List<OrderProduct> OrderProducts { get; set; }
     
 }

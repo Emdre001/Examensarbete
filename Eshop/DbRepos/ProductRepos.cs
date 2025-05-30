@@ -67,12 +67,13 @@ public class ProductDbRepos
             ProductPrice = dto.ProductPrice,
             ProductRating = dto.ProductRating,
             ProductGender = dto.ProductGender,
-            
+
             Brand = brand,
-            BrandId = brand?.BrandId ?? Guid.Empty, // Optional but good for clarity
+            BrandId = brand?.BrandId ?? Guid.Empty,
             Colors = colors,
             ProductSizes = productSizes,
-            Orders = new List<Order>()
+            ProductImages = new List<ProductImage>(),
+            OrderProducts = new List<OrderProduct>()
         };
 
         _dbContext.Products.Add(product);

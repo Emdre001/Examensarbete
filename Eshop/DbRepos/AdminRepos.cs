@@ -108,11 +108,8 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorBlack, colorBlue },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>()
-            {
-                
-            }
         };
 
         var product2 = new Product
@@ -126,7 +123,7 @@ public class AdminDbRepos
             ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorGrey },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
 
@@ -141,7 +138,7 @@ public class AdminDbRepos
             ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorBrown },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product4 = new Product
@@ -155,7 +152,7 @@ public class AdminDbRepos
             ProductGender = "Unisex",
             Brand = brandAxelArigato,
             Colors = new List<Color> { colorBlack, colorBlue, colorGreen },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product5 = new Product
@@ -169,7 +166,7 @@ public class AdminDbRepos
             ProductGender = "Unisex",
             Brand = brandAxelArigato,
             Colors = new List<Color> { colorBlack, colorBlue, colorWhite },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product6 = new Product
@@ -183,7 +180,7 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandDior,
             Colors = new List<Color> { colorBlack, colorGrey, colorWhite },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product7 = new Product
@@ -197,7 +194,7 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandNewBalance,
             Colors = new List<Color> { colorGrey, colorWhite, colorPink },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product8 = new Product
@@ -211,7 +208,7 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandNewBalance,
             Colors = new List<Color> { colorGrey, colorWhite, colorBeige },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product9 = new Product
@@ -225,7 +222,7 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandNike,
             Colors = new List<Color> { colorWhite, colorPink, colorBeige },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product10 = new Product
@@ -239,7 +236,7 @@ public class AdminDbRepos
             ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorRed, colorBlue, colorGreen },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product11 = new Product
@@ -253,7 +250,7 @@ public class AdminDbRepos
             ProductGender = "Unisex",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorWhite },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product12 = new Product
@@ -267,7 +264,7 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandUgg,
             Colors = new List<Color> { colorBlack, colorBeige, colorBrown },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product13 = new Product
@@ -281,7 +278,6 @@ public class AdminDbRepos
             ProductGender = "Women",
             Brand = brandUgg,
             Colors = new List<Color> { colorBlack, colorBeige, colorBrown },
-            Orders = new List<Order>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product14 = new Product
@@ -295,7 +291,7 @@ public class AdminDbRepos
             ProductGender = "Unisex",
             Brand = brandAdidas,
             Colors = new List<Color> { colorBlack, colorBeige, colorGrey },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product15 = new Product
@@ -309,7 +305,7 @@ public class AdminDbRepos
             ProductGender = "Unisex",
             Brand = brandNike,
             Colors = new List<Color> { colorBlue, colorGreen, colorRed },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
         var product16 = new Product
@@ -323,7 +319,7 @@ public class AdminDbRepos
             ProductGender = "Men",
             Brand = brandNike,
             Colors = new List<Color> { colorBlack, colorWhite, colorGrey },
-            Orders = new List<Order>(),
+            OrderProducts = new List<OrderProduct>(),
             ProductSizes = new List<ProductSize>() 
         };
 

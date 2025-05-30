@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles/Orders.css';
 
@@ -10,13 +10,12 @@ const Orders = ({user}) => {
 
   const credentials = localStorage.getItem('auth');
   const isLoggedIn = !!credentials;
-  const userId = user.userId || user.id;
 
   useEffect(() => {
     if (!isLoggedIn) return;
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`http://localhost:5066/api/Order/GetMyOrders`, {
+        const response = await fetch(`http://localhost:5066/api/Order/GetByName?userName=${encodeURIComponent(user?.userName || '')}`, {
           headers: {
             'Authorization': `Basic ${credentials}`
           }
@@ -41,7 +40,7 @@ const Orders = ({user}) => {
     };
 
     fetchOrders();
-  }, [isLoggedIn, userId, navigate, credentials]);
+  }, [isLoggedIn, navigate, credentials]);
 
   if (!isLoggedIn) {
     return (
@@ -81,26 +80,37 @@ const Orders = ({user}) => {
                 </span>
               </div>
               <div className="order-date">Date: {order.orderDate ? new Date(order.orderDate).toLocaleDateString() : ''}</div>
-              <div className="order-total">Total: <strong>{order.orderAmount || order.total} kr</strong></div>
+              <div className="order-total">Total: <strong>
+                  {(
+                    (Array.isArray(order.orderProducts)
+                      ? order.orderProducts.map(op => op.product)
+                      : order.orderProducts?.$values
+                        ? order.orderProducts.$values.map(op => op.product)
+                        : []
+                    ).reduce((sum, item) =>
+                      sum + (item.productPrice || 0), 0)
+                  )} kr
+                </strong>
+              </div>
               <div className="order-products">
                 <strong>Products:</strong>
-                <ul>
-                  {(order.products || order.items || []).map((item, idx) => (
-                    <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                      <img
-                        src={item.image || item.productImage || ''}
-                        alt={item.name || item.productName || ''}
-                        style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6, marginRight: 12 }}
-                      />
-                      <span>
-                        {(item.name || item.productName || '')}
-                        {item.size && ` (Size: ${item.size})`}
-                        {item.quantity && ` x ${item.quantity}`}
-                        {item.price && ` – ${item.price} kr each`}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                  <ul>
+                    {(Array.isArray(order.orderProducts)
+                      ? order.orderProducts.map(op => op.product)
+                      : order.orderProducts?.$values
+                        ? order.orderProducts.$values.map(op => op.product)
+                        : []
+                    ).map((item, idx) => (
+                      <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                        <span>
+                          {(item.name || item.productName || '')}
+                          {item.size && ` (Size: ${item.size})`}
+                          {item.quantity && ` x ${item.quantity}`}
+                          {item.price && ` – ${item.price} kr each`}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
               </div>
             </div>
           ))}

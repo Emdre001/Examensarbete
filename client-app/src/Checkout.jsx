@@ -78,16 +78,34 @@ const Checkout = () => {
       }
 
       // ✅ 3. Save order to localStorage
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      orders.push({
-        id: Date.now(),
-        items: cart,
-        total: totalPrice,
-        date: new Date().toLocaleDateString(),
-        status: 'Placed',
-        ...form,
+      const credentials = localStorage.getItem('auth');
+      if (!credentials) {
+        alert("You must be logged in to place an order.");
+        return;
+      }
+
+      const orderData = {
+        OrderDetails: `Order for ${cart.length} item(s) by ${form.name}`,
+        OrderDate: new Date().toISOString(),
+        OrderStatus: "Pending",
+        OrderAmount: cart.reduce((sum, item) => sum + item.quantity, 0),
+        ProductIds: cart.map(item => item.productId || item.id)
+      };
+
+      const response = await fetch('http://localhost:5066/api/Order/Create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify(orderData)
       });
-      localStorage.setItem('orders', JSON.stringify(orders));
+
+      if (!response.ok) {
+        const msg = await response.text();
+        alert(`Order failed: ${msg}`);
+        return;
+      }
 
       clearCart();
       setShowToast(true);

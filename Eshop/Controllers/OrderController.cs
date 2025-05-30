@@ -22,11 +22,11 @@ public class OrderController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] OrderDTO dto)
     {
-        var userOdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userOdStr) || !Guid.TryParse(userOdStr, out var userId))
+        var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userName))
             return Unauthorized("User not authenticated.");
         
-        var order = await _orderRepo.CreateOrderAsync(dto, userId);
+        var order = await _orderRepo.CreateOrderAsync(dto, userName);
         return Ok(order);
     }
 
@@ -46,15 +46,19 @@ public class OrderController : Controller
     }
     
     [Authorize]
-    [HttpGet("my")]
-    public async Task<IActionResult> GetByUserId(Guid userId)
+    [HttpGet]
+    public async Task<IActionResult> GetByName(string userName = null)
     {
-        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out userId))
+        if (string.IsNullOrEmpty(userName))
+            userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userName))
             return Unauthorized();
-        
-        var orders = await _orderRepo.GetOrdersByUserIdAsync(userId);
-        if (orders == null || orders.Count == 0) return NotFound("No orders found for this user.");
+
+        var orders = await _orderRepo.GetOrdersByUserNameAsync(userName);
+        if (orders == null || orders.Count == 0)
+            return NotFound("No orders found for this user.");
+
         return Ok(orders);
     }
 

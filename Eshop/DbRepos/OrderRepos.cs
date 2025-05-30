@@ -20,7 +20,8 @@ public class OrderDbRepos
     public async Task<List<Order>> GetAllOrdersAsync()
     {
         return await _dbContext.Orders
-            .Include(o => o.Products)
+            .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
             .Include(o => o.User)
             .ToListAsync();
     }
@@ -28,24 +29,37 @@ public class OrderDbRepos
     public async Task<Order?> GetOrderByIdAsync(Guid id)
     {
         return await _dbContext.Orders
-            .Include(o => o.Products)
+            .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
             .Include(o => o.User)
             .FirstOrDefaultAsync(o => o.OrderId == id);
     }
 
-    public async Task<List<Order>> GetOrdersByUserIdAsync(Guid userId)
+    public async Task<List<Order>> GetOrdersByUserNameAsync(string userName)
     {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+        if (user == null) return [];
+
         return await _dbContext.Orders
-            .Include(o => o.Products)
+            .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
             .Include(o => o.User)
-            .Where(o => o.userId == userId)
-            .ToListAsync();
+            .Where(o => o.userId == user.UserId)
+        .ToListAsync();
     }
 
-    public async Task<Order> CreateOrderAsync(OrderDTO dto, Guid? userId)
+    public async Task<Order> CreateOrderAsync(OrderDTO dto, string userName)
     {
-        if (userId == null)
-            throw new ArgumentNullException(nameof(userId), "UserId cannot be null when creating an order.");
+        if (string.IsNullOrEmpty(userName))
+            throw new ArgumentNullException(nameof(userName), "Username cannot be null when creating an order.");
+
+        var userId = await _dbContext.Users
+            .Where(u => u.UserName == userName)
+            .Select(u => u.UserId)
+            .FirstOrDefaultAsync();
+
+        if (userId == Guid.Empty)
+            throw new InvalidOperationException("User not found when creating an order.");
 
         var order = new Order
         {
@@ -54,17 +68,17 @@ public class OrderDbRepos
             OrderDate = DateTime.UtcNow,
             OrderStatus = dto.OrderStatus,
             OrderAmount = dto.OrderAmount,
-            userId = userId.Value,
-            Products = []
+            userId = userId,
+            OrderProducts = []
         };
 
-        foreach (var p in dto.ProductIds)
+        foreach (var pid in dto.ProductIds)
         {
-            var product = await _dbContext.Products.FindAsync(p);
-            if (product != null)
+            order.OrderProducts.Add(new OrderProduct
             {
-                order.Products.Add(product);
-            }
+                OrderId = order.OrderId,
+                ProductId = pid
+            });
         }
 
         _dbContext.Orders.Add(order);
@@ -75,7 +89,8 @@ public class OrderDbRepos
     public async Task<bool> UpdateOrderAsync(Guid id, OrderDTO dto)
     {
         var order = await _dbContext.Orders
-            .Include(o => o.Products)
+            .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
             .FirstOrDefaultAsync(o => o.OrderId == id);
 
         if (order == null) return false;
@@ -86,10 +101,18 @@ public class OrderDbRepos
         order.OrderAmount = dto.OrderAmount;
         order.userId = dto.UserId ?? Guid.Empty;
 
-        // Uppdatera produkter
-        order.Products = await _dbContext.Products
-            .Where(p => dto.ProductIds.Contains(p.ProductId))
-            .ToListAsync();
+        order.OrderProducts.RemoveAll(op => !dto.ProductIds.Contains(op.ProductId));
+        foreach (var pid in dto.ProductIds)
+        {
+            if (!order.OrderProducts.Any(op => op.ProductId == pid))
+            {
+                order.OrderProducts.Add(new OrderProduct
+                {
+                    OrderId = order.OrderId,
+                    ProductId = pid
+                });
+            }
+        }
 
         await _dbContext.SaveChangesAsync();
         return true;

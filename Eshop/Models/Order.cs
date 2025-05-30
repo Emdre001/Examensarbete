@@ -12,7 +12,7 @@ public class Order
     public virtual string OrderStatus { get; set; }
     public virtual int OrderAmount { get; set; }
 
-    public virtual List<Product> Products { get; set; }
+    public List<OrderProduct> OrderProducts { get; set; }
     public virtual User User { get; set; }
     public virtual Guid userId { get; set; }
 }

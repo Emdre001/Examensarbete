@@ -43,9 +43,18 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
         .WithMany(c => c.Products);
 
     // Product - Order
-    modelBuilder.Entity<Product>()
-        .HasMany(p => p.Orders)
-        .WithMany(o => o.Products);
+    modelBuilder.Entity<OrderProduct>()
+        .HasKey(op => new { op.OrderId, op.ProductId });
+
+    modelBuilder.Entity<OrderProduct>()
+        .HasOne(op => op.Order)
+        .WithMany(o => o.OrderProducts)
+        .HasForeignKey(op => op.OrderId);
+
+    modelBuilder.Entity<OrderProduct>()
+        .HasOne(op => op.Product)
+        .WithMany(p => p.OrderProducts)
+        .HasForeignKey(op => op.ProductId);
 
     // Brand - Product
     modelBuilder.Entity<Product>()
