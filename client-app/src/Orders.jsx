@@ -13,10 +13,10 @@ const Orders = ({user}) => {
   const userId = user.userId || user.id;
 
   useEffect(() => {
-    if (!isLoggedIn || !userId) return;
+    if (!isLoggedIn) return;
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`http://localhost:5066/api/Order/GetByUserId/${userId}`, {
+        const response = await fetch(`http://localhost:5066/api/Order/GetMyOrders`, {
           headers: {
             'Authorization': `Basic ${credentials}`
           }
@@ -26,9 +26,11 @@ const Orders = ({user}) => {
           navigate('/login');
           return;
         }
+
         if (!response.ok) {
           throw new Error(await response.text());
         }
+        
         const data = await response.json();
         setOrders(data.$values || data);
       } catch (err) {

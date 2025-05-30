@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DTO;
 using DbRepos;
 using Microsoft.Identity.Client;
+using System.Security.Claims;
 
 namespace Controllers;
 
@@ -39,9 +40,14 @@ public class OrderController : Controller
         return Ok(order);
     }
     
-    [HttpGet("user/{userId}")]
+    [Authorize]
+    [HttpGet("my")]
     public async Task<IActionResult> GetByUserId(Guid userId)
     {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out userId))
+            return Unauthorized();
+        
         var orders = await _orderRepo.GetOrdersByUserIdAsync(userId);
         if (orders == null || orders.Count == 0) return NotFound("No orders found for this user.");
         return Ok(orders);
