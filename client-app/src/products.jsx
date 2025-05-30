@@ -93,30 +93,48 @@ export function Products() {
   // Fetch products from backend
   useEffect(() => {
   async function fetchProducts() {
-    setLoading(true);
-    setError(null);
-    try {
-      const [productRes, imageRes] = await Promise.all([
-        fetch('http://localhost:5066/api/Product/GetAll'),
-        fetch('http://localhost:5066/api/ProductImage/GetAll')
-      ]);
+  setLoading(true);
+  setError(null);
 
-      const productData = await productRes.json();
-      const imageData = await imageRes.json();
+  try {
+    const [productRes, imageRes] = await Promise.all([
+      fetch(`${BACKEND_BASE_URL}/api/Product/GetAll`),
+      fetch(`${BACKEND_BASE_URL}/api/ProductImage/GetAll`)
+    ]);
 
-      const resolvedProducts = resolveRefs(productData);
-      const resolvedImages = resolveRefs(imageData);
+    const productData = await productRes.json();
+    const imageData = await imageRes.json();
 
-      const imageMap = {};
-      for (const img of resolvedImages?.$values || []) {
-        if (!imageMap[img.productId]) {
-          imageMap[img.productId] = [];
-        }
-        imageMap[img.productId].push(img.imageUrl);
+    const resolvedProducts = resolveRefs(productData);
+    const resolvedImages = resolveRefs(imageData);
+
+    const imageMap = {};
+    for (const img of resolvedImages?.$values || []) {
+      if (!imageMap[img.productId]) {
+        imageMap[img.productId] = [];
       }
+      imageMap[img.productId].push(img.imageUrl);
+    }
 
-      const formattedProducts = resolvedProducts?.$values?.map(product => {
+    const formattedProducts = await Promise.all(
+      resolvedProducts?.$values?.map(async (product) => {
         const productImages = imageMap[product.productId] || [];
+
+        // Step 1: Fetch ProductSizes (sizeId + stock)
+        const productSizesRes = await fetch(
+          `${BACKEND_BASE_URL}/api/GetProductSizesByProductId/${product.productId}`
+        );
+        const productSizesData = await productSizesRes.json();
+        const productSizes = resolveRefs(productSizesData)?.$values || [];
+
+        // Step 2: Fetch size values for each sizeId
+        const sizeValuePromises = productSizes.map(async (ps) => {
+          const sizeRes = await fetch(`${BACKEND_BASE_URL}/api/Size/GetSizeById/${ps.sizeId}`);
+          const sizeData = await sizeRes.json();
+          return sizeData?.sizeValue;
+        });
+        const sizeValues = await Promise.all(sizeValuePromises);
+
         return {
           id: product.productId,
           name: product.productName,
@@ -126,22 +144,24 @@ export function Products() {
           rating: product.productRating,
           gender: product.productGender,
           brand: product.brand?.brandName || 'Unknown',
-          colors: product.colors?.$values?.map(c => c.colorName) || [],
-          sizes: product.sizes?.$values?.map(Number) || [],
+          colors: product.colors?.$values?.map((c) => c.colorName) || [],
+          sizes: sizeValues || [],
           image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
-          images: productImages,          // All images if needed later
+          images: productImages,
           category: product.productType || '',
         };
-      }) || [];
+      })
+    );
 
-      setProducts(formattedProducts);
-    } catch (err) {
-      console.error('Error fetching products or images:', err);
-      setError('Failed to load products.');
-    } finally {
-      setLoading(false);
-    }
+    setProducts(formattedProducts);
+  } catch (err) {
+    console.error('Error fetching products or sizes:', err);
+    setError('Failed to load products.');
+  } finally {
+    setLoading(false);
   }
+}
+
 
   fetchProducts();
 }, []);
