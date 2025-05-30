@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useCartStore from './CartStore';
 import './styles/cart.css';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
 
 const colorNames = {
   "#ff0000": "Red",
@@ -21,14 +20,65 @@ const Cart = () => {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCartStore();
   const navigate = useNavigate();
 
+  const [sizeMap, setSizeMap] = useState({});
+  const [imageMap, setImageMap] = useState({});
+  
+  // Fetch size values and images for items in the cart
+  useEffect(() => {
+    console.log("Cart contents:", cart);
+    const fetchExtraData = async () => {
+      const newSizeMap = {};
+      const newImageMap = {};
+
+      for (const item of cart) {
+        // Fetch Size if not already fetched
+        if (!newSizeMap[item.size]) {
+          try {
+            const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${item.size}`);
+            if (res.ok) {
+              const sizeData = await res.json();
+              newSizeMap[item.size] = sizeData.sizeValue;
+            }
+          } catch (err) {
+            console.error("Error fetching size:", err);
+          }
+        }
+
+        // Fetch Image if not already fetched
+        // Fetch Image if not already fetched
+        if (item.productId && !newImageMap[item.productId]) {
+          try {
+            const res = await fetch(`http://localhost:5066/api/ProductImage/GetImagesByProductId/${item.productId}`);
+            if (res.ok) {
+              const imageData = await res.json();
+              const images = imageData?.$values || [];
+              const sorted = images.sort((a, b) =>
+                a.imageUrl.localeCompare(b.imageUrl, undefined, { numeric: true })
+              );
+              newImageMap[item.productId] = sorted.length > 0
+                ? `http://localhost:5066${sorted[0].imageUrl}`
+                : '/placeholder-image.png';
+            }
+          } catch (err) {console.error("Error fetching image:", err);}
+        }
+
+      }
+
+      setSizeMap(newSizeMap);
+      setImageMap(newImageMap);
+    };
+
+    if (cart.length > 0) {
+      fetchExtraData();
+    }
+  }, [cart]);
+
   const totalPrice = cart.reduce((sum, item) => {
     const price = item.discount
       ? item.price * (1 - item.discount / 100)
       : item.price;
     return sum + price * item.quantity;
   }, 0);
-
-  
 
   return (
     <div className="cart-page">
@@ -38,19 +88,20 @@ const Cart = () => {
       ) : (
         <div className="cart-content">
           <div className="cart-items">
-            {cart.map((item) => {              
+            {cart.map((item) => {
+              const imageUrl = imageMap[item.productId] || '/placeholder-image.png';
+              const sizeLabel = sizeMap[item.size] || item.size;
+
               return (
                 <div key={`${item.id}-${item.size}-${item.color}`} className="cart-item">
-                  <img src={item.image} alt={item.name} className="cart-item-image" />
+                  <img src={imageUrl} alt={item.name} className="cart-item-image" />
                   <div className="cart-item-details">
                     <h3 className="cart-item-name">{item.name}</h3>
                     <div className="cart-item-options">
-                      {/* Size row */}
-                     <div className="cart-size-row">
-                      <span>Size:</span>
-                      <span className="cart-size-value">{item.size}</span>
-                    </div>
-                      {/* Color row */}
+                      <div className="cart-size-row">
+                        <span>Size:</span>
+                        <span className="cart-size-value">{sizeLabel}</span>
+                      </div>
                       <div className="cart-color-row">
                         <span>Color:</span>
                         <span
@@ -99,10 +150,7 @@ const Cart = () => {
               <p>Shipping: <span>Free</span></p>
               <p className="summary-total">Total: <span>{totalPrice.toFixed(2)} kr</span></p>
             </div>
-            <button
-              className="checkout-button"
-              onClick={() => navigate('/checkout')}
-            >
+            <button className="checkout-button" onClick={() => navigate('/checkout')}>
               Checkout
             </button>
             <button className="clear-cart-button" onClick={clearCart}>

@@ -95,17 +95,27 @@ export function Products() {
   async function fetchProducts() {
     setLoading(true);
     setError(null);
+
     try {
-      const [productRes, imageRes] = await Promise.all([
-        fetch('http://localhost:5066/api/Product/GetAll'),
-        fetch('http://localhost:5066/api/ProductImage/GetAll')
+      const [productRes, imageRes, sizeRes] = await Promise.all([
+        fetch(`${BACKEND_BASE_URL}/api/Product/GetAll`),
+        fetch(`${BACKEND_BASE_URL}/api/ProductImage/GetAll`),
+        fetch(`${BACKEND_BASE_URL}/api/Size/GetAllSizes`)
       ]);
 
       const productData = await productRes.json();
       const imageData = await imageRes.json();
+      const sizeData = await sizeRes.json();
 
       const resolvedProducts = resolveRefs(productData);
       const resolvedImages = resolveRefs(imageData);
+      const resolvedSizes = resolveRefs(sizeData)?.$values || [];
+
+      // Create a map of sizeValue → sizeId
+      const sizeValueToIdMap = {};
+      resolvedSizes.forEach((s) => {
+        sizeValueToIdMap[s.sizeValue] = s.sizeId;
+      });
 
       const imageMap = {};
       for (const img of resolvedImages?.$values || []) {
@@ -115,28 +125,47 @@ export function Products() {
         imageMap[img.productId].push(img.imageUrl);
       }
 
-      const formattedProducts = resolvedProducts?.$values?.map(product => {
-        const productImages = imageMap[product.productId] || [];
-        return {
-          id: product.productId,
-          name: product.productName,
-          type: product.productType,
-          description: product.productDescription,
-          price: product.productPrice,
-          rating: product.productRating,
-          gender: product.productGender,
-          brand: product.brand?.brandName || 'Unknown',
-          colors: product.colors?.$values?.map(c => c.colorName) || [],
-          sizes: product.sizes?.$values || [],
-          image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
-          images: productImages,
-          category: product.productType || '',
-        };
-      }) || [];
+      const formattedProducts = await Promise.all(
+        resolvedProducts?.$values?.map(async (product) => {
+          const productImages = (imageMap[product.productId] || []).sort();
+
+          const productSizesRes = await fetch(
+            `${BACKEND_BASE_URL}/api/GetProductSizesByProductId/${product.productId}`
+          );
+          const productSizesData = await productSizesRes.json();
+          const productSizes = resolveRefs(productSizesData)?.$values || [];
+
+          // Get sizeValues and map them to their sizeIds
+          const sizeEntries = await Promise.all(productSizes.map(async (ps) => {
+            const sizeRes = await fetch(`${BACKEND_BASE_URL}/api/Size/GetSizeById/${ps.sizeId}`);
+            const sizeData = await sizeRes.json();
+            return {
+              sizeValue: sizeData?.sizeValue,
+              sizeId: ps.sizeId,
+            };
+          }));
+
+          return {
+            id: product.productId,
+            name: product.productName,
+            type: product.productType,
+            description: product.productDescription,
+            price: product.productPrice,
+            rating: product.productRating,
+            gender: product.productGender,
+            brand: product.brand?.brandName || 'Unknown',
+            colors: product.colors?.$values?.map((c) => c.colorName) || [],
+            sizes: sizeEntries,
+            image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
+            images: productImages,
+            category: product.productType || '',
+          };
+        })
+      );
 
       setProducts(formattedProducts);
     } catch (err) {
-      console.error('Error fetching products or images:', err);
+      console.error('Error fetching products or sizes:', err);
       setError('Failed to load products.');
     } finally {
       setLoading(false);
@@ -145,6 +174,8 @@ export function Products() {
 
   fetchProducts();
 }, []);
+
+
 
   // Filters from URL
   useEffect(() => {
@@ -164,7 +195,7 @@ export function Products() {
     if (selectedGender.length && !selectedGender.includes(product.gender)) return false;
     if (selectedCategories.length && !selectedCategories.includes(product.category)) return false;
     if (selectedColors.length && !product.colors?.some((c) => selectedColors.includes(c))) return false;
-    if (selectedSizes.length && !product.sizes?.some((s) => selectedSizes.includes(s))) return false;
+    if (selectedSizes.length && !product.sizes?.some((s) => selectedSizes.includes(Number(s)))) return false;
     if (selectedPrices.length) {
       const inRange = selectedPrices.some(({ min, max }) =>
         product.price >= min && product.price < max
@@ -176,21 +207,25 @@ export function Products() {
   });
 
   const handleAddToCart = (product) => {
-    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
-    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
+  const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
+  const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
 
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      size: defaultSize,
-      color: defaultColor,
-    });
-    setShowToast(true);
-    if (toastTimeout.current) clearTimeout(toastTimeout.current);
-    toastTimeout.current = setTimeout(() => setShowToast(false), 1800);
-  };
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image,
+    size: defaultSize?.sizeId, // ✅ Use sizeId directly
+    color: defaultColor,
+  });
+
+  setShowToast(true);
+  if (toastTimeout.current) clearTimeout(toastTimeout.current);
+  toastTimeout.current = setTimeout(() => setShowToast(false), 1800);
+};
+
+
+
 
  // Toggle helpers
   const toggleBrand = (brand) => {
@@ -203,11 +238,11 @@ export function Products() {
       prev.includes(gender) ? prev.filter((g) => g !== gender) : [...prev, gender]
     );
   };
-  const toggleColor = (color) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
+  const toggleColor = (colorName) => {
+  setSelectedColors((prev) =>
+    prev.includes(colorName) ? prev.filter((c) => c !== colorName) : [...prev, colorName]
+  );
+};
   const toggleSize = (size) => {
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
@@ -247,6 +282,23 @@ export function Products() {
                     onChange={() => toggleBrand(brand)}
                   />{" "}
                   {brand}
+                </label>
+              ))}
+            </div>
+          </div>
+
+                    {/* Category Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Category</div>
+            <div className="filter-options category-options">
+              {categoryOptions.map((category) => (
+                <label key={category}>
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => toggleCategory(category)}
+                  />{" "}
+                  {category}
                 </label>
               ))}
             </div>
@@ -312,12 +364,12 @@ export function Products() {
               {colorOptions.map((color) => (
                 <div key={color.value} className="color-circle-label">
                   <span
-                    className={`color-circle-filter${selectedColors.includes(color.value) ? " selected" : ""}`}
+                    className={`color-circle-filter${selectedColors.includes(color.name) ? " selected" : ""}`}
                     style={{ backgroundColor: color.value }}
                     title={color.name}
-                    onClick={() => toggleColor(color.value)}
+                    onClick={() => toggleColor(color.name)}
                   >
-                    {selectedColors.includes(color.value) && (
+                    {selectedColors.includes(color.name) && (
                       <span className="color-checkmark">&#10003;</span>
                     )}
                   </span>
