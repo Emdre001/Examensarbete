@@ -118,7 +118,7 @@ export function Products() {
 
     const formattedProducts = await Promise.all(
       resolvedProducts?.$values?.map(async (product) => {
-        const productImages = imageMap[product.productId] || [];
+        const productImages = (imageMap[product.productId] || []).sort();
 
         // Step 1: Fetch ProductSizes (sizeId + stock)
         const productSizesRes = await fetch(
@@ -268,6 +268,23 @@ export function Products() {
                     onChange={() => toggleBrand(brand)}
                   />{" "}
                   {brand}
+                </label>
+              ))}
+            </div>
+          </div>
+
+                    {/* Category Filter */}
+          <div className="filter-section">
+            <div className="filter-title">Category</div>
+            <div className="filter-options category-options">
+              {categoryOptions.map((category) => (
+                <label key={category}>
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => toggleCategory(category)}
+                  />{" "}
+                  {category}
                 </label>
               ))}
             </div>
