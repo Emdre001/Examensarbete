@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Models;
@@ -11,6 +10,7 @@ public class UserDbRepos
 {
     private readonly ILogger<UserDbRepos> _logger;
     private readonly MainDbContext _dbContext;
+    
     public UserDbRepos(ILogger<UserDbRepos> logger, MainDbContext context)
     {
         _logger = logger;
@@ -36,11 +36,11 @@ public class UserDbRepos
         {
             UserId = Guid.NewGuid(),
             UserName = dto.UserName,
-            UserEmail = dto.UserEmail,
-            UserPassword = dto.UserPassword,
-            UserAddress = dto.UserAddress,
-            UserPhoneNr = dto.UserPhoneNr,
-            UserRole = dto.UserRole,
+            Email = dto.UserEmail,
+            Password = dto.UserPassword,
+            Address = dto.UserAddress,
+            PhoneNr = dto.UserPhoneNr,
+            Role = dto.UserRole,
             Orders = await _dbContext.Orders
                 .Where(o => dto.OrdersId.Contains(o.OrderId))
                 .ToListAsync()
@@ -60,11 +60,11 @@ public class UserDbRepos
         if (user == null) return false;
 
         user.UserName = dto.UserName;
-        user.UserEmail = dto.UserEmail;
-        user.UserPassword = dto.UserPassword;
-        user.UserAddress = dto.UserAddress;
-        user.UserPhoneNr = dto.UserPhoneNr;
-        user.UserRole = dto.UserRole;
+        user.Email = dto.UserEmail;
+        user.Password = dto.UserPassword;
+        user.Address = dto.UserAddress;
+        user.PhoneNr = dto.UserPhoneNr;
+        user.Role = dto.UserRole;
 
         user.Orders = await _dbContext.Orders
             .Where(o => dto.OrdersId.Contains(o.OrderId))
@@ -90,5 +90,4 @@ public class UserDbRepos
         _dbContext.Users.RemoveRange(allUsers);
         await _dbContext.SaveChangesAsync();
     }
-
 }

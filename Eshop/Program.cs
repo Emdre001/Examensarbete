@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using DbContext;
 using DbRepos;
+using Microsoft.OpenApi.Models;
 using System.Text.Json;
-using Newtonsoft.Json;
-using Microsoft.Extensions.FileProviders;
+using Eshop.DbRepos;
+using Microsoft.AspNetCore.Authentication;
+using Eshop.Services;using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Newtonsoft.Json;
 
 
 
@@ -29,26 +32,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
-
-//CORS stuff goes here
-
 // Fetch the connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AzureSqlEShop");
-
-// Add DbContext to DI container (use Npgsql for PostgreSQL)
 builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Add services for Swagger
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
-builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-//Repos goes here
+// Repos registration
 builder.Services.AddScoped<AdminDbRepos>();
 builder.Services.AddScoped<BrandDbRepos>();
 builder.Services.AddScoped<ColorDbRepos>(); 
@@ -56,12 +45,53 @@ builder.Services.AddScoped<OrderDbRepos>();
 builder.Services.AddScoped<ProductDbRepos>();
 builder.Services.AddScoped<SizeDbRepos>();
 builder.Services.AddScoped<UserDbRepos>();
+builder.Services.AddScoped<AccountRepos>();
 
+builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
 
+// Swagger with JWT support
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "E Shop API",
+        Version = "v1"
+    });
+
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        Description = "Basic Authentication header"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
-// Use Swagger in development mode
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -80,7 +110,7 @@ app.UseStaticFiles(new StaticFileOptions
         Path.Combine(Directory.GetCurrentDirectory(), "img")),  // adjust path as needed
     RequestPath = "/img"
 });
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
