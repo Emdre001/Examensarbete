@@ -1,182 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './styles/ProductDetail.css';
 import useCartStore from './CartStore';
 import ToastNotification from './ToastNotification';
-
-const productData = {
-  1: {
-    name: "Nike Air Max DN Women",
-    price: 1499,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen.png",
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen2.png",
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen3.png",
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen4.png",
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen5.png",
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxWomen6.png",
-    ],
-    video: process.env.PUBLIC_URL + "/Assets/video/AirMaxWomenVid.mp4",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41"],
-    colors: ["#ffffff", "#ff69b4", "#888888" ], // White/Pink/Grey
-    description: "Nike Air Max DN Womens shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
-  },
-  2: {
-    name: "Nike Air Force 1 '07",
-    price: 1499,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/AIR force.jpg"
-    ],
-    video: "",
-    sizes: ["EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44"],
-    colors: ["#ffffff"],
-    description: "Nike Air Force 1 '07 Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
-  },
-  3: {
-    name: "Nike Air Max Plus",
-    price: 2399,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/AirMaxPlus.webp",
-    ],
-    video: "",
-    sizes: ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44"],
-    colors: ["#000000"],
-    description: "Nike Air Max Plus Man shoe combine comfort and style with a sleek design and responsive cushioning. Perfect for everyday wear.",
-  },
-   4: {
-    name: "Axel arigato Area Lo Sneaker",
-    price: 2565,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/AxelArigato.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#ffffff", "#f5f5dc"], // White/Beige
-    description: "Axel arigato Area Lo Sneaker in white/beige.",
-  },
-  5: {
-    name: "Axel arigato Clean 90 Mocha",
-    price: 3723,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/Arigattooo.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#000000", "#ffffff"], // Black/White
-    description: "Axel arigato Clean 90 Mocha in black/white.",
-  },
-  6: {
-    name: "Walk'n'Dior Platform Sneaker",
-    price: 10232,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/Dior.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#ffffff", "#f5f5dc"], // White/Beige
-    description: "Walk'n'Dior Platform Sneaker in white/beige.",
-  },
-  7: {
-    name: "New Balance 530",
-    price: 1270,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NewBalance.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#ffffff"], // White
-    description: "New Balance 530 in white.",
-  },
-  8: {
-    name: "New Balance 530 Beige",
-    price: 1070,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NewBalanceBeige.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#f5f5dc"], // Beige
-    description: "New Balance 530 Beige.",
-  },
-  9: {
-    name: "Nike Dunk pink",
-    price: 799,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NikebabyPink.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#ff69b4"], // Pink
-    description: "Nike Dunk pink.",
-  },
-  10: {
-    name: "Nike Dunks Olive green/white",
-    price: 1045,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NikeGreen.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#228B22", "#ffffff"], // Olive Green/White
-    description: "Nike Dunks Olive green/white.",
-  },
-  11: {
-    name: "Nike Dunks Low Panda",
-    price: 1245,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NikePanda.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#000000", "#ffffff"], // Black/White
-    description: "Nike Dunks Low Panda black and white.",
-  },
-  12: {
-    name: "Ugg mini",
-    price: 2745,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/uggMiniSvart.jpeg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#000000"], // Black
-    description: "Ugg mini black.",
-  },
-  13: {
-    name: "Ugg ultra mini",
-    price: 2859,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/UggsLow.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#f5f5dc"], // Beige
-    description: "Ugg ultra mini beige.",
-  },
-  14: {
-    name: "Adidas Campus",
-    price: 1355,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/AdidasCampus.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#888888", "#ffffff"], // Grey/White
-    description: "Adidas Campus grey/white.",
-  },
-  15: {
-    name: "Nike Baby blue",
-    price: 1170,
-    images: [
-      process.env.PUBLIC_URL + "/Assets/img/NikeDunkBlue.jpg"
-    ],
-    video: "",
-    sizes: ["EU 36", "EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
-    colors: ["#007aff"], // Blue
-    description: "Nike Baby blue shoe combine perfect comfort with a cool aesthetic vibe and responsive cushioning. Perfect for everyday.",
-  },
-  
-};
 
 const colorOptions = [
   { name: "Red", value: "#ff0000" },
@@ -190,136 +16,217 @@ const colorOptions = [
   { name: "Beige", value: "#f5f5dc" }
 ];
 
-export function ProductDetail() {
-  const { id } = useParams();
-  const product = productData[id];
-  const addToCart = useCartStore((state) => state.addToCart);
-  const [showToast, setShowToast] = useState(false);
+const productImages = {
+  "79eee69d-a383-4303-b0be-021070a57d45": [ '/Assets/img/NewBalanceBasic.jpg', ],
+  "1dbcfcb3-090f-45f0-a78d-3eb7da6c5468": [ '/Assets/img/NewBalanceBeige.jpg', ],
+  "cb45cbe5-600f-41bc-84fc-81997c96e5f3": [ '/Assets/img/AIR force.jpg', ],
+  "7fb89bfd-a86e-4cfa-8eae-3acbde1abbfd": [ '/Assets/img/AirMaxPlus.webp', ],
+  "5d4c227b-fcca-42f3-b0b1-b1a89de47ef5": [
+  '/Assets/Video/AirMaxWomenVid.mp4',
+  '/Assets/img/AirMaxWomen.png',
+  '/Assets/img/AirMaxWomen2.png',
+  '/Assets/img/AirMaxWomen3.png',
+  '/Assets/img/AirMaxWomen4.png',
+  '/Assets/img/AirMaxWomen5.png',
+  '/Assets/img/AirMaxWomen6.png',
+  ],
+  "59d157e9-7e82-4254-8163-341acef2cc51": [ '/Assets/img/UggsLow.jpg', ],
+  "02ac4c55-eef5-4722-b19d-877e917cd7cb": [ '/Assets/img/uggMiniSvart.jpg', ],
+  "134890f0-fa0e-4d71-826b-829cb5deab30": [ '/Assets/img/AdidasCampus.jpg', ],
+  "fe07d1b5-af4f-4392-ad03-a03cd825dd22": [ 'Assets/img/BabyDunk.jpg', ],
+  "eb9aea7c-a7fa-4ed5-8799-4dbe130f8d76": [ '/Assets/img/NikeGreen.jpg', ],
+  "73d20b7a-1a01-42b7-baf6-58070f3e1954": [ '/Assets/img/NikeDunkBlue.jpg', ],
+  "f2ebfe0c-080d-4951-b6da-55bbb2b7337c": [ '/Assets/img/NikebabyPink.jpg', ],
+  "5f21de1b-b31c-4b47-9192-4cb8a9d09213": [ '/Assets/img/NikePanda.jpg', ],
+  "ca3dbabf-c551-4bae-82d7-feafa6c0e3bb": [ '/Assets/img/AxelArigato.jpg', ],
+  "f7e815f3-06a4-4d56-a6ad-d2c49c5849b7": [ '/Assets/img/Arigattooo.jpg', ],
+  "a502ef7b-b3d0-4fb0-949a-c4aabae18060": [ '/Assets/img/Dior.jpg', ],
+  //"ProductID here": 'Image Link Here',
 
-  // Start with first image or video as selected
-  const [selectedMedia, setSelectedMedia] = useState(
-    product?.video ? product.video : product?.images[0]
-  );
+};
+
+export function ProductDetail() {
+  const { productId } = useParams(); 
+  const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [sizes, setSizes] = useState([]);
+  const [images, setImages] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0); // NEW
+
+  // Helper to prefix image URLs with backend base URL
+  const getImageUrl = (relativePath) => `http://localhost:5066${relativePath}`;
+
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:5066/api/Product/Get/${productId}`);
+        if (!response.ok) throw new Error('Product not found');
+        const data = await response.json();
+        setProduct(data);
+
+        const sizeValues = data.productSizes?.$values || [];
+        const fetchedSizes = await Promise.all(
+          sizeValues.map(async (s) => {
+            const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${s.sizeId}`);
+            const sizeData = await res.json();
+            return {
+              sizeId: s.sizeId,
+              sizeValue: sizeData.sizeValue
+            };
+          })
+        );
+
+        // Sort sizes numerically (or lexicographically if needed)
+        fetchedSizes.sort((a, b) => {
+          const aVal = parseFloat(a.sizeValue);
+          const bVal = parseFloat(b.sizeValue);
+          return aVal - bVal;
+        });
+
+        setSizes(fetchedSizes);
+      } catch (error) {
+        console.error('Error fetching product or sizes:', error);
+      }
+    };
+
+    fetchProduct();
+
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`http://localhost:5066/api/ProductImage/GetImagesByProductId/${productId}`);
+        if (!response.ok) throw new Error('Images not found');
+        const data = await response.json();
+        setImages(data?.$values || []); // API returns images array in $values
+        setSelectedImageIndex(0); // reset main image to first on images load
+      } catch (error) {
+        console.error('Error fetching product images:', error);
+      }
+    };
+
+    fetchImages();
+  }, [productId]);
 
   if (!product) {
-    return <div>Product not found.</div>;
+    return <div>Loading product...</div>;
   }
 
+  const extractedColors = product.colors?.$values?.map(c => c.colorName) || [];
+  const extractedSizes = product.productSizes?.$values?.map(s => s.sizeId) || [];
+
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      alert("Please select a size before adding to cart.");
-      return;
-    }
-    if (!selectedColor) {
-      alert("Please select a color before adding to cart.");
+    if (!selectedSize || !selectedColor) {
+      alert("Please select size and color before adding to cart.");
       return;
     }
 
     addToCart({
-      id,
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
+      productId: product.productId,
+      name: product.productName,
+      price: product.productPrice,
+      image: "", // no image in API response for cart
       size: selectedSize,
       color: selectedColor,
     });
-     setShowToast(true);
+
+    setShowToast(true);
     setTimeout(() => setShowToast(false), 1800);
   };
 
   return (
     <>
-    <ToastNotification show={showToast} message="Product added to cart!" />
-    <div className="product-detail-container">
-      <div className="product-gallery">
-        {/* Show video as first thumbnail if it exists */}
-        {product.video && (
-          <div
-            className={`thumbnail${selectedMedia === product.video ? " selected" : ""}`}
-            onMouseEnter={() => setSelectedMedia(product.video)}
-            style={{ cursor: "pointer" }}
-          >
-            <video
-              className="thumbnail-video"
-              autoPlay
-              loop
-              muted
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            >
-              <source src={product.video} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        )}
-        {product.images.map((img, index) => (
-          <img
-            key={index}
-            src={img}
-            alt={`Product ${index}`}
-            className={`thumbnail${selectedMedia === img ? " selected" : ""}`}
-            onMouseEnter={() => setSelectedMedia(img)}
-            style={{ cursor: "pointer" }}
-          />
-        ))}
-      </div>
-
-      <div className="product-main-image">
-        {selectedMedia && selectedMedia.endsWith(".mp4") ? (
-          <video controls autoPlay className="main-video">
-            <source src={selectedMedia} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          <img src={selectedMedia} alt="Selected Product" className="main-image" />
-        )}
-      </div>
-
-      <div className="product-info">
-        <h1>{product.name}</h1>
-        <p className="product-price">{product.price} kr</p>
-        <p className="product-description">{product.description}</p>
-        <h3>Select size:</h3>
-        <div className="size-selector">
-          {product.sizes.map((size, index) => (
-            <button
-              key={index}
-              className={`size-button ${selectedSize === size ? "selected" : ""}`}
-              onClick={() => setSelectedSize(size)}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-        <h3>Select color:</h3>
-        <div className="color-circles">
-          {colorOptions
-            .filter(color => product.colors?.includes(color.value))
-            .map((color) => (
-              <div
-                key={color.value}
-                className="color-circle-wrapper"
-                onClick={() => setSelectedColor(color.value)}
-              >
-                <span
-                  className={`color-circle${selectedColor === color.value ? " selected" : ""}`}
-                  style={{ backgroundColor: color.value }}
-                  title={color.name}
-                >
-                  {selectedColor === color.value && (
-                    <span className="color-checkmark">&#10003;</span>
-                  )}
-                </span>
-                <span className="color-label">{color.name}</span>
-              </div>
+      <ToastNotification show={showToast} message="Product added to cart!" />
+      <div className="product-detail-container">
+        <div className="product-main-image-container" style={{ display: 'flex', gap: '10px' }}>
+          {/* Thumbnails on the left */}
+          <div className="thumbnail-column" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {images.map((img, index) => (
+              <img
+                key={index}
+                src={getImageUrl(img.imageUrl)}
+                alt={`Thumbnail ${index}`}
+                className="thumbnail"
+                style={{
+                  cursor: 'pointer',
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'cover',
+                  border: selectedImageIndex === index ? '2px solid #007aff' : 'none'
+                }}
+                onClick={() => setSelectedImageIndex(index)}
+              />
             ))}
+          </div>
+
+          {/* Main image */}
+          <div className="main-image-wrapper">
+            {images.length > 0 ? (
+              <img
+                src={getImageUrl(images[selectedImageIndex].imageUrl)}
+                alt="Product"
+                className="main-image"
+                style={{ width: '400px', height: '400px', objectFit: 'contain' }}
+              />
+            ) : (
+              <img
+                src="/placeholder-image.png"
+                alt="Product"
+                className="main-image"
+                style={{ width: '400px', height: '400px', objectFit: 'contain' }}
+              />
+            )}
+          </div>
         </div>
-        <button className="add-to-cart-button" onClick={handleAddToCart}>
-          Add to cart
-        </button>
+
+        <div className="product-info">
+          <h1>{product.productName}</h1>
+          <p className="product-price">{product.productPrice} kr</p>
+          <p className="product-description">{product.productDescription}</p>
+
+          <h3>Select size:</h3>
+          <div className="size-selector">
+            {sizes.map(({ sizeId, sizeValue }) => (
+              <button
+                key={sizeId}
+                className={`size-button ${selectedSize === sizeId ? "selected" : ""}`}
+                onClick={() => setSelectedSize(sizeId)}
+              >
+                {sizeValue}
+              </button>
+            ))}
+          </div>
+
+          <h3>Select color:</h3>
+          <div className="color-circles">
+            {colorOptions
+              .filter(color => extractedColors.includes(color.name))
+              .map((color) => (
+                <div
+                  key={color.value}
+                  className="color-circle-wrapper"
+                  onClick={() => setSelectedColor(color.value)}
+                >
+                  <span
+                    className={`color-circle${selectedColor === color.value ? " selected" : ""}`}
+                    style={{ backgroundColor: color.value }}
+                    title={color.name}
+                  >
+                    {selectedColor === color.value && (
+                      <span className="color-checkmark">&#10003;</span>
+                    )}
+                  </span>
+                  <span className="color-label">{color.name}</span>
+                </div>
+              ))}
+          </div>
+          <button className="add-to-cart-button" onClick={handleAddToCart}>
+            Add to cart
+          </button>
+        </div>
       </div>
-    </div>
     </>
   );
 }

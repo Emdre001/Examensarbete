@@ -182,3 +182,24 @@
     box-shadow: 0 8px 24px rgba(0,122,255,0.18);
     transform: translateY(-2px) scale(1.03);
 }
+
+.product-main-image-gallery {
+    display: flex;
+    flex-direction: column;     
+    overflow-y: auto;            
+    max-height: 500px;            
+    scroll-snap-type: y mandatory; 
+    gap: 10px;
+  }
+  
+  .main-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    scroll-snap-align: start;
+    border-radius: 8px;
+  }
+  
+  
+
