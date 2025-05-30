@@ -1,11 +1,5 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Models.DTO;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Npgsql.Replication;
 
 
 namespace DbContext;
@@ -59,11 +53,11 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
         .WithMany(b => b.Products)
         .HasForeignKey(p => p.BrandId);
 
-    // User - Order
-    modelBuilder.Entity<Order>()
-        .HasOne(o => o.User)
-        .WithMany(u => u.Orders)
-        .HasForeignKey(o => o.UserId);
+        // One-to-Many: User - Order
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.User)
+            .WithMany(u => u.Orders)
+            .HasForeignKey(o => o.userId);
 
     // Brand config
     modelBuilder.Entity<Brand>(entity =>

@@ -1,70 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { use, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles/Orders.css';
 
-const Orders = () => {
-  const isLoggedIn = true;
+const Orders = ({user}) => {
   const [orders, setOrders] = useState([]);
-  const [sizeMap, setSizeMap] = useState({});
-  const [imageMap, setImageMap] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  // Load orders from localStorage once
+  const credentials = localStorage.getItem('auth');
+  const isLoggedIn = !!credentials;
+  const userId = user.userId || user.id;
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('orders') || '[]');
-    setOrders(stored);
-  }, []);
-
-  useEffect(() => {
-    const fetchExtraData = async () => {
-      const newSizeMap = { ...sizeMap };
-      const newImageMap = { ...imageMap };
-
-      for (const order of orders) {
-        for (const item of order.items) {
-          // Fetch size
-          if (item.size && !newSizeMap[item.size]) {
-            try {
-              const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${item.size}`);
-              if (res.ok) {
-                const data = await res.json();
-                newSizeMap[item.size] = data.sizeValue;
-              }
-            } catch (err) {
-              console.error('Error fetching size:', err);
-            }
+    if (!isLoggedIn || !userId) return;
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(`http://localhost:5066/api/Order/GetByUserId/${userId}`, {
+          headers: {
+            'Authorization': `Basic ${credentials}`
           }
+        });
 
-          // Fetch image
-          const key = item.productId;
-          if (key && !newImageMap[key]) {
-            try {
-              const res = await fetch(`http://localhost:5066/api/ProductImage/GetImagesByProductId/${key}`);
-              if (res.ok) {
-                const data = await res.json();
-                const images = data?.$values || [];
-                const sorted = images.sort((a, b) =>
-                  a.imageUrl.localeCompare(b.imageUrl, undefined, { numeric: true })
-                );
-                const imagePath = sorted.length > 0 ? sorted[0].imageUrl : null;
-                newImageMap[key] = imagePath
-                  ? `http://localhost:5066${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
-                  : '/placeholder-image.png';
-              }
-            } catch (err) {
-              console.error('Error fetching image:', err);
-            }
-          }
+        if (response.status === 401) {
+          navigate('/login');
+          return;
         }
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+        const data = await response.json();
+        setOrders(data.$values || data);
+      } catch (err) {
+        setError('Failed to load orders.');
+      } finally {
+        setLoading(false);
       }
-
-      setSizeMap(newSizeMap);
-      setImageMap(newImageMap);
     };
 
-    if (orders.length > 0) {
-      fetchExtraData();
-    }
-  }, [orders]); // Safe: `orders` is now stable from useState
+    fetchOrders();
+  }, [isLoggedIn, userId, navigate, credentials]);
 
   if (!isLoggedIn) {
     return (
@@ -75,6 +50,14 @@ const Orders = () => {
         </p>
       </div>
     );
+  }
+
+  if (loading) {
+    return <div className="orders-page">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="orders-page">{error}</div>;
   }
 
   return (
@@ -88,33 +71,33 @@ const Orders = () => {
       ) : (
         <div className="orders-list">
           {orders.map(order => (
-            <div key={order.id} className="order-item">
+            <div key={order.orderId || order.id} className="order-item">
               <div className="order-header">
-                <span className="order-id">Order #{order.id}</span>
-                <span className={`order-status order-status-${order.status.toLowerCase()}`}>{order.status}</span>
+                <span className="order-id">Order #{order.orderId || order.id}</span>
+                <span className={`order-status order-status-${(order.orderStatus || order.status || '').toLowerCase()}`}>
+                  {order.orderStatus || order.status}
+                </span>
               </div>
-              <div className="order-date">Date: {order.date}</div>
-              <div className="order-total">Total: <strong>{order.total} kr</strong></div>
+              <div className="order-date">Date: {order.orderDate ? new Date(order.orderDate).toLocaleDateString() : ''}</div>
+              <div className="order-total">Total: <strong>{order.orderAmount || order.total} kr</strong></div>
               <div className="order-products">
                 <strong>Products:</strong>
                 <ul>
-                  {order.items.map((item, idx) => {
-                    const sizeLabel = sizeMap[item.size] || item.size;
-                    const imageUrl = imageMap[item.productId] || '/placeholder-image.png';
-
-                    return (
-                      <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                        <img
-                          src={imageUrl}
-                          alt={item.name}
-                          style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6, marginRight: 12 }}
-                        />
-                        <span>
-                          {item.name} (Size: {sizeLabel}) x {item.quantity} – {item.price} kr each
-                        </span>
-                      </li>
-                    );
-                  })}
+                  {(order.products || order.items || []).map((item, idx) => (
+                    <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                      <img
+                        src={item.image || item.productImage || ''}
+                        alt={item.name || item.productName || ''}
+                        style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6, marginRight: 12 }}
+                      />
+                      <span>
+                        {(item.name || item.productName || '')}
+                        {item.size && ` (Size: ${item.size})`}
+                        {item.quantity && ` x ${item.quantity}`}
+                        {item.price && ` – ${item.price} kr each`}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Models.DTO;
 
 public class UserDTO
@@ -13,7 +10,5 @@ public class UserDTO
     public string UserPhoneNr { get; set; }
     public string UserRole { get; set; }
 
-    public string UserSalt { get; set; } = null;
-
-    public virtual List<Guid> OrdersId { get; set; } = null;
+    public virtual List<Guid> OrdersId { get; set; } = [];
 }

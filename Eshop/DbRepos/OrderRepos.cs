@@ -33,6 +33,15 @@ public class OrderDbRepos
             .FirstOrDefaultAsync(o => o.OrderId == id);
     }
 
+    public async Task<List<Order>> GetOrdersByUserIdAsync(Guid userId)
+    {
+        return await _dbContext.Orders
+            .Include(o => o.Products)
+            .Include(o => o.User)
+            .Where(o => o.userId == userId)
+            .ToListAsync();
+    }
+
     public async Task<Order> CreateOrderAsync(OrderDTO dto)
     {
         var order = new Order
@@ -42,7 +51,7 @@ public class OrderDbRepos
             OrderDate = dto.OrderDate,
             OrderStatus = dto.OrderStatus,
             OrderAmount = dto.OrderAmount,
-            UserId = dto.UserId ?? Guid.Empty,
+            userId = dto.UserId ?? Guid.Empty,
             Products = await _dbContext.Products
                 .Where(p => dto.ProductsId.Contains(p.ProductId))
                 .ToListAsync()
@@ -65,7 +74,7 @@ public class OrderDbRepos
         order.OrderDate = dto.OrderDate;
         order.OrderStatus = dto.OrderStatus;
         order.OrderAmount = dto.OrderAmount;
-        order.UserId = dto.UserId ?? Guid.Empty;
+        order.userId = dto.UserId ?? Guid.Empty;
 
         // Uppdatera produkter
         order.Products = await _dbContext.Products

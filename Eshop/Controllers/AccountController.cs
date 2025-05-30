@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Eshop.DbRepos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.DTO;
@@ -16,9 +18,9 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequestModel dto)
     {
-        var user = await _accountRepos.LoginAsync(dto.Username, dto.Password);
+        var user = await _accountRepos.LoginAsync(dto.UsernameOrEmail, dto.Password);
         if (user == null)
-            return Unauthorized("Invalid username or password.");
+            return Unauthorized("Invalid Username/Email or password.");
 
         return Ok(new { user.UserName, user.Role });
     }
@@ -56,6 +58,37 @@ public class AccountController : ControllerBase
             return NotFound();
         return Ok(user);
     }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdStr))
+            return Unauthorized();
+
+        var userEntity = await _accountRepos.GetUserByNameAsync(userIdStr);
+        if (userEntity == null)
+            return NotFound();
+
+        var user = await _accountRepos.GetUserByIdAsync(userEntity.UserId);
+        if (user == null)
+            return NotFound();
+
+        var userDto = new 
+        {
+            user.UserId,
+            user.UserName,
+            user.Password,
+            user.Email,
+            user.Address,
+            user.PhoneNr,
+            user.Role
+        };
+
+        return Ok(userDto);
+    }
+
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] AccountDto dto)

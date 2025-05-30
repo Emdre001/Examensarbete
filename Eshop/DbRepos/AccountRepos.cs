@@ -14,10 +14,10 @@ namespace Eshop.DbRepos
             _context = context;
         }
 
-        public async Task<User?> LoginAsync(string username, string password)
+        public async Task<User?> LoginAsync(string identifier, string password)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(u => u.UserName == username && u.Password == password);
+                .FirstOrDefaultAsync(u => u.UserName == identifier || u.Email == identifier && u.Password == password);
         }
 
         public async Task<bool> RegisterAsync(User newUser)
@@ -41,6 +41,27 @@ namespace Eshop.DbRepos
             return await _context.Users.FindAsync(id);
         }
 
+        public async Task<UserDTO?> GetUserByNameAsync(string userName)
+        {
+            var user = await _context.Users
+                .Include(u => u.Orders)
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+
+            if (user == null)
+                return null;
+
+            return new UserDTO
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                UserEmail = user.Email,
+                UserAddress = user.Address ?? string.Empty,
+                UserPhoneNr = user.PhoneNr ?? string.Empty,
+                OrdersId = user.Orders != null ? [.. user.Orders.Select(o => o.OrderId)] : [],
+                UserRole = user.Role
+            };
+        }
+
         public async Task<bool> UpdateUserAsync(Guid id, AccountDto dto)
         {
             var user = await _context.Users.FindAsync(id);
@@ -48,7 +69,6 @@ namespace Eshop.DbRepos
                 return false;
 
             user.UserName = dto.UserName;
-            user.Password = dto.Password;
             user.Email = dto.Email;
             user.Address = dto.Address;
             user.PhoneNr = dto.PhoneNumber;
@@ -58,8 +78,8 @@ namespace Eshop.DbRepos
                 OrderDate = o.OrderDate,
                 OrderStatus = o.OrderStatus,
                 OrderAmount = o.OrderAmount,
-                UserId = (Guid)o.UserId,
-                Products = _context.Products.Where(p => o.ProductsId.Contains(p.ProductId)).ToList()
+                userId = o.UserId ?? Guid.Empty,
+                Products = [.. _context.Products.Where(p => o.ProductsId.Contains(p.ProductId))]
             })];
 
             await _context.SaveChangesAsync();

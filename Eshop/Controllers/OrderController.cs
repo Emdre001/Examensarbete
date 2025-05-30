@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.DTO;
 using DbRepos;
+using Microsoft.Identity.Client;
 
 namespace Controllers;
 
@@ -36,6 +37,14 @@ public class OrderController : Controller
         var order = await _orderRepo.GetOrderByIdAsync(id);
         if (order == null) return NotFound("Order not found.");
         return Ok(order);
+    }
+    
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetByUserId(Guid userId)
+    {
+        var orders = await _orderRepo.GetOrdersByUserIdAsync(userId);
+        if (orders == null || orders.Count == 0) return NotFound("No orders found for this user.");
+        return Ok(orders);
     }
 
     [HttpPut("{id}")]

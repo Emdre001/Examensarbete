@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './home';
 import Products from './products';
@@ -24,6 +25,19 @@ import Checkout from './Checkout';
 
 
 function App() {
+  const [user, setUser] = React.useState(null);
+
+  useEffect(() => {
+    const credentials = localStorage.getItem('auth');
+    if (!credentials) return;
+    fetch('http://localhost:5066/api/Account/GetCurrentUser', {
+      headers: { 'Authorization': `Basic ${credentials}` }
+    })
+    .then(res => res.ok ? res.json() : null)
+    .then(data => setUser(data))
+    .catch(() => setUser(null));
+  }, []);
+
   return (
     <Router>
       <div className="app">
@@ -46,8 +60,8 @@ function App() {
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/admin/editProduct/:id" element={<EditProduct />} />
               <Route path="/admin/AddProduct" element={<AdminAddProduct />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/orders" element={<Orders />} />
+              <Route path="/profile" element={<Profile user={user} setUser={setUser}/>} />
+              <Route path="/orders" element={<Orders user={user}/>} />
               <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </main>

@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/login.css';
 
 const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    identifier: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -25,31 +24,51 @@ const Login = ({ onLoginSuccess }) => {
     e.preventDefault();
     setError('');
     
-    if (!formData.email || !formData.password) {
+    if (!formData.identifier || !formData.password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In a real app, you would verify credentials here
-      console.log('Login attempt with:', formData);
-      
-      // Call the success handler (would set auth state in parent)
+
+      const credentials = btoa(`${formData.identifier}:${formData.password}`);
+      localStorage.setItem('auth', credentials);
+      console.log('Logging in with credentials:', credentials);
+
+      const response = await fetch('http://localhost:5066/api/Account/Login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          UsernameOrEmail: formData.identifier,
+          Password: formData.password,
+        })
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const msg = await response.text();
+        setError(msg || 'Invalid credentials. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+
       if (onLoginSuccess) {
         onLoginSuccess({
-          email: formData.email,
-          name: "Test User" // In real app, this would come from your backend
+          name: data.name,
+          role: data.role,
         });
       }
-      
-      // Redirect to shop page after login
-      navigate('/shop');
-    } catch (err) {
-      setError('Invalid credentials. Please try again.');
+
+      navigate('/');
+    }
+    catch (err) {
+      setError('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -75,12 +94,12 @@ const Login = ({ onLoginSuccess }) => {
           <div className="input-field">
             <label htmlFor="email" className="sr-only">Email</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              id="identifier"
+              name="identifier"
+              value={formData.identifier}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Email or Username"
               required
               autoComplete="username"
             />
@@ -109,16 +128,6 @@ const Login = ({ onLoginSuccess }) => {
           </div>
 
           <div className="options">
-            <div className="checkbox">
-              <input
-                type="checkbox"
-                id="remember"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-              />
-              <label htmlFor="remember">Remember me</label>
-            </div>
             <button 
               type="button" 
               className="forgot-password"

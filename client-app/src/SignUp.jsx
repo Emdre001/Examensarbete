@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/login.css'; // Same styling as login
 
@@ -32,11 +32,29 @@ const Signup = () => {
 
     try {
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Simulate success (replace with backend call)
-      console.log('Sign up data:', formData);
+      const payload = {
+        userName: formData.name,
+        email: formData.email,
+        password: formData.password
+      };
+
+      const registerResponse = await fetch('http://localhost:5066/api/Account/Register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!registerResponse.ok) {
+        const errorMsg = await registerResponse.text();
+        setError(errorMsg || 'Registration failed. Please try again.');
+        return;
+      }
+
       navigate('/login');
+      console.log('Sign up data:', formData);
     } catch (err) {
       setError('Something went wrong. Please try again.');
     } finally {

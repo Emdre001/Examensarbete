@@ -10,6 +10,7 @@ namespace Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {   
     private readonly AdminDbRepos _adminDbRepos;

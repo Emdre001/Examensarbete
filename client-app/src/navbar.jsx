@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Navbar,
   Nav,
@@ -47,6 +47,20 @@ const CustomNavbar = () => {
     if (search.trim()) {
       navigate(`/products?search=${encodeURIComponent(search.trim())}`);
     }
+  };
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem('auth'));
+  }, []);
+
+  console.log('isAuthenticated:', isAuthenticated);
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth');
+    setIsAuthenticated(false);
+    navigate('/');
   };
 
   return (
@@ -208,19 +222,30 @@ const CustomNavbar = () => {
               <FaUser size={22} />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item as={Link} to="/login">
-                Login
-              </Dropdown.Item>
-              <Dropdown.Item as={Link} to="/signup">
-                Sign Up
-              </Dropdown.Item>
+              {!isAuthenticated ? (
+                <>
+                  <Dropdown.Item as={Link} to="/login">
+                    Login
+                  </Dropdown.Item>
+                  <Dropdown.Item as={Link} to="/signup">
+                    Sign Up
+                  </Dropdown.Item>
+                </>
+              ) : (
+                <>
+                  <Dropdown.Item as={Link} to="/profile">
+                    Profile
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogout}>
+                    Logout
+                  </Dropdown.Item>
+
+                </>
+              )}
               <Dropdown.Divider />
-              <Dropdown.Item as={Link} to="/profile">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item as={Link} to="/settings">
-                Settings
-              </Dropdown.Item>
+                <Dropdown.Item as={Link} to="/settings">
+                  Settings
+                </Dropdown.Item>
               <Dropdown.Item as={Link} to="/orders" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               Orders
               {ordersCount > 0 && (
