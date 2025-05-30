@@ -10,5 +10,5 @@ public class UserDTO
     public string UserPhoneNr { get; set; }
     public string UserRole { get; set; }
 
-    public virtual List<Guid> OrdersId { get; set; } = null;
+    public virtual List<Guid> OrdersId { get; set; } = [];
 }

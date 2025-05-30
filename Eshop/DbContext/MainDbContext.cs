@@ -61,7 +61,7 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<Order>()
             .HasOne(o => o.User)
             .WithMany(u => u.Orders)
-            .HasForeignKey(o => o.UserId);
+            .HasForeignKey(o => o.userId);
 
         modelBuilder.Entity<Brand>(entity =>
         {

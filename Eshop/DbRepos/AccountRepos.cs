@@ -44,6 +44,7 @@ namespace Eshop.DbRepos
         public async Task<UserDTO?> GetUserByNameAsync(string userName)
         {
             var user = await _context.Users
+                .Include(u => u.Orders)
                 .FirstOrDefaultAsync(u => u.UserName == userName);
 
             if (user == null)
@@ -54,9 +55,9 @@ namespace Eshop.DbRepos
                 UserId = user.UserId,
                 UserName = user.UserName,
                 UserEmail = user.Email,
-                UserAddress = user.Address,
-                UserPhoneNr = user.PhoneNr,
-                OrdersId = [.. user.Orders.Select(o => o.OrderId)],
+                UserAddress = user.Address ?? string.Empty,
+                UserPhoneNr = user.PhoneNr ?? string.Empty,
+                OrdersId = user.Orders != null ? [.. user.Orders.Select(o => o.OrderId)] : [],
                 UserRole = user.Role
             };
         }
@@ -68,7 +69,6 @@ namespace Eshop.DbRepos
                 return false;
 
             user.UserName = dto.UserName;
-            user.Password = dto.Password;
             user.Email = dto.Email;
             user.Address = dto.Address;
             user.PhoneNr = dto.PhoneNumber;
@@ -78,8 +78,8 @@ namespace Eshop.DbRepos
                 OrderDate = o.OrderDate,
                 OrderStatus = o.OrderStatus,
                 OrderAmount = o.OrderAmount,
-                UserId = (Guid)o.UserId,
-                Products = _context.Products.Where(p => o.ProductsId.Contains(p.ProductId)).ToList()
+                userId = o.UserId ?? Guid.Empty,
+                Products = [.. _context.Products.Where(p => o.ProductsId.Contains(p.ProductId))]
             })];
 
             await _context.SaveChangesAsync();

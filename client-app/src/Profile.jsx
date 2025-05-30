@@ -1,47 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa';
 import './styles/Profile.css';
 
-const MOCK_USER = true; // Set to false when backend is ready
-
-const mockUserData = {
-  email: "robinracho@outlook.com",
-  password: "************",
-  phone: "",
-  birthdate: "1999-10-18",
-  country: "Sweden",
-  postalCode: "",
-  city: "",
-};
-
-const countries = ["Sweden", "Norway", "Denmark", "Finland"];
-
 const Profile = () => {
-  const [user, setUser] = useState(MOCK_USER ? mockUserData : null);
+  const [user, setUser] = useState(null);
   const [edit, setEdit] = useState({ password: false, phone: false });
-  const [form, setForm] = useState(user || {});
+  const [form, setForm] = useState({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
-    if (!MOCK_USER) {
-      fetch('/api/profile', { credentials: 'include' })
-        .then(res => {
-          if (res.status === 401) {
-            navigate('/login');
-            return null;
-          }
-          return res.json();
-        })
-        .then(data => {
-          if (data) {
-            setUser(data);
-            setForm(data);
-          }
-        });
-    }
+    const credentials = localStorage.getItem('auth');
+    fetch('http://localhost:5066/api/Account/GetCurrentUser', { 
+      headers: {
+        'Authorization': `Basic ${credentials}`
+      },
+    })
+    .then(async res => {
+      if (res.status === 401) {
+        navigate('/login');
+        return null;
+      }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+      return res.json();
+    })
+    .then(data => {
+      if (data) {
+        setUser(data);
+        setForm(data);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to load profile:', err.message);
+    });;
   }, [navigate]);
 
   useEffect(() => {
@@ -54,30 +52,65 @@ const Profile = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = e => {
+  const handleSave = async e => {
     e.preventDefault();
-    setUser(form);
     setEdit({ password: false, phone: false });
-    if (!MOCK_USER) {
-      fetch('/api/profile', {
+
+    const payload = {
+    UserName: form.userName || form.UserName || "",
+    Email: form.email || form.userEmail || "",
+    Address: form.address || form.userAddress || "",
+    PhoneNumber: form.phone || form.userPhoneNr || ""
+    };
+
+    const credentials = localStorage.getItem('auth');
+
+    try {
+      const response = await fetch(`http://localhost:5066/api/Account/UpdateAccount/${user.userId || user.UserId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(form),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify(payload),
       });
+      if (!response.ok) {
+        const errorMsg = await response.text();
+        alert(`Failed to update profile: ${errorMsg}`);
+        return;
+      }
+
+      setUser({ ...user, ...payload });
+      alert('Profile updated successfully');
+    } catch (error) {
+      alert("Error updating profile.");
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setShowDeleteConfirm(false);
-    if (!MOCK_USER) {
-      fetch('/api/profile', {
-        method: 'DELETE',
-        credentials: 'include',
-      }).then(() => navigate('/signup'));
-    } else {
+    const credentials = localStorage.getItem('auth');
+    try {
+      const response = await fetch(
+        `http://localhost:5066/api/Account/DeleteAccount/${user.userId || user.UserId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Basic ${credentials}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorMsg = await response.text();
+        alert(`Failed to delete account: ${errorMsg}`);
+        return;
+      }
+
       setUser(null);
+      alert('Account deleted successfully');
       navigate('/signup');
+    } catch (error) {
+      alert(`Error deleting account: ${error}`);
     }
   };
 
@@ -86,6 +119,19 @@ const Profile = () => {
       <div className="profile-page">
         <h2 className="profile-title">Account Information</h2>
         <form className="profile-form" onSubmit={handleSave}>
+          {/* Username field */}
+          <label className="profile-label">
+            Username*
+            <input
+              className="profile-input"
+              type="text"
+              name="userName"
+              value={form.userName || form.UserName || ""}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
           {/* Email with icon */}
           <label className="profile-label">
             Email*
@@ -93,7 +139,7 @@ const Profile = () => {
               <input
                 className="profile-input"
                 type="email"
-                value={form.email}
+                value={form.email || form.userEmail || ""}
                 disabled
               />
               <FaEnvelope className="profile-input-icon" />
@@ -153,57 +199,24 @@ const Profile = () => {
           <label className="profile-label">
             Phone Number
             <input
-                className="profile-input"
-                type="tel"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="Enter your phone number"
-            />
-            </label>
-
-          <label className="profile-label">
-            Birthdate*
-            <input
               className="profile-input"
-              type="date"
-              name="birthdate"
-              value={form.birthdate}
+              type="tel"
+              name="phone"
+              value={form.phone}
               onChange={handleChange}
-              max={new Date().toISOString().split('T')[0]}
+              placeholder="Enter your phone number"
             />
           </label>
 
-          <div className="profile-section-title">Location</div>
           <label className="profile-label">
-            Country/Region*
-            <select
-              className="profile-input"
-              name="country"
-              value={form.country}
-              onChange={handleChange}
-            >
-              {countries.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </label>
-          <label className="profile-label">
-            Postal Code
+            Address
             <input
               className="profile-input"
               type="text"
-              name="postalCode"
-              value={form.postalCode}
+              name="address"
+              value={form.address ?? ""}
               onChange={handleChange}
-            />
-          </label>
-          <label className="profile-label">
-            City
-            <input
-              className="profile-input"
-              type="text"
-              name="city"
-              value={form.city}
-              onChange={handleChange}
+              placeholder="Enter your address"
             />
           </label>
           <button type="submit" className="profile-save-btn">Save Changes</button>
@@ -214,8 +227,7 @@ const Profile = () => {
           <button
             className="profile-delete-btn"
             type="button"
-            onClick={() => setShowDeleteConfirm(true)}
-          >
+            onClick={() => setShowDeleteConfirm(true)}>
             Remove
           </button>
         </div>
@@ -234,11 +246,6 @@ const Profile = () => {
         )}
         <div className="profile-actions">
           <Link to="/orders" className="profile-link">My Orders</Link>
-          <Link to="/settings" className="profile-link">Settings</Link>
-          <button className="profile-logout" onClick={() => {
-            fetch('/api/logout', { method: 'POST', credentials: 'include' })
-              .then(() => navigate('/login'));
-          }}>Log out</button>
         </div>
       </div>
     </div>

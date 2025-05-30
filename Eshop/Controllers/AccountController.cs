@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Eshop.DbRepos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.DTO;
@@ -58,6 +59,7 @@ public class AccountController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetCurrentUser()
     {
@@ -65,8 +67,11 @@ public class AccountController : ControllerBase
         if (string.IsNullOrEmpty(userIdStr))
             return Unauthorized();
 
-        var userId = _accountRepos.GetUserByNameAsync(userIdStr).Result.UserId;
-        var user = await _accountRepos.GetUserByIdAsync(userId);
+        var userEntity = await _accountRepos.GetUserByNameAsync(userIdStr);
+        if (userEntity == null)
+            return NotFound();
+
+        var user = await _accountRepos.GetUserByIdAsync(userEntity.UserId);
         if (user == null)
             return NotFound();
 
@@ -74,6 +79,7 @@ public class AccountController : ControllerBase
         {
             user.UserId,
             user.UserName,
+            user.Password,
             user.Email,
             user.Address,
             user.PhoneNr,

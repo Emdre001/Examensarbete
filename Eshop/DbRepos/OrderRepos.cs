@@ -42,7 +42,7 @@ public class OrderDbRepos
             OrderDate = dto.OrderDate,
             OrderStatus = dto.OrderStatus,
             OrderAmount = dto.OrderAmount,
-            UserId = dto.UserId ?? Guid.Empty,
+            userId = dto.UserId ?? Guid.Empty,
             Products = await _dbContext.Products
                 .Where(p => dto.ProductsId.Contains(p.ProductId))
                 .ToListAsync()
@@ -65,7 +65,7 @@ public class OrderDbRepos
         order.OrderDate = dto.OrderDate;
         order.OrderStatus = dto.OrderStatus;
         order.OrderAmount = dto.OrderAmount;
-        order.UserId = dto.UserId ?? Guid.Empty;
+        order.userId = dto.UserId ?? Guid.Empty;
 
         // Uppdatera produkter
         order.Products = await _dbContext.Products
