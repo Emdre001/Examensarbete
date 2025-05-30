@@ -1,13 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/Orders.css';
 
 const Orders = () => {
-  // Simulate authentication
-  const isLoggedIn = true; // Replace with real auth logic, set to true for testing
-  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const isLoggedIn = true;
+  const [orders, setOrders] = useState([]);
+  const [sizeMap, setSizeMap] = useState({});
+  const [imageMap, setImageMap] = useState({});
 
-   if (!isLoggedIn) {
+  // Load orders from localStorage once
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('orders') || '[]');
+    setOrders(stored);
+  }, []);
+
+  useEffect(() => {
+    const fetchExtraData = async () => {
+      const newSizeMap = { ...sizeMap };
+      const newImageMap = { ...imageMap };
+
+      for (const order of orders) {
+        for (const item of order.items) {
+          // Fetch size
+          if (item.size && !newSizeMap[item.size]) {
+            try {
+              const res = await fetch(`http://localhost:5066/api/Size/GetSizeById/${item.size}`);
+              if (res.ok) {
+                const data = await res.json();
+                newSizeMap[item.size] = data.sizeValue;
+              }
+            } catch (err) {
+              console.error('Error fetching size:', err);
+            }
+          }
+
+          // Fetch image
+          const key = item.productId;
+          if (key && !newImageMap[key]) {
+            try {
+              const res = await fetch(`http://localhost:5066/api/ProductImage/GetImagesByProductId/${key}`);
+              if (res.ok) {
+                const data = await res.json();
+                const images = data?.$values || [];
+                const sorted = images.sort((a, b) =>
+                  a.imageUrl.localeCompare(b.imageUrl, undefined, { numeric: true })
+                );
+                const imagePath = sorted.length > 0 ? sorted[0].imageUrl : null;
+                newImageMap[key] = imagePath
+                  ? `http://localhost:5066${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+                  : '/placeholder-image.png';
+              }
+            } catch (err) {
+              console.error('Error fetching image:', err);
+            }
+          }
+        }
+      }
+
+      setSizeMap(newSizeMap);
+      setImageMap(newImageMap);
+    };
+
+    if (orders.length > 0) {
+      fetchExtraData();
+    }
+  }, [orders]); // Safe: `orders` is now stable from useState
+
+  if (!isLoggedIn) {
     return (
       <div className="orders-page">
         <h2>My Orders</h2>
@@ -39,18 +98,23 @@ const Orders = () => {
               <div className="order-products">
                 <strong>Products:</strong>
                 <ul>
-                {order.items.map((item, idx) => (
-                    <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                    <img
-                        src={item.image}
-                        alt={item.name}
-                        style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6, marginRight: 12 }}
-                    />
-                    <span>
-                        {item.name} (Size: {item.size}) x {item.quantity} – {item.price} kr each
-                    </span>
-                    </li>
-                ))}
+                  {order.items.map((item, idx) => {
+                    const sizeLabel = sizeMap[item.size] || item.size;
+                    const imageUrl = imageMap[item.productId] || '/placeholder-image.png';
+
+                    return (
+                      <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                        <img
+                          src={imageUrl}
+                          alt={item.name}
+                          style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6, marginRight: 12 }}
+                        />
+                        <span>
+                          {item.name} (Size: {sizeLabel}) x {item.quantity} – {item.price} kr each
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
