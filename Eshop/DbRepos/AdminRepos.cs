@@ -36,7 +36,7 @@ public class AdminDbRepos
         var brandNewBalance = new Brand
         {
             BrandId = Guid.NewGuid(),
-            BrandName = "NewBalance",
+            BrandName = "New Balance",
             Products = new List<Product>()
         };
         var brandAxelArigato = new Brand
@@ -428,7 +428,7 @@ public class AdminDbRepos
 
         var images = new List<ProductImage>
         {
-            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen.png"},
+            new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen1.png"},
             new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen2.png"},
             new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen3.png"},
             new ProductImage {ProductId = product1.ProductId, ImageUrl = "/img/AirMaxWomen4.png"},
