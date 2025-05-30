@@ -18,10 +18,15 @@ public class OrderController : Controller
         _orderRepo = orderRepo;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] OrderDTO dto)
     {
-        var order = await _orderRepo.CreateOrderAsync(dto);
+        var userOdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userOdStr) || !Guid.TryParse(userOdStr, out var userId))
+            return Unauthorized("User not authenticated.");
+        
+        var order = await _orderRepo.CreateOrderAsync(dto, userId);
         return Ok(order);
     }
 

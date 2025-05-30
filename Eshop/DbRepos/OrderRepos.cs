@@ -42,20 +42,30 @@ public class OrderDbRepos
             .ToListAsync();
     }
 
-    public async Task<Order> CreateOrderAsync(OrderDTO dto)
+    public async Task<Order> CreateOrderAsync(OrderDTO dto, Guid? userId)
     {
+        if (userId == null)
+            throw new ArgumentNullException(nameof(userId), "UserId cannot be null when creating an order.");
+
         var order = new Order
         {
             OrderId = Guid.NewGuid(),
             OrderDetails = dto.OrderDetails,
-            OrderDate = dto.OrderDate,
+            OrderDate = DateTime.UtcNow,
             OrderStatus = dto.OrderStatus,
             OrderAmount = dto.OrderAmount,
-            userId = dto.UserId ?? Guid.Empty,
-            Products = await _dbContext.Products
-                .Where(p => dto.ProductsId.Contains(p.ProductId))
-                .ToListAsync()
+            userId = userId.Value,
+            Products = []
         };
+
+        foreach (var p in dto.ProductIds)
+        {
+            var product = await _dbContext.Products.FindAsync(p);
+            if (product != null)
+            {
+                order.Products.Add(product);
+            }
+        }
 
         _dbContext.Orders.Add(order);
         await _dbContext.SaveChangesAsync();
@@ -78,7 +88,7 @@ public class OrderDbRepos
 
         // Uppdatera produkter
         order.Products = await _dbContext.Products
-            .Where(p => dto.ProductsId.Contains(p.ProductId))
+            .Where(p => dto.ProductIds.Contains(p.ProductId))
             .ToListAsync();
 
         await _dbContext.SaveChangesAsync();

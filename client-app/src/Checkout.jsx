@@ -14,26 +14,92 @@ const Checkout = () => {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // Save order to localStorage (simulate backend)
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push({
-      id: Date.now(),
-      items: cart,
-      total: totalPrice,
-      date: new Date().toLocaleDateString(),
-      status: 'Placed',
-      ...form,
-    });
-    localStorage.setItem('orders', JSON.stringify(orders));
-    clearCart();
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-      navigate('/orders');
-    }, 1200);
+
+    const credentials = localStorage.getItem('auth');
+    if (!credentials) {
+      alert("You must be logged in to place an order.");
+      return;
+    }
+
+    const productIds = cart.map(item => item.id);
+    const orderData = {
+      OrderDetails: `Order for ${cart.length} item(s) by ${form.name}`,
+      OrderDate: new Date().toISOString(),
+      OrderStatus: "Pending",
+      OrderAmount: parseInt(cart.reduce((sum, item) => sum + item.quantity, 0)),
+      ProductIds: productIds
+    };
+
+    try {
+      const response = await fetch('http://localhost:5066/api/Order/Create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (!response.ok) {
+        const msg = await response.text();
+        alert(`Order failed: ${msg}`);
+        return;
+      }
+
+      clearCart();
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate('/orders');
+      }, 1800);
+    } catch (err) {
+      alert("Error placing order.");
+    }
   };
+
+  // const handlePlaceOrder = async () => {
+  //   if (!selectedSize || !selectedColor) {
+  //     alert("Please select size and color before placing order.");
+  //     return;
+  //   }
+
+  //   const credentials = localStorage.getItem('auth');
+  //   if (!credentials) {
+  //     alert("You must be logged in to place an order.");
+  //     return;
+  //   }
+
+  //   const orderData = {
+  //     OrderDetails: "Order for Nike Air Max (Red, size 42)",
+  //     OrderDate: new Date().toISOString(),
+  //     OrderStatus: "Pending",
+  //     OrderAmount: 1200,
+  //     ProductsId: [selectedProductId]
+  //   };
+
+  //   try {
+  //     const response = await fetch('http://localhost:5066/api/Order/Create', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Basic ${credentials}`
+  //       },
+  //       body: JSON.stringify(orderData)
+  //     });
+
+  //     if (!response.ok) {
+  //       const msg = await response.text();
+  //       alert(`Order failed: ${msg}`);
+  //       return;
+  //     }
+
+  //     alert("Order placed successfully!");
+  //   } catch (error) {
+  //     console.error('Error placing order:', error);
+  //   }
+  // }
 
   return (
     <div className="checkout-page">

@@ -79,7 +79,7 @@ namespace Eshop.DbRepos
                 OrderStatus = o.OrderStatus,
                 OrderAmount = o.OrderAmount,
                 userId = o.UserId ?? Guid.Empty,
-                Products = [.. _context.Products.Where(p => o.ProductsId.Contains(p.ProductId))]
+                Products = [.. _context.Products.Where(p => o.ProductIds.Contains(p.ProductId))]
             })];
 
             await _context.SaveChangesAsync();

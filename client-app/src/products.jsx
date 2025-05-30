@@ -129,7 +129,7 @@ export function Products() {
           colors: product.colors?.$values?.map(c => c.colorName) || [],
           sizes: product.sizes?.$values || [],
           image: productImages[0] ? `${BACKEND_BASE_URL}${productImages[0]}` : '',
-          images: productImages,          // All images if needed later
+          images: productImages,
           category: product.productType || '',
         };
       }) || [];
@@ -145,7 +145,6 @@ export function Products() {
 
   fetchProducts();
 }, []);
-
 
   // Filters from URL
   useEffect(() => {

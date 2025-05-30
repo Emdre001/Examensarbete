@@ -222,7 +222,12 @@ export function ProductDetail() {
                 </div>
               ))}
           </div>
-          <button className="add-to-cart-button" onClick={handleAddToCart}>
+          <button
+            className="add-to-cart-button"
+            onClick={() => {
+              handleAddToCart();
+            }}
+          >
             Add to cart
           </button>
         </div>
